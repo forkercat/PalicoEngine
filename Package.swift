@@ -4,25 +4,49 @@
 import PackageDescription
 
 let package = Package(
-    name: "MisoEngine",
+    name: "PalicoEngine",
+    
+    platforms: [
+//        .macOS(.v10_14),
+//        .macOS(.v11),
+        .macOS(.v12),
+    ],
+    
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "MisoEngine",
-            targets: ["MisoEngine"]),
+        .library(name: "Palico", targets: ["Palico"]),
+        .executable(name: "Editor", targets: ["Editor"]),
+        .executable(name: "Example", targets: ["Example"]),
     ],
+    
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/forkercat/OhMyLog.git", .branch("main")),
+        .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
+        .package(url: "https://github.com/forkercat/CGLFW3.git", .branch("main")),
     ],
+    
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "MisoEngine",
-            dependencies: []),
-        .testTarget(
-            name: "MisoEngineTests",
-            dependencies: ["MisoEngine"]),
+        .target(name: "Palico",
+            dependencies: [
+                .product(name: "OhMyLog", package: "OhMyLog"),
+                .product(name: "MathLib", package: "MathLib"),
+                .product(name: "CGLFW3", package: "CGLFW3"),
+            ]),
+        
+        .executableTarget(name: "Editor",
+            dependencies: [
+                .product(name: "OhMyLog", package: "OhMyLog"),
+                .product(name: "MathLib", package: "MathLib"),
+                "Palico",
+            ]),
+        
+        .executableTarget(name: "Example",
+            dependencies: [
+                .product(name: "OhMyLog", package: "OhMyLog"),
+                "Palico",
+
+            ]),
     ]
 )
