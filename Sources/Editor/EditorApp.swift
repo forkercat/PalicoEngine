@@ -8,7 +8,7 @@
 import Palico
 
 class EditorApp: Application {
-    override init(name: String = "Miso App", arguments: [String] = []) {
+    override init(name: String = "Palico Editor", arguments: [String] = []) {
         super.init(name: name, arguments: arguments)
         pushLayer(EditorLayer())
     }

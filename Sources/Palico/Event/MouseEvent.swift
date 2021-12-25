@@ -5,7 +5,7 @@
 //  Created by Junhao Wang on 12/19/21.
 //
 
-public protocol MouseEvent: Event { }
+internal protocol MouseEvent: Event { }
 
 // MouseMoved
 public class MouseMovedEvent: MouseEvent {
@@ -49,7 +49,7 @@ public class MouseScrolledEvent: MouseEvent {
     }
 }
 
-public protocol MouseButtonEvent: Event {
+internal protocol MouseButtonEvent: Event {
     var button: Mouse { get }
 }
 

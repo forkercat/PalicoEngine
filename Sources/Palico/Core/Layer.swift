@@ -19,7 +19,7 @@ open class Layer {
     
     open func onAttach() { }
     open func onDetach() { }
-    open func onUpdate() { }
+    open func onUpdate(deltaTime: Timestep) { }
     open func onImGuiRender() { }
     open func onEvent(event: Event) { }
 }

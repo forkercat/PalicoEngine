@@ -15,7 +15,7 @@ public enum EventUtils {
 
 public enum EventType {
     case none
-    case windowResize, windowClose
+    case windowViewResize, windowClose
     case keyPressed, keyReleased, charTyped
     case mouseButtonPressed, mouseButtonReleased, mouseMoved, mouseScrolled
 }
@@ -51,6 +51,7 @@ public class EventDispatcher {
         self.event = event
     }
     
+    @discardableResult
     public func dispatch<T>(callback: EventCallback<T>) -> Bool where T: Event {
         if event.eventType == T.staticEventType {
             event.handled = event.handled || callback(event as! T)

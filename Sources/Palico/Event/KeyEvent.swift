@@ -5,7 +5,7 @@
 //  Created by Junhao Wang on 12/19/21.
 //
 
-public protocol KeyEvent: Event {
+internal protocol KeyEvent: Event {
     var key: Key { get }
 }
 
@@ -20,7 +20,7 @@ public class KeyPressedEvent: KeyEvent {
     public let key: Key
     public let repeatCount: UInt32
     
-    public init(keyCode: KeyCode, repeatCount: UInt32) {
+    public init(keyCode: KeyCode, repeat repeatCount: UInt32) {
         key = Key(rawValue: keyCode) ?? .unknown
         self.repeatCount = repeatCount
     }
@@ -57,9 +57,9 @@ public class CharTypedEvent: Event {
     public var eventType: EventType { get { Self.staticEventType } }
     public var handled: Bool = false
     
-    public let char: CharCode
+    public let char: String
     
-    public init(char: CharCode) {
+    public init(char: String) {
         self.char = char
     }
     

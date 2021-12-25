@@ -5,15 +5,15 @@
 //  Created by Junhao Wang on 12/19/21.
 //
 
-public protocol AppEvent: Event { }
+internal protocol AppEvent: Event { }
 
-// WindowResize
-public class WindowResizeEvent: AppEvent {
+// WindowViewResize
+public class WindowViewResizeEvent: AppEvent {
     public let width: UInt32
     public let height: UInt32
     
     public static var categoryFlags: EventCategory { get { [.application] } }
-    public static var staticEventType: EventType { get { .windowResize } }
+    public static var staticEventType: EventType { get { .windowViewResize } }
     public var eventType: EventType { get { Self.staticEventType } }
     public var handled: Bool = false
     
@@ -23,7 +23,7 @@ public class WindowResizeEvent: AppEvent {
     }
     
     public var toString: String {
-        get { "[Event] type=WindowResize, size=(\(width) x \(height)), handled=\(handled)" }
+        get { "[Event] type=WindowViewResize, size=(\(width) x \(height)), handled=\(handled)" }
     }
 }
 

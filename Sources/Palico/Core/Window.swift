@@ -5,13 +5,8 @@
 //  Created by Junhao Wang on 12/15/21.
 //
 
-import CGLFW3
+import MetalKit
 import MathLib
-
-fileprivate struct GLFWInt32 {
-    static var FALSE: Int32 = 0
-    static var TRUE: Int32 = 1
-}
 
 struct WindowDescriptor {
     var title: String
@@ -25,236 +20,190 @@ struct WindowDescriptor {
     }
 }
 
-// Window
-typealias WindowEventCallback = (Event) -> Void
+protocol WindowDelegate {
+    func onUpdate(deltaTime: Timestep)
+    func onEvent(event: Event)
+}
 
-class Window {
-    fileprivate struct WindowData {
-        var eventCallback: WindowEventCallback? = nil
-        var title: String = ""
-        var width: UInt32 = 0
-        var height: UInt32 = 0
-        var vSync: Bool = false
-    }
+// Window
+class Window: NSObject {
+    var title: String { get { nsWindow.title } }
+    var width: UInt32 { get { UInt32(nsWindow.contentView?.frame.width ?? 0) } }
+    var height: UInt32 { get { UInt32(nsWindow.contentView?.frame.height ?? 0) } }
+    var windowDelegate: WindowDelegate? = nil
     
-    fileprivate enum DataOffsets {
-        static let eventCallbackOffset = MemoryLayout<WindowData>.offset(of: \.eventCallback)!
-        static let titleOffset = MemoryLayout<WindowData>.offset(of: \.title)!
-        static let widthOffset = MemoryLayout<WindowData>.offset(of: \.width)!
-        static let heightOffset = MemoryLayout<WindowData>.offset(of: \.height)!
-        static let vSyncOffset = MemoryLayout<WindowData>.offset(of: \.vSync)!
-    }
+    static var mainMTKView: MTKView! = nil
     
-    fileprivate var data: WindowData = WindowData()
+    private var lastFrameTime: Timestep = Time.currentTime
     
-    private(set) var rawWindow: OpaquePointer!
-    private(set) var nsWindow: NSWindow!
-    private(set) var swapchain: CAMetalLayer!
-    
-    private static var windowCount: UInt8 = 0
+    let viewController = ViewController()
+    let nsWindow: NSWindow
     
     init(descriptor: WindowDescriptor) {
-        data.title = descriptor.title
-        data.width = descriptor.width
-        data.height = descriptor.height
+        Log.info("Creating window: \(descriptor.title) \(descriptor.width) x \(descriptor.height)")
         
-        Log.info("Creating window: \(data.title) \(data.width) x \(data.height)")
+        nsWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: Int(descriptor.width), height: Int(descriptor.height)),
+                            styleMask: [.miniaturizable, .closable, .resizable, .titled],
+                            backing: .buffered,
+                            defer: false)
+        nsWindow.title = descriptor.title
+        nsWindow.center()
+        nsWindow.contentView = viewController.mtkView
+        nsWindow.acceptsMouseMovedEvents = true
+        nsWindow.makeKeyAndOrderFront(nil)
         
-        if Window.windowCount == 0 {
-            Log.debug("Initializing GLFW")
-            let success = glfwInit()
-            assert(success != 0, "Could not initialize GLFW!")
-            glfwSetErrorCallback(glfwErrorCallback)
+        super.init()
+        
+        viewController.mtkView.delegate = self
+        mtkView(viewController.mtkView, drawableSizeWillChange: viewController.mtkView.drawableSize)
+        
+        // Add a tracking area to capture move events within the window;
+        // otherwise, location would become screen coord when mouse is outside.
+        let trackingArea = NSTrackingArea(rect: .zero, options: [.mouseMoved, .inVisibleRect, .activeAlways],
+                                          owner: viewController.mtkView, userInfo: nil)
+        viewController.mtkView.addTrackingArea(trackingArea)
+        
+        NSEvent.addLocalMonitorForEvents(matching: [.any], handler: onNSEventPublished)
+    }
+    
+    func makeMain() {
+        nsWindow.makeMain()
+        Self.mainMTKView = viewController.mtkView
+    }
+}
+
+// Event Publish
+extension Window {
+    private func onNSEventPublished(nsEvent: NSEvent) -> NSEvent? {
+//        let wantsCapture: Bool = ImGui_ImplOSX_HandleEvent(nsEvent, viewController.view)
+        let wantsCapture = false
+        
+        if nsEvent.type == .keyDown && wantsCapture {
+            return nil  // do not dispatch keydown event when ImGUi wants to capture
         }
         
-        // Hint
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
-        glfwWindowHint(GLFW_RESIZABLE, GLFWInt32.TRUE)  // by default
+        // Handled by us
+        switch nsEvent.type {
+            
+        // key
+        case .keyDown:
+            keyEventCallback(nsEvent: nsEvent)
+            charTypedEventCallback(nsEvent: nsEvent)
+            return nil  // do not dispatch key event (alarm sound issue)
+        case .keyUp:
+            keyEventCallback(nsEvent: nsEvent)
+            return nil  // same
+        case .flagsChanged:
+            modifierChangedEventCallback(nsEvent: nsEvent)
+            
+        // mouse button
+        case .leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp, .otherMouseDown, .otherMouseUp:
+            mouseButtonEventCallback(nsEvent: nsEvent)
+            
+        // mouse moved
+        case .mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged:
+            mouseMovedEventCallback(nsEvent: nsEvent)
+            
+        // scroll wheel
+        case .scrollWheel:  // ScrollWheel
+            mouseScrollWheelEventCallback(nsEvent: nsEvent)
+            // dispatch other events
+            return nil  // same
         
-        // Create Window
-        guard let window = glfwCreateWindow(Int32(data.width), Int32(data.height), data.title, nil, nil) else {
-            assertionFailure("Failed to create GLFW window!")
+        default:
+            return nsEvent
+        }
+        
+        return nsEvent
+    }
+    
+    private func publishEvent(_ event: Event) {
+        windowDelegate?.onEvent(event: event)
+    }
+}
+    
+// Event Callbacks
+extension Window {
+    private func keyEventCallback(nsEvent: NSEvent) {
+        switch nsEvent.type {
+        case .keyDown:
+            Input.keyMap[Int(nsEvent.keyCode)] = true
+            let event = KeyPressedEvent(keyCode: nsEvent.keyCode, repeat: nsEvent.isARepeat ? 1 : 0)
+            publishEvent(event)
+        case .keyUp:
+            Input.keyMap[Int(nsEvent.keyCode)] = false
+            let event = KeyReleasedEvent(keyCode: nsEvent.keyCode)
+            publishEvent(event)
+        default:
             return
         }
-        rawWindow = window
-        guard let nsWindow = glfwGetCocoaWindow(window) as? NSWindow else {
-            assertionFailure("Failed to get Cocoa window!")
+    }
+    
+    private func modifierChangedEventCallback(nsEvent: NSEvent) {
+        let flags = nsEvent.modifierFlags
+        
+        // For debugging
+        // print("Command: \(flags.contains(.command)), Shift: \(flags.contains(.shift)), Option: \(flags.contains(.option)), Fn: \(flags.contains(.function))")
+        
+        // Does not support distinguishing from right modifier keys yet
+        Input.keyMap[Int(Key.command.rawValue)]  = flags.contains(.command)
+        Input.keyMap[Int(Key.shift.rawValue)]    = flags.contains(.shift)
+        Input.keyMap[Int(Key.option.rawValue)]   = flags.contains(.option)
+        Input.keyMap[Int(Key.function.rawValue)] = flags.contains(.function)
+    }
+    
+    private func charTypedEventCallback(nsEvent: NSEvent) {
+        switch nsEvent.type {
+        case .keyDown:
+            guard let string = nsEvent.characters else {
+                return
+            }
+            let event = CharTypedEvent(char: string)
+            publishEvent(event)
+        default:
             return
         }
-        self.nsWindow = nsWindow
-        
-        // Swap Chain
-        swapchain = CAMetalLayer()
-        swapchain.device = MetalContext.device
-        swapchain.pixelFormat = .bgra8Unorm
-        swapchain.displaySyncEnabled = true  // not working w/ GLFW
-        
-        nsWindow.contentView?.layer = swapchain
-        nsWindow.contentView?.wantsLayer = true
-        
-        // Set Window Data
-        glfwSetWindowUserPointer(rawWindow, &data)
-        
-        // Set GLFW Callbacks
-        glfwSetWindowSizeCallback(rawWindow, glfwWindowResizeCallback)
-        glfwSetWindowCloseCallback(rawWindow, glfwWindowCloseCallback)
-        glfwSetKeyCallback(rawWindow, glfwKeyCallback)
-        glfwSetCharCallback(rawWindow, glfwCharCallback)
-        glfwSetMouseButtonCallback(rawWindow, glfwMouseButtonCallback)
-        glfwSetScrollCallback(rawWindow, glfwScrollCallback)
-        glfwSetCursorPosCallback(rawWindow, glfwCursorPosCallback)
     }
     
-    deinit {
-        shutdown()
-    }
-    
-    private func shutdown() {
-        glfwDestroyWindow(rawWindow)
-        Window.windowCount -= 1
-        if Window.windowCount == 0 {
-            Log.debug("Window::Terminating GLFW!")
-            glfwTerminate()
+    private func mouseButtonEventCallback(nsEvent: NSEvent) {
+        switch nsEvent.type {
+        case .leftMouseDown, .rightMouseDown, .otherMouseDown:
+            Input.mouseMap[nsEvent.buttonNumber] = true
+            let event = MouseButtonPressedEvent(mouseCode: MouseCode(nsEvent.buttonNumber))
+            publishEvent(event)
+        case .leftMouseUp, .rightMouseUp, .otherMouseUp:
+            Input.mouseMap[nsEvent.buttonNumber] = false
+            let event = MouseButtonReleasedEvent(mouseCode: MouseCode(nsEvent.buttonNumber))
+            publishEvent(event)
+        default:
+            return
         }
     }
     
-    func onUpdate() {
-        glfwPollEvents()  // handle events
-        MetalContext.updateDrawable(drawable: swapchain.nextDrawable())
+    private func mouseMovedEventCallback(nsEvent: NSEvent) {
+        let cursorLocation = nsEvent.locationInWindow
+        let event = MouseMovedEvent(x: Float(cursorLocation.x), y: Float(cursorLocation.y))
+        publishEvent(event)
     }
     
-    func setEventCallback(callback:@escaping WindowEventCallback) {
-        data.eventCallback = callback
-    }
-    
-    func setVSync(enabled: Bool) {
-        glfwSwapInterval(enabled ? GLFWInt32.TRUE : GLFWInt32.FALSE)
-        data.vSync = enabled
-    }
-    
-    func lookupKeyState(key: Key) -> ButtonState {
-        let keyCode = key.rawValue
-        let state = glfwGetKey(rawWindow, Int32(keyCode))
-        return ButtonState(rawValue: State(state)) ?? .unknown
-    }
-    
-    func lookupMouseButtonState(mouse: Mouse) -> ButtonState {
-        let mouseCode = mouse.rawValue
-        let state = glfwGetMouseButton(rawWindow, Int32(mouseCode))
-        return ButtonState(rawValue: State(state)) ?? .unknown
-    }
-    
-    func lookupMousePosition() -> Float2 {
-        var xpos: Double = 0
-        var ypos: Double = 0
-        glfwGetCursorPos(rawWindow, &xpos, &ypos)
-        return Float2(x: Float(xpos), y: Float(ypos))
+    private func mouseScrollWheelEventCallback(nsEvent: NSEvent) {
+        let event = MouseScrolledEvent(x: Float(nsEvent.scrollingDeltaX), y: Float(nsEvent.scrollingDeltaY))
+        publishEvent(event)
     }
 }
 
-// Callbacks
-private func glfwErrorCallback(error: Int32, description: UnsafePointer<CChar>?) {
-    let str = String(cString: description!)
-    Log.error("GLFW::Error \(error): \(str)")
-}
-
-private func glfwWindowResizeCallback(window: OpaquePointer?, width: Int32, height: Int32) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("WindowResizeCallback::Not able to get window data!")
-        return
+extension Window: MTKViewDelegate {
+    func draw(in view: MTKView) {
+        let currentTime = Time.currentTime
+        let deltaTime = currentTime - lastFrameTime
+        lastFrameTime = currentTime
+        
+        windowDelegate?.onUpdate(deltaTime: deltaTime)
     }
     
-    let w = UInt32(width), h = UInt32(height)
-    dataPointer.storeBytes(of: w, toByteOffset: Window.DataOffsets.widthOffset, as: UInt32.self)
-    dataPointer.storeBytes(of: h, toByteOffset: Window.DataOffsets.heightOffset, as: UInt32.self)
-    
-    let event = WindowResizeEvent(width: w, height: h)
-    publishEvent(dataPointer: dataPointer, event: event)
-}
-
-private func glfwWindowCloseCallback(window: OpaquePointer?) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("WindowCloseCallback::Not able to get window data!")
-        return
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        // NSWindowDelegate::WindowDidResize includes the status bar height, use this method instead
+        let event = WindowViewResizeEvent(width: UInt32(size.width), height: UInt32(size.height))
+        publishEvent(event)
     }
-    
-    let event = WindowCloseEvent()
-    publishEvent(dataPointer: dataPointer, event: event)
-}
-
-private func glfwKeyCallback(window: OpaquePointer?, key: Int32, scancode: Int32, action: Int32, mods: Int32) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("KeyCallback::Not able to get window data!")
-        return
-    }
-    
-    let state = ButtonState(rawValue: State(action))
-    switch state {
-    case .pressed:
-        let event = KeyPressedEvent(keyCode: KeyCode(key), repeatCount: 0)
-        publishEvent(dataPointer: dataPointer, event: event)
-    case .released:
-        let event = KeyReleasedEvent(keyCode: KeyCode(key))
-        publishEvent(dataPointer: dataPointer, event: event)
-    case .repeated:
-        let event = KeyPressedEvent(keyCode: KeyCode(key), repeatCount: 1)
-        publishEvent(dataPointer: dataPointer, event: event)
-    default:
-        assertionFailure("KeyCallback::Unsupported button state!")
-    }
-}
-
-private func glfwCharCallback(window: OpaquePointer?, keycode: UInt32) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("CharCallback::Not able to get window data!")
-        return
-    }
-    
-    let event = CharTypedEvent(char: KeyCode(keycode))
-    publishEvent(dataPointer: dataPointer, event: event)
-}
-
-private func glfwMouseButtonCallback(window: OpaquePointer?, button: Int32, action: Int32, mods: Int32) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("MouseButtonCallback::Not able to get window data!")
-        return
-    }
-    
-    let state = ButtonState(rawValue: State(action))
-    switch state {
-    case .pressed:
-        let event = MouseButtonPressedEvent(mouseCode: MouseCode(button))
-        publishEvent(dataPointer: dataPointer, event: event)
-    case .released:
-        let event = MouseButtonReleasedEvent(mouseCode: MouseCode(button))
-        publishEvent(dataPointer: dataPointer, event: event)
-    case .repeated:
-        assertionFailure("MouseButtonCallback::Released is not supported yet!")
-    default:
-        assertionFailure("MouseButtonCallback::Unsupported button state!")
-    }
-}
-
-private func glfwScrollCallback(window: OpaquePointer?, xoffset: Double, yoffset: Double) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("ScrollCallback::Not able to get window data!")
-        return
-    }
-    
-    let event = MouseScrolledEvent(x: Float(xoffset), y: Float(yoffset))
-    publishEvent(dataPointer: dataPointer, event: event)
-}
-
-private func glfwCursorPosCallback(window: OpaquePointer?, xpos: Double, ypos: Double) {
-    guard let dataPointer = glfwGetWindowUserPointer(window) else {
-        Log.warn("CursorPosCallback::Not able to get window data!")
-        return
-    }
-    
-    let event = MouseMovedEvent(x: Float(xpos), y: Float(ypos))
-    publishEvent(dataPointer: dataPointer, event: event)
-}
-
-private func publishEvent(dataPointer: UnsafeMutableRawPointer, event: Event) {
-    dataPointer.load(as: Window.WindowData.self).eventCallback?(event)
 }

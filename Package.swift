@@ -3,6 +3,21 @@
 
 import PackageDescription
 
+// Dependencies
+let OhMyLog = Target.Dependency.product(name: "OhMyLog", package: "OhMyLog")
+let MathLib = Target.Dependency.product(name: "MathLib", package: "MathLib")
+let ImGui = Target.Dependency.product(name: "ImGui", package: "SwiftImGui")
+
+// Engine Dependencies
+let engineDependencies: [Target.Dependency] = [
+    OhMyLog, MathLib, ImGui,
+]
+
+// Application Dependencies
+let appDependencies: [Target.Dependency] = [
+    OhMyLog, MathLib, ImGui,
+]
+
 let package = Package(
     name: "PalicoEngine",
     
@@ -22,31 +37,25 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/forkercat/OhMyLog.git", .branch("main")),
         .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
-        .package(url: "https://github.com/forkercat/CGLFW3.git", .branch("main")),
+        .package(url: "https://github.com/ctreffs/SwiftImGui.git", .branch("docking")),
     ],
     
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "Palico",
-            dependencies: [
-                .product(name: "OhMyLog", package: "OhMyLog"),
-                .product(name: "MathLib", package: "MathLib"),
-                .product(name: "CGLFW3", package: "CGLFW3"),
+            dependencies: engineDependencies + [
+                
             ]),
         
         .executableTarget(name: "Editor",
-            dependencies: [
-                .product(name: "OhMyLog", package: "OhMyLog"),
-                .product(name: "MathLib", package: "MathLib"),
-                "Palico",
+            dependencies: appDependencies + [
+                "Palico"
             ]),
         
         .executableTarget(name: "Example",
-            dependencies: [
-                .product(name: "OhMyLog", package: "OhMyLog"),
+            dependencies: appDependencies + [
                 "Palico",
-
             ]),
     ]
 )

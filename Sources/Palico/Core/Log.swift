@@ -1,6 +1,6 @@
 //
 //  Log.swift
-//  
+//  Palico
 //
 //  Created by Junhao Wang on 12/15/21.
 //

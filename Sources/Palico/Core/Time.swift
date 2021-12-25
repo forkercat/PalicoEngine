@@ -5,9 +5,9 @@
 //  Created by Junhao Wang on 12/17/21.
 //
 
-import CGLFW3
+import Foundation
 
-public typealias Timestep = Float
+public typealias Timestep = TimeInterval
 
 extension Timestep {
     public var toMilliSeconds: Timestep {
@@ -17,6 +17,8 @@ extension Timestep {
 
 public enum Time {
     public static var currentTime: Timestep {
-        get { Timestep(glfwGetTime()) }
+        get {
+            Timestep(NSDate().timeIntervalSince1970)
+        }
     }
 }

@@ -5,101 +5,94 @@
 //  Created by Junhao Wang on 12/15/21.
 //
 
-import Metal
+import AppKit
+import MetalKit
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationWillFinishLaunching(_ notification: Notification) { }
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
+}
 
 open class Application {
     private(set) static var instance: Application?
     
-    private(set) var window: Window
     private var layerStack: LayerStack = LayerStack()
-    private var isRunning: Bool = true
-    private var isMinimized: Bool = false
     
-    private var lastFrameTime: Timestep = 0.0
+    let appDelegate: AppDelegate
+    let window: Window
     
     public init(name: String = "Palico Engine", arguments: [String] = []) {
         Log.registerLogger(name: "Palico", level: .trace)
-        
         Log.info("Arguments[1:]: \(arguments.dropFirst())")
         
         // Applicaiton
-        assert(Application.instance == nil, "Application::Only one application is allowed!")
+        assert(Application.instance == nil, "Only one application is allowed!")
         defer { Application.instance = self }
         
-        // Window
-        let windowDescriptor = WindowDescriptor(title: name, width: 640, height: 360)
+        _ = NSApplication.shared
+        appDelegate = AppDelegate()
+        NSApp.delegate = appDelegate
+        NSApp.setActivationPolicy(.regular)
+        
+        let width: UInt32 = 960
+        let height: UInt32 = 540
+        
+        // Window (ViewController & MTKView)
+        let windowDescriptor = WindowDescriptor(title: name, width: width, height: height)
         window = Window(descriptor: windowDescriptor)
-        window.setEventCallback(callback: onEvent)
+        window.windowDelegate = self
+        window.makeMain()
         
         // Renderer
-        
         
         // ImGui
     }
     
     public func run() {
-        while isRunning {
-            // Poll Events & Swapchain updates drawable
-            window.onUpdate()
-            
-            // Time
-            let currentTime = Time.currentTime
-            let deltaTime = currentTime - lastFrameTime
-            lastFrameTime = currentTime
-
-            Log.debug("FPS: \(1.0 / deltaTime)")
-
-            // Render
-            if isMinimized { return }
-            
-            let buffer = MetalContext.commandQueue.makeCommandBuffer()!
-
-            let pass = MTLRenderPassDescriptor()
-            pass.colorAttachments[0].texture = MetalContext.currentDrawable?.texture
-            pass.colorAttachments[0].loadAction = .clear
-            pass.colorAttachments[0].clearColor = MTLClearColorMake(0.2, 0.8, 0.0, 1.0)
-            pass.colorAttachments[0].storeAction = .store
-            let encoder = buffer.makeRenderCommandEncoder(descriptor: pass)!
-            encoder.endEncoding()
-
-            buffer.present(MetalContext.currentDrawable!)
-            buffer.commit()
-            
-            // ...
-        }
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.run()
     }
     
-    private func close() {
-        isRunning = false
-    }
-    
-    // Layer
-    public func pushLayer(_ layer: Layer) {
-        layerStack.pushLayer(layer)
-        layer.onAttach()
-    }
-    
-    public func pushOverlay(_ overlay: Layer) {
-        layerStack.pushOverlay(overlay)
-        overlay.onAttach()
-    }
-    
-    public func getImGuiLayer() {
-        
+    public func close() {
+        NSApp.deactivate()
+        NSApp.stop(nil)
     }
 }
 
-// Handle Events
-extension Application {
-
-    // Event
-    private func onEvent(event: Event) {
-        let dispatcher = EventDispatcher(event: event)
-        _ = dispatcher.dispatch(callback: onWindowClose)
-        _ = dispatcher.dispatch(callback: onWindowResize)
-        _ = dispatcher.dispatch(callback: onEscPressed)
+// Window Delegate
+extension Application: WindowDelegate {
+    func onUpdate(deltaTime: Timestep) {
+        guard NSApp.isRunning && !window.nsWindow.isMiniaturized else {
+            return
+        }
         
-        // Process events in layers (reversed order)
+        if false {  // show FPS?
+            Log.debug("FPS: \(Int(1.0 / deltaTime))")
+        }
+        
+        // - 1. Layer Update
+        for layer in layerStack.layers {
+            layer.onUpdate(deltaTime: deltaTime)
+        }
+        
+        // - 2. Layer ImGuiRender
+        // ImGuiLayer.begin()
+        for layer in layerStack.layers {
+            layer.onUpdate(deltaTime: deltaTime)
+        }
+        // ImGuiLayer.end()
+    }
+    
+    func onEvent(event: Event) {
+        let dispatcher = EventDispatcher(event: event)
+        
+        // 1. Application Level
+        dispatcher.dispatch(callback: onWindowClose)
+        dispatcher.dispatch(callback: onWindowViewResize)
+        dispatcher.dispatch(callback: onEscPressedForDebugging)
+        
+        // 2. Layer Level
+        // Process events in layers (reversed order) Ex: [back, ..., front]
         for layer in layerStack.layers.reversed() {
             if event.handled {
                 break
@@ -109,28 +102,41 @@ extension Application {
     }
     
     private func onWindowClose(event: WindowCloseEvent) -> Bool {
-        isRunning = false
+        close()
         return true
     }
     
-    private func onEscPressed(event: KeyPressedEvent) -> Bool {
+    private func onEscPressedForDebugging(event: KeyPressedEvent) -> Bool {
         if event.key == .escape {
-            isRunning = false
+            close()
             return true
         } else {
             return false
         }
     }
     
-    private func onWindowResize(event: WindowResizeEvent) -> Bool {
+    private func onWindowViewResize(event: WindowViewResizeEvent) -> Bool {
         if event.width == 0 || event.height == 0 {
-            isMinimized = true
+            Log.warn("Window view size is 0. Do not updating.")
             return false
         }
         
-        isMinimized = false
         // Renderer Resize
+        // Ex: Renderer::onWindowViewResize
         
         return false
+    }
+}
+
+// Layer
+extension Application {
+    public func pushLayer(_ layer: Layer) {
+        layerStack.pushLayer(layer)
+        layer.onAttach()
+    }
+    
+    public func pushOverlay(_ overlay: Layer) {
+        layerStack.pushOverlay(overlay)
+        overlay.onAttach()
     }
 }

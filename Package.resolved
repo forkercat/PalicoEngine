@@ -2,20 +2,11 @@
   "object": {
     "pins": [
       {
-        "package": "CGLFW3",
-        "repositoryURL": "https://github.com/forkercat/CGLFW3.git",
-        "state": {
-          "branch": "main",
-          "revision": "8895107b44bbb5c7f7f991713d585b8f990d4650",
-          "version": null
-        }
-      },
-      {
         "package": "MathLib",
         "repositoryURL": "https://github.com/forkercat/MathLib.git",
         "state": {
           "branch": "main",
-          "revision": "7ed856a1a61710150c79b8963450bf9493afdb09",
+          "revision": "7f6a8d3ba27d322cae8703d74d365b21aa7f954c",
           "version": null
         }
       },
@@ -25,6 +16,15 @@
         "state": {
           "branch": "main",
           "revision": "5e0a384bb0538e3642680e31d785728226b787ee",
+          "version": null
+        }
+      },
+      {
+        "package": "ImGui",
+        "repositoryURL": "https://github.com/ctreffs/SwiftImGui.git",
+        "state": {
+          "branch": "docking",
+          "revision": "b0f848e34d44fa0c9ad6082641d4793f30073e8d",
           "version": null
         }
       }

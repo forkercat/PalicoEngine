@@ -1,6 +1,6 @@
 //
 //  EditorLayer.swift
-//  
+//  Editor
 //
 //  Created by Junhao Wang on 12/15/21.
 //
@@ -25,7 +25,7 @@ class EditorLayer: Layer {
         
     }
     
-    override func onUpdate() {
+    override func onUpdate(deltaTime: Timestep) {
         
     }
     
@@ -34,6 +34,16 @@ class EditorLayer: Layer {
     }
     
     override func onEvent(event: Event) {
-        
+        let dispatcher = EventDispatcher(event: event)
+        _ = dispatcher.dispatch(callback: onKeyPressed)
+        _ = dispatcher.dispatch(callback: onMouseButtonPressed)
+    }
+    
+    private func onKeyPressed(event: KeyPressedEvent) -> Bool {
+        return true
+    }
+    
+    private func onMouseButtonPressed(evet: MouseButtonPressedEvent) -> Bool {
+        return true
     }
 }

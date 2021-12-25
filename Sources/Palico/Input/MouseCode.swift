@@ -8,20 +8,20 @@
 public typealias MouseCode = UInt16
 
 public enum Mouse: MouseCode {
-    // From glfw3.h
-    case unknown = 10
+    // From Apple
     
-    case button0 = 0
-    case button1 = 1
-    case button2 = 2
+    case left    = 0
+    case right   = 1
+    case middle  = 2
     case button3 = 3
     case button4 = 4
     case button5 = 5
     case button6 = 6
     case button7 = 7
     
-    public static let buttonLast   = Self.button7
-    public static let buttonLeft   = Self.button0
-    public static let buttonRight  = Self.button1
-    public static let buttonMiddle = Self.button2
+    case unknown = 9
+}
+
+extension Mouse {
+    static let maxMouseCode = 10
 }

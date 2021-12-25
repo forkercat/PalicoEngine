@@ -8,41 +8,21 @@
 import MetalKit
 
 class MetalContext {
-    private static var _device: MTLDevice?
-    static var device: MTLDevice { get {
-        if _device == nil {
-            guard let dev = MTLCreateSystemDefaultDevice() else {
-                assertionFailure("Device is not properly initialized!")
-                exit(1)
-            }
-            _device = dev
+    private(set) static var shared = MetalContext()
+    
+    let device: MTLDevice!
+    let commandQueue: MTLCommandQueue!
+    
+    private init() {
+        guard let device = MTLCreateSystemDefaultDevice(),
+              let queue = device.makeCommandQueue()
+        else {
+            assertionFailure("Device and command queue are not properly initialized!")
+            self.device = nil
+            self.commandQueue = nil
+            return
         }
-        return _device!
-    }}
-    
-    private static var _commandQueue: MTLCommandQueue?
-    static var commandQueue: MTLCommandQueue { get {
-        if _commandQueue == nil {
-            guard let queue = device.makeCommandQueue() else {
-                assertionFailure("Command queue is not properly initialized!")
-                exit(1)
-            }
-            _commandQueue = queue
-        }
-        return _commandQueue!
-    }}
-    
-    private(set) static var currentDrawable: CAMetalDrawable?
-    
-    static func updateDrawable(drawable: CAMetalDrawable?) {
-        Self.currentDrawable = drawable
+        self.device = device
+        self.commandQueue = queue
     }
-
-//    func beginCommandBuffer() {
-//
-//    }
-//
-//    func endCommandBuffer() {
-//
-//    }
 }
