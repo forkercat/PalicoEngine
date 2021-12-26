@@ -8,8 +8,7 @@
 public typealias MouseCode = UInt16
 
 public enum Mouse: MouseCode {
-    // From Apple
-    
+    // Currently only supports Cocoa framework
     case left    = 0
     case right   = 1
     case middle  = 2

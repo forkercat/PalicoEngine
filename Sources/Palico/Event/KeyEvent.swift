@@ -11,10 +11,10 @@ internal protocol KeyEvent: Event {
 
 // KeyPressed
 public class KeyPressedEvent: KeyEvent {
-    public static var categoryFlags: EventCategory { get { [.keyboard, .input] } }
-    public static var staticEventType: EventType { get { .keyPressed } }
+    public static var categoryFlags: EventCategory { [.keyboard, .input] }
+    public static var staticEventType: EventType { .keyPressed }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let key: Key
@@ -26,16 +26,16 @@ public class KeyPressedEvent: KeyEvent {
     }
     
     public var toString: String {
-        get { "[Event] type=KeyPressed, key=\(key), repeat=\(repeatCount), handled=\(handled)" }
+        "[Event] type=KeyPressed, key=\(key), repeat=\(repeatCount), handled=\(handled)"
     }
 }
 
 // KeyReleased
 public class KeyReleasedEvent: KeyEvent {
-    public static var categoryFlags: EventCategory { get { [.keyboard, .input] } }
-    public static var staticEventType: EventType { get { .keyReleased } }
+    public static var categoryFlags: EventCategory { [.keyboard, .input] }
+    public static var staticEventType: EventType { .keyReleased }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let key: Key
@@ -45,16 +45,16 @@ public class KeyReleasedEvent: KeyEvent {
     }
     
     public var toString: String {
-        get { "[Event] type=KeyReleased, key=\(key), handled=\(handled)" }
+        "[Event] type=KeyReleased, key=\(key), handled=\(handled)"
     }
 }
 
 // CharTyped
 public class CharTypedEvent: Event {
-    public static var categoryFlags: EventCategory { get { [.keyboard, .input] } }
-    public static var staticEventType: EventType { get { .charTyped } }
+    public static var categoryFlags: EventCategory { [.keyboard, .input] }
+    public static var staticEventType: EventType { .charTyped }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let char: String
@@ -64,6 +64,6 @@ public class CharTypedEvent: Event {
     }
     
     public var toString: String {
-        get { "[Event] type=KeyTyped, char=\(char)), handled=\(handled)" }
+        "[Event] type=KeyTyped, char=\(char)), handled=\(handled)"
     }
 }

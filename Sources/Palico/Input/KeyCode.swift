@@ -8,7 +8,7 @@
 public typealias KeyCode = UInt16
 
 public enum Key: KeyCode {
-    // From Apple
+    // Currently only supports Cocoa framework
     // https://stackoverflow.com/questions/36900825/where-are-all-the-cocoa-keycodes
     
     // Digits

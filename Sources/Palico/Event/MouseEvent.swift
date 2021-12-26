@@ -9,10 +9,10 @@ internal protocol MouseEvent: Event { }
 
 // MouseMoved
 public class MouseMovedEvent: MouseEvent {
-    public static var categoryFlags: EventCategory { get { [.mouse, .input] } }
-    public static var staticEventType: EventType { get { .mouseMoved } }
+    public static var categoryFlags: EventCategory { [.mouse, .input] }
+    public static var staticEventType: EventType { .mouseMoved }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let xpos: Float
@@ -24,16 +24,16 @@ public class MouseMovedEvent: MouseEvent {
     }
     
     public var toString: String {
-        get { "[Event] type=MouseMoved, position=(\(xpos), \(ypos)), handled=\(handled)" }
+        "[Event] type=MouseMoved, position=(\(xpos), \(ypos)), handled=\(handled)"
     }
 }
 
 // MouseScrolled
 public class MouseScrolledEvent: MouseEvent {
-    public static var categoryFlags: EventCategory { get { [.mouse, .input] } }
-    public static var staticEventType: EventType { get { .mouseScrolled } }
+    public static var categoryFlags: EventCategory { [.mouse, .input] }
+    public static var staticEventType: EventType { .mouseScrolled }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let xoffset: Float
@@ -45,7 +45,7 @@ public class MouseScrolledEvent: MouseEvent {
     }
     
     public var toString: String {
-        get { "[Event] type=MouseScrolled, offset=(\(xoffset), \(yoffset)), handled=\(handled)" }
+        "[Event] type=MouseScrolled, offset=(\(xoffset), \(yoffset)), handled=\(handled)"
     }
 }
 
@@ -55,10 +55,10 @@ internal protocol MouseButtonEvent: Event {
 
 // MouseButtonPressed
 public class MouseButtonPressedEvent: MouseButtonEvent {
-    public static var categoryFlags: EventCategory { get { [.mouseButton, .input] } }
-    public static var staticEventType: EventType { get { .mouseButtonPressed } }
+    public static var categoryFlags: EventCategory { [.mouseButton, .input] }
+    public static var staticEventType: EventType { .mouseButtonPressed }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let button: Mouse
@@ -68,16 +68,16 @@ public class MouseButtonPressedEvent: MouseButtonEvent {
     }
     
     public var toString: String {
-        get { "[Event] type=MouseButtonPressed, button=\(button), handled=\(handled)" }
+        "[Event] type=MouseButtonPressed, button=\(button), handled=\(handled)"
     }
 }
 
 // MouseButtonReleased
 public class MouseButtonReleasedEvent: MouseButtonEvent {
-    public static var categoryFlags: EventCategory { get { [.mouseButton, .input] } }
-    public static var staticEventType: EventType { get { .mouseButtonReleased } }
+    public static var categoryFlags: EventCategory { [.mouseButton, .input] }
+    public static var staticEventType: EventType { .mouseButtonReleased }
     
-    public var eventType: EventType { get { Self.staticEventType } }
+    public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
     public let button: Mouse
@@ -87,7 +87,6 @@ public class MouseButtonReleasedEvent: MouseButtonEvent {
     }
     
     public var toString: String {
-        get {
-            "[Event] type=MouseButtonReleased, button=\(button), handled=\(handled)" }
+        "[Event] type=MouseButtonReleased, button=\(button), handled=\(handled)"
     }
 }

@@ -5,8 +5,6 @@
 //  Created by Junhao Wang on 12/15/21.
 //
 
-import Foundation
-
 // Layer
 open class Layer {
     var debugName: String = "Untitled Layer"
