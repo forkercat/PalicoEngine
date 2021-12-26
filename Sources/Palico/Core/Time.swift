@@ -17,8 +17,6 @@ extension Timestep {
 
 public enum Time {
     public static var currentTime: Timestep {
-        get {
-            Timestep(NSDate().timeIntervalSince1970)
-        }
+        get { Context.currentTime }
     }
 }

@@ -6,16 +6,21 @@
 //
 
 protocol ContextDelegate {
+    var isAppRunning: Bool { get }
+    var isAppActive:  Bool { get }
+    var currentTime:  Timestep { get }
+    
     func initialize()
     func activate()
     func deinitialize()
-    
-    var isAppRunning: Bool { get }
-    var isAppActive:  Bool { get }
 }
 
 public struct Context {
     private static let contextDelegate = CocoaContext()
+    
+    public static var currentTime: Timestep { get {
+        return Self.contextDelegate.currentTime
+    }}
     
     public static var isAppRunning: Bool { get {
         return Self.contextDelegate.isAppRunning
