@@ -6,19 +6,15 @@
 //
 
 import Cocoa
-import MetalKit
 
 @available(OSX 10.11, *)
 class CocoaWindow: Window {
-    var title:          String { nsWindow.title }
-    var width:          UInt32 { view.width }
-    var height:         UInt32 { view.height }
-    var isMinimized:    Bool   { nsWindow.isMiniaturized }
-    var view:           View
+    var title: String { nsWindow.title }
+    var width: UInt32 { UInt32(nsWindow.contentView?.bounds.width ?? 0) }
+    var height: UInt32 { UInt32(nsWindow.contentView?.bounds.height ?? 0) }
+    var isMinimized: Bool { nsWindow.isMiniaturized }
     
     weak var windowDelegate: WindowDelegate? = nil
-    
-    private var lastFrameTime: Timestep = Time.currentTime
     
     private let nsWindow: NSWindow
     
@@ -26,9 +22,7 @@ class CocoaWindow: Window {
         Log.info("Initializing Cocoa window: \(descriptor.title) \(descriptor.width) x \(descriptor.height)")
         
         // View
-        view = CocoaView()
-        defer { view.viewDelegate = self }
-        let mtkView: MTKView = (view as! CocoaView).nativeView
+        let nativeView: NSView = GraphicsContext.canvas as! NSView  // for Metal, it is MTKView per se
         
         // NSWindow
         nsWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: Int(descriptor.width), height: Int(descriptor.height)),
@@ -37,7 +31,7 @@ class CocoaWindow: Window {
                             defer: false)
         nsWindow.title = descriptor.title
         nsWindow.center()
-        nsWindow.contentView = mtkView
+        nsWindow.contentView = nativeView
         nsWindow.acceptsMouseMovedEvents = true
         nsWindow.makeKeyAndOrderFront(nil)
         nsWindow.makeMain()
@@ -45,28 +39,11 @@ class CocoaWindow: Window {
         // Add a tracking area to capture move events within the window;
         // otherwise, location would become screen coord when mouse is outside.
         let trackingArea = NSTrackingArea(rect: .zero, options: [.mouseMoved, .inVisibleRect, .activeAlways],
-                                          owner: mtkView, userInfo: nil)
-        mtkView.addTrackingArea(trackingArea)
+                                          owner: nativeView, userInfo: nil)
+        nativeView.addTrackingArea(trackingArea)
         
         // Add locao monitor for NSEvent
         NSEvent.addLocalMonitorForEvents(matching: [.any], handler: handleNSEvents)
-    }
-}
-
-// View Delegate
-@available(OSX 10.11, *)
-extension CocoaWindow: ViewDelegate {
-    func viewShouldStartDrawing(in view: View) {
-        let currentTime = Time.currentTime
-        let deltaTime = currentTime - lastFrameTime
-        lastFrameTime = currentTime
-        windowDelegate?.onUpdate(deltaTime: deltaTime, in: view)
-    }
-    
-    func onViewResize(width: UInt32, height: UInt32) {
-        // NSWindowDelegate.WindowDidResize includes the status bar height, use this method instead.
-        let event = WindowViewResizeEvent(width: width, height: height)
-        windowDelegate?.onEvent(event: event)
     }
 }
 
@@ -74,7 +51,9 @@ extension CocoaWindow: ViewDelegate {
 @available(OSX 10.11, *)
 extension CocoaWindow {
     private func handleNSEvents(nsEvent: NSEvent) -> NSEvent? {
-        let wantsCapture: Bool = ImGui_ImplOSX_HandleEvent(nsEvent, (view as! CocoaView).nativeView)
+        // Should be ImGuiContext
+        let nativeView: NSView = GraphicsContext.canvas as! NSView
+        let wantsCapture: Bool = ImGui_ImplOSX_HandleEvent(nsEvent, nativeView)
         
         if nsEvent.type == .keyDown && wantsCapture {
             return nil  // do not dispatch keydown event when ImGUi wants to capture

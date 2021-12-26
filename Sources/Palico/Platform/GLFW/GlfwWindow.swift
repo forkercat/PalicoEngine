@@ -27,7 +27,6 @@ class GlfwWindow: Window {
     var width: UInt32 { data.width }
     var height: UInt32 { data.height }
     var isMinimized: Bool { nsWindow.isMiniaturized }
-    var view: View = GlfwView()
     
     private var data: WindowData = WindowData()
     

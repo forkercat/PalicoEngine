@@ -7,10 +7,11 @@ import PackageDescription
 let OhMyLog = Target.Dependency.product(name: "OhMyLog", package: "OhMyLog")
 let MathLib = Target.Dependency.product(name: "MathLib", package: "MathLib")
 let ImGui = Target.Dependency.product(name: "ImGui", package: "SwiftImGui")
+let CGLFW3 = Target.Dependency.product(name: "CGLFW3", package: "CGLFW3")
 
 // Engine Dependencies
 let engineDependencies: [Target.Dependency] = [
-    OhMyLog, MathLib, ImGui,
+    OhMyLog, MathLib, ImGui, CGLFW3,
 ]
 
 // Application Dependencies
@@ -28,7 +29,6 @@ let package = Package(
     ],
     
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(name: "Palico", targets: ["Palico"]),
         .executable(name: "Editor", targets: ["Editor"]),
         .executable(name: "Example", targets: ["Example"]),
@@ -37,16 +37,16 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/forkercat/OhMyLog.git", .branch("main")),
         .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
+        .package(url: "https://github.com/forkercat/CGLFW3.git", .branch("main")),
         .package(url: "https://github.com/ctreffs/SwiftImGui.git", .branch("docking")),
     ],
     
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(name: "Palico",
             dependencies: engineDependencies + [
                 
-            ]),
+            ],
+            exclude: ["Platform/GLFW/README.md"]),
         
         .executableTarget(name: "Editor",
             dependencies: appDependencies + [
