@@ -22,7 +22,7 @@ class CocoaWindow: Window {
         Log.info("Initializing Cocoa window: \(descriptor.title) \(descriptor.width) x \(descriptor.height)")
         
         // View
-        let nativeView: NSView = GraphicsContext.canvas as! NSView  // for Metal, it is MTKView per se
+        let nativeView: NSView = GraphicsContext.view as! NSView
         
         // NSWindow
         nsWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: Int(descriptor.width), height: Int(descriptor.height)),
@@ -52,7 +52,7 @@ class CocoaWindow: Window {
 extension CocoaWindow {
     private func handleNSEvents(nsEvent: NSEvent) -> NSEvent? {
         // Should be ImGuiContext
-        let nativeView: NSView = GraphicsContext.canvas as! NSView
+        let nativeView: NSView = GraphicsContext.view as! NSView
         let wantsCapture: Bool = ImGui_ImplOSX_HandleEvent(nsEvent, nativeView)
         
         if nsEvent.type == .keyDown && wantsCapture {

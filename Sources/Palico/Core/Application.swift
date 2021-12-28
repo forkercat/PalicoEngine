@@ -69,21 +69,21 @@ extension Application {
             return
         }
         
-        if true {  // show FPS?
-            Log.debug("FPS: \(Int(1.0 / deltaTime))")
+        if false {  // show FPS?
+//            Log.debug("FPS: \(Int(1.0 / deltaTime))")
         }
         
-        //        // - 1. Layer Update
-        //        for layer in layerStack.layers {
-        //            layer.onUpdate(deltaTime: deltaTime)
-        //        }
-        //
-        //        // - 2. Layer ImGuiRender
-        //        imGuiLayer.begin(in: view)
-        //        for layer in layerStack.layers {
-        //            layer.onUpdate(deltaTime: deltaTime)
-        //        }
-        //        imGuiLayer.end()
+        // - 1. Layer Update
+        for layer in layerStack.layers {
+            layer.onUpdate(deltaTime: deltaTime)
+        }
+
+        // - 2. Layer ImGuiRender
+//        imGuiLayer.begin(in: view)
+//        for layer in layerStack.layers {
+//            layer.onImGuiRender()
+//        }
+//        imGuiLayer.end()
     }
     
     func onResize(width: UInt32, height: UInt32) {

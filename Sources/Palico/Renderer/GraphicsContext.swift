@@ -5,15 +5,15 @@
 //  Created by Junhao Wang on 12/25/21.
 //
 
-typealias CanvasUpdateCallback = () -> Void
-typealias CanvasResizeCallback = (UInt32, UInt32) -> Void
+typealias ViewUpdateCallback = () -> Void
+typealias ViewResizeCallback = (UInt32, UInt32) -> Void
 
 protocol GraphicsContextDelegate {
-    var canvas: Canvas { get }
+    var view: View { get }
     
     func initialize()
-    func setCanvasCallbacks(update updateCallback: @escaping CanvasUpdateCallback,
-                            resize resizeCallback: @escaping CanvasResizeCallback)
+    func setViewCallbacks(update updateCallback: @escaping ViewUpdateCallback,
+                          resize resizeCallback: @escaping ViewResizeCallback)
     func deinitialize()
 }
 
@@ -21,18 +21,18 @@ protocol GraphicsContextDelegate {
 struct GraphicsContext {
     private static let contextDelegate = MetalContext()
     
-    static var canvas: Canvas { get {
-        return Self.contextDelegate.canvas
+    static var view: View { get {
+        return Self.contextDelegate.view
     }}
     
     static func initialize() {
         return Self.contextDelegate.initialize()
     }
     
-    static func setCanvasCallbacks(update updateCallback: @escaping CanvasUpdateCallback,
-                                  resize resizeCallback: @escaping CanvasResizeCallback) {
-        return Self.contextDelegate.setCanvasCallbacks(update: updateCallback,
-                                                       resize: resizeCallback)
+    static func setCanvasCallbacks(update updateCallback: @escaping ViewUpdateCallback,
+                                  resize resizeCallback: @escaping ViewResizeCallback) {
+        return Self.contextDelegate.setViewCallbacks(update: updateCallback,
+                                                     resize: resizeCallback)
     }
     
     static func deinitialize() {
@@ -44,6 +44,6 @@ struct GraphicsContext {
 
 // Wrapper for API-specific devices/components
 // Protocol Wrapper
-protocol Canvas {
-    var canvas: Canvas { get }
+protocol View {
+    var view: View { get }
 }
