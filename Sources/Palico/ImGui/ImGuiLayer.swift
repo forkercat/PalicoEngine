@@ -29,16 +29,33 @@ class ImGuiLayer: Layer {
         io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)
         
         // ImGui Font
-//        let dpi: Float = 2.0
-//        let fontSize: Float = 18.0
-//        io.pointee.FontGlobalScale = 1 / dpi
+        setFonts()
         
         // ImGui Style
         ImGuiStyleColorsDark(nil)
+        setThemeColors()
         
         // Setup Platform/Renderer Bindings
         ImGuiBackend.implPlatformInit()
         ImGuiBackend.implGraphicsInit()
+    }
+    
+    private func setFonts() {
+        let io = ImGuiGetIO()!
+        
+        let dpi: Float = GraphicsContext.dpi
+        let fontSize = Float(18.0)
+        let scaledFontSize = Float(dpi * fontSize)
+        io.pointee.FontGlobalScale = 1 / dpi
+        
+        /*
+        let robotoRegular = FileUtils.getURL(path: "Assets/Fonts/Roboto/Roboto-Regular.ttf").path  // Roboto
+         */
+        let openSansBold = FileUtils.getURL(path: "Assets/Fonts/OpenSans/OpenSans-Bold.ttf").path
+        let openSansRegular = FileUtils.getURL(path: "Assets/Fonts/OpenSans/OpenSans-Regular.ttf").path
+        
+        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, openSansBold, scaledFontSize, nil, nil)
+        io.pointee.FontDefault = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, openSansRegular, scaledFontSize, nil, nil)
     }
     
     override func onDetach() {
@@ -80,5 +97,9 @@ class ImGuiLayer: Layer {
 //            ImGui::RenderPlatformWindowsDefault();
 //            glfwMakeContextCurrent(backup_current_context);
 //        }
+    }
+    
+    private func setThemeColors() {
+        /* TODO */
     }
 }

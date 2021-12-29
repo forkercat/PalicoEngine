@@ -10,6 +10,7 @@ typealias ViewResizeCallback = (UInt32, UInt32) -> Void
 
 protocol GraphicsContextDelegate {
     var view: View { get }
+    var dpi: Float { get }
     
     func initialize()
     func setViewCallbacks(update updateCallback: @escaping ViewUpdateCallback,
@@ -19,27 +20,38 @@ protocol GraphicsContextDelegate {
 
 // Internal Usage
 struct GraphicsContext {
-    private static let contextDelegate = MetalContext()
+    private static var contextDelegate: GraphicsContextDelegate!
+    
+    private init() { }
     
     static var view: View { get {
-        return Self.contextDelegate.view
+        return contextDelegate.view
+    }}
+    
+    static var dpi: Float { get {
+        return contextDelegate.dpi
     }}
     
     static func initialize() {
-        return Self.contextDelegate.initialize()
+        let api = RendererAPI.getAPI()
+        switch api {
+        case .metal:
+            contextDelegate = MetalContext()
+        default:
+            fatalError("API (\(api)) is not supported!")
+        }
+        contextDelegate.initialize()
     }
     
     static func setCanvasCallbacks(update updateCallback: @escaping ViewUpdateCallback,
                                   resize resizeCallback: @escaping ViewResizeCallback) {
-        return Self.contextDelegate.setViewCallbacks(update: updateCallback,
+        return contextDelegate.setViewCallbacks(update: updateCallback,
                                                      resize: resizeCallback)
     }
     
     static func deinitialize() {
-        return Self.contextDelegate.deinitialize()
+        return contextDelegate.deinitialize()
     }
-    
-    private init() { }
 }
 
 // Wrapper for API-specific devices/components

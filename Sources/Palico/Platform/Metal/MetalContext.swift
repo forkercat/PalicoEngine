@@ -17,6 +17,7 @@ class MetalContext: NSObject, GraphicsContextDelegate {
     private(set) static var library: MTLLibrary!
     
     var view: View { Self.mtkView! }
+    var dpi: Float { Float(Self.mtkView?.window?.screen?.backingScaleFactor ?? 1.0) }
     
     var viewUpdateCallback: ViewUpdateCallback? = nil
     var viewResizeCallback: ViewResizeCallback? = nil
