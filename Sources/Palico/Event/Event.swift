@@ -8,8 +8,9 @@
 import Darwin
 
 public enum EventUtils {
-    public static func isInCategoryFlags(category: EventCategory, categoryFlags: EventCategory) -> Bool {
-        return categoryFlags.contains(category)
+    // Check if an event's category (could be multiple values) has a specific category.
+    public static func isInCategory(event: Event, category: EventCategory) -> Bool {
+        return event.categoryFlags.contains(category)
     }
 }
 
@@ -34,9 +35,9 @@ public struct EventCategory: OptionSet {
 
 // Event
 public protocol Event {
-    static var categoryFlags: EventCategory { get }
     static var staticEventType: EventType { get }
     var eventType: EventType { get }
+    var categoryFlags: EventCategory { get }
     var handled: Bool { get set }
     var toString: String { get }
 }

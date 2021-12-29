@@ -9,9 +9,9 @@ internal protocol MouseEvent: Event { }
 
 // MouseMoved
 public class MouseMovedEvent: MouseEvent {
-    public static var categoryFlags: EventCategory { [.mouse, .input] }
     public static var staticEventType: EventType { .mouseMoved }
     
+    public var categoryFlags: EventCategory { [.mouse, .input] }
     public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
@@ -30,9 +30,9 @@ public class MouseMovedEvent: MouseEvent {
 
 // MouseScrolled
 public class MouseScrolledEvent: MouseEvent {
-    public static var categoryFlags: EventCategory { [.mouse, .input] }
     public static var staticEventType: EventType { .mouseScrolled }
     
+    public var categoryFlags: EventCategory { [.mouse, .input] }
     public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
@@ -55,9 +55,9 @@ internal protocol MouseButtonEvent: Event {
 
 // MouseButtonPressed
 public class MouseButtonPressedEvent: MouseButtonEvent {
-    public static var categoryFlags: EventCategory { [.mouseButton, .input] }
     public static var staticEventType: EventType { .mouseButtonPressed }
     
+    public var categoryFlags: EventCategory { [.mouseButton, .input] }
     public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
@@ -74,9 +74,9 @@ public class MouseButtonPressedEvent: MouseButtonEvent {
 
 // MouseButtonReleased
 public class MouseButtonReleasedEvent: MouseButtonEvent {
-    public static var categoryFlags: EventCategory { [.mouseButton, .input] }
     public static var staticEventType: EventType { .mouseButtonReleased }
     
+    public var categoryFlags: EventCategory { [.mouseButton, .input] }
     public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     

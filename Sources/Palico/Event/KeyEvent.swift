@@ -11,10 +11,10 @@ internal protocol KeyEvent: Event {
 
 // KeyPressed
 public class KeyPressedEvent: KeyEvent {
-    public static var categoryFlags: EventCategory { [.keyboard, .input] }
     public static var staticEventType: EventType { .keyPressed }
     
     public var eventType: EventType { Self.staticEventType }
+    public var categoryFlags: EventCategory { [.keyboard, .input] }
     public var handled: Bool = false
     
     public let key: Key
@@ -32,9 +32,9 @@ public class KeyPressedEvent: KeyEvent {
 
 // KeyReleased
 public class KeyReleasedEvent: KeyEvent {
-    public static var categoryFlags: EventCategory { [.keyboard, .input] }
     public static var staticEventType: EventType { .keyReleased }
     
+    public var categoryFlags: EventCategory { [.keyboard, .input] }
     public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
@@ -51,9 +51,9 @@ public class KeyReleasedEvent: KeyEvent {
 
 // CharTyped
 public class CharTypedEvent: Event {
-    public static var categoryFlags: EventCategory { [.keyboard, .input] }
     public static var staticEventType: EventType { .charTyped }
     
+    public var categoryFlags: EventCategory { [.keyboard, .input] }
     public var eventType: EventType { Self.staticEventType }
     public var handled: Bool = false
     
