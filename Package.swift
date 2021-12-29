@@ -46,11 +46,17 @@ let package = Package(
             dependencies: engineDependencies + [
                 
             ],
-            exclude: ["Platform/GLFW/README.md"]),
+            exclude: ["Platform/GLFW/README.md"],
+            resources: [
+                .copy("Assets/")
+            ]),
         
         .executableTarget(name: "Editor",
             dependencies: appDependencies + [
                 "Palico"
+            ],
+            resources: [
+                .copy("Assets/")
             ]),
         
         .executableTarget(name: "Example",

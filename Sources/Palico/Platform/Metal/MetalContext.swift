@@ -14,6 +14,7 @@ class MetalContext: NSObject, GraphicsContextDelegate {
     private(set) static var device: MTLDevice!
     private(set) static var commandQueue: MTLCommandQueue!
     private(set) static var mtkView: MTKView!
+    private(set) static var library: MTLLibrary!
     
     var view: View { Self.mtkView! }
     
@@ -54,6 +55,10 @@ class MetalContext: NSObject, GraphicsContextDelegate {
         Self.device = nil
         Self.commandQueue = nil
         Self.mtkView = nil
+    }
+    
+    static func updateShaderLibrary(_ library: MTLLibrary) {
+        Self.library = library
     }
 }
 
