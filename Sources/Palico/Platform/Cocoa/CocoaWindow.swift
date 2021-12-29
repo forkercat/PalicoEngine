@@ -53,11 +53,16 @@ extension CocoaWindow {
     private func handleNSEvents(nsEvent: NSEvent) -> NSEvent? {
         // Should be ImGuiContext
         let nativeView: NSView = GraphicsContext.view as! NSView
-        let wantsCapture: Bool = ImGui_ImplOSX_HandleEvent(nsEvent, nativeView)
+        ImGui_ImplOSX_HandleEvent(nsEvent, nativeView)
         
+        /*
+        // Just handle the events. This will then dispatch to ImGuiLayer.onEvent,
+        // in which events will be dispatched or not.
+        let wantsCapture: Bool = ImGui_ImplOSX_HandleEvent(nsEvent, nativeView)
         if nsEvent.type == .keyDown && wantsCapture {
             return nil  // do not dispatch keydown event when ImGUi wants to capture
         }
+         */
         
         // Handled by us
         switch nsEvent.type {

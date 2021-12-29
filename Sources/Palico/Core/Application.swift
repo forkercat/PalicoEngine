@@ -43,6 +43,7 @@ open class Application {
         defer { window.windowDelegate = self }
 
         // Renderer
+        Renderer.initialize()
 
         // ImGui
         pushOverlay(imGuiLayer)
@@ -79,11 +80,11 @@ extension Application {
         }
 
         // - 2. Layer ImGuiRender
-//        imGuiLayer.begin(in: view)
-//        for layer in layerStack.layers {
-//            layer.onImGuiRender()
-//        }
-//        imGuiLayer.end()
+        imGuiLayer.begin()
+        for layer in layerStack.layers {
+            layer.onImGuiRender()
+        }
+        imGuiLayer.end()
     }
     
     func onResize(width: UInt32, height: UInt32) {
