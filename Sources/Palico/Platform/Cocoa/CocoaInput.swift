@@ -9,8 +9,8 @@ import Cocoa
 import MathLib
 
 class CocoaInput: InputDelegate {
-    private var keyMap: [Bool] = [Bool](repeating: false, count: Key.maxKeyCode)
-    private var mouseMap: [Bool] = [Bool](repeating: false, count: Mouse.maxMouseCode)
+    private var keyMap: [Bool] = [Bool](repeating: false, count: 512)
+    private var mouseMap: [Bool] = [Bool](repeating: false, count: 10)
     
     var mousePos: Float2 {
         // Becomes (0, 0) when app is not active (hidden) - not sure if it causes issue yet

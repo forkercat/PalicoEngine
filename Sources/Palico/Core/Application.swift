@@ -32,7 +32,9 @@ open class Application {
         // Context
         Context.initialize()          // application
         GraphicsContext.initialize()  // graphics
-        defer { GraphicsContext.setCanvasCallbacks(update: onUpdate, resize: onResize) }
+        defer {
+            GraphicsContext.setViewCallbacks(update: onUpdate, resize: onResize)
+        }
         
         let width: UInt32 = 1280
         let height: UInt32 = 720
@@ -40,7 +42,9 @@ open class Application {
         // Window
         let windowDescriptor = WindowDescriptor(title: name, width: width, height: height)
         window = CocoaWindow(descriptor: windowDescriptor)
-        defer { window.windowDelegate = self }
+        defer {
+            window.windowDelegate = self
+        }
 
         // Renderer
         Renderer.initialize()

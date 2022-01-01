@@ -8,9 +8,10 @@
 import Foundation
 
 public enum FileUtils {
-    public static func getURL(path: String) -> URL {
+    public static func getURL(path: String) -> URL? {
         guard let filePathURL = URL(string: path) else {
-            fatalError("Invalid filepath: \(path)")
+            assertionFailure("Invalid filepath: \(path)")
+            return nil
         }
         
         let directory = filePathURL.deletingLastPathComponent().path
@@ -20,7 +21,8 @@ public enum FileUtils {
         guard let shaderURL = Bundle.module.url(forResource: filename,
                                                 withExtension: filenameExtension,
                                                 subdirectory: directory) else {
-            fatalError("Invalid filepath: \(path)")
+            assertionFailure("Invalid filepath: \(path)")
+            return nil
         }
         
         return shaderURL

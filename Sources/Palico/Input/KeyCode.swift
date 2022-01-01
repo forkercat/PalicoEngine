@@ -138,7 +138,3 @@ public enum Key: KeyCode {
     
     case unknown         = 199
 }
-
-extension Key {
-    static let maxKeyCode = 200
-}

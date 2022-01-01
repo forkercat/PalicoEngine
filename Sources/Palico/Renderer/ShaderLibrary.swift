@@ -12,34 +12,46 @@ public struct ShaderLibrary {
     
     public static var shaderCount: Int { get { shaderCache.count } }
     
-    public static func makeShader(name: String, url: URL) -> Shader {
+    public static func makeShader(name: String, url: URL) -> Shader? {
         Log.debug("ShaderLibrary::Making shader -> \(name) (\(url.lastPathComponent))")
         let api = RendererAPI.getAPI()
         switch api {
         case .metal:
             return MetalShader(name: name, url: url)
         default:
-            fatalError("API (\(api)) is not supported!")
+            assertionFailure("API \(api) is not supported!")
+            return nil
         }
     }
     
-    public static func makeShader(name: String, source: String) -> Shader {
+    public static func makeShader(name: String, source: String) -> Shader? {
         Log.debug("ShaderLibrary::Making shader -> \(name) (source code)")
         let api = RendererAPI.getAPI()
         switch api {
         case .metal:
             return MetalShader(name: name, source: source)
         default:
-            fatalError("API (\(api)) is not supported!")
+            assertionFailure("API \(api) is not supported!")
+            return nil
         }
     }
     
-    public static func add(shader: Shader) {
+    public static func add(shader: Shader?) {
+        guard let shader = shader else {
+            assertionFailure("You are adding a nil shader to library. Skipping it!")
+            return
+        }
         shaderCache[shader.name] = shader
     }
     
-    public static func add(name: String, url: URL) {
-        add(shader: makeShader(name: name, url: url))
+    public static func add(name: String, url: URL?) {
+        guard let url = url,
+              let shader = makeShader(name: name, url: url)
+        else {
+            Log.warn("You are adding a nil shader to library. Skipping it!")
+            return
+        }
+        add(shader: shader)
     }
     
     public static func add(name: String, source: String) {
@@ -60,7 +72,10 @@ public struct ShaderLibrary {
         var shaderSource: String = ""
         for name in nameSet {
             guard let shader = get(name: name) else {
-                fatalError("Unknown shader name: \(name)")
+                let message = "Unknown shader name: \(name)"
+                assertionFailure(message)
+                Log.warn(message)
+                continue
             }
             shaderSource.append(contentsOf: "\(shader.source ?? "")\n")
         }
@@ -71,7 +86,8 @@ public struct ShaderLibrary {
         case .metal:
             MetalShader.compile(source: shaderSource)
         default:
-            fatalError("API (\(api)) is not supported!")
+            assertionFailure("API \(api) is not supported!")
+            return
         }
         
         for var shader in shaderCache.values {

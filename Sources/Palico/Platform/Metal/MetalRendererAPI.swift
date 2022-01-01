@@ -23,21 +23,30 @@ class MetalRendererAPI: RendererAPIImplDelegate {
     func initialize() {
         // Command Queue
         guard let queue = MetalContext.commandQueue else {
-            fatalError("Cannot make command queue from Metal device!")
+            assertionFailure("Cannot make command queue from Metal device!")
+            return
         }
         commandQueue = queue
         
         // Load Shaders
-        ShaderLibrary.add(name: "Phong", url: FileUtils.getURL(path: "Assets/Shaders/Phong.metal"))
-        ShaderLibrary.add(name: "PBR", url: FileUtils.getURL(path: "Assets/Shaders/PBR.metal"))
+        guard let phongURL = FileUtils.getURL(path: "Assets/Shaders/Phong.metal"),
+              let pbrURL = FileUtils.getURL(path: "Assets/Shaders/PBR.metal")
+        else {
+            Log.warn("Failed to load get shader URLs!")
+            return
+        }
+        ShaderLibrary.add(name: "Phong", url: phongURL)
+        ShaderLibrary.add(name: "PBR", url: pbrURL)
         ShaderLibrary.compileAll()
         
+        // Stencil State
         buildDepthStencilState()
     }
     
     func makeCommandBuffer() {
         guard let buffer = commandQueue?.makeCommandBuffer() else {
-            fatalError("Cannot make command buffer!")
+            assertionFailure("Cannot make command queue from Metal device!")
+            return
         }
         commandBuffer = buffer
     }

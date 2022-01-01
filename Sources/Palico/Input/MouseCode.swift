@@ -20,7 +20,3 @@ public enum Mouse: MouseCode {
     
     case unknown = 9
 }
-
-extension Mouse {
-    static let maxMouseCode = 10
-}

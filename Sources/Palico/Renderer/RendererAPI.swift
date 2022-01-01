@@ -30,12 +30,13 @@ public struct RendererAPI {
         return Self.api
     }
     
-    internal static func create() -> RendererAPIImplDelegate {
+    internal static func create() -> RendererAPIImplDelegate? {
         switch api {
         case .metal:
             return MetalRendererAPI()
         default:
-            fatalError("API \(api) is not supported!")
+            assertionFailure("API \(api) is not supported!")
+            return nil
         }
     }
 }

@@ -38,15 +38,16 @@ struct GraphicsContext {
         case .metal:
             contextDelegate = MetalContext()
         default:
-            fatalError("API (\(api)) is not supported!")
+            assertionFailure("API (\(api)) is not supported!")
+            return
         }
         contextDelegate.initialize()
     }
     
-    static func setCanvasCallbacks(update updateCallback: @escaping ViewUpdateCallback,
-                                  resize resizeCallback: @escaping ViewResizeCallback) {
+    static func setViewCallbacks(update updateCallback: @escaping ViewUpdateCallback,
+                                 resize resizeCallback: @escaping ViewResizeCallback) {
         return contextDelegate.setViewCallbacks(update: updateCallback,
-                                                     resize: resizeCallback)
+                                                resize: resizeCallback)
     }
     
     static func deinitialize() {

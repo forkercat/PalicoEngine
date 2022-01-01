@@ -27,7 +27,7 @@ class GlfwContext: ContextDelegate {
         assert(success != 0, "Could not initialize GLFW!")
         glfwSetErrorCallback{ (error: Int32, description: UnsafePointer<CChar>?) in
             let str = String(cString: description!)
-            Log.error("GLFW Error \(error): \(str)")
+            assertionFailure("GLFW Error \(error): \(str)")
         }
         
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)

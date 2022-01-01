@@ -6,30 +6,30 @@
 //
 
 public struct RenderCommand {
-    private static let rendererAPI = RendererAPI.create()
+    private static let rendererAPI: RendererAPIImplDelegate? = RendererAPI.create()
     
     public static func initialize() {
-        rendererAPI.initialize()
+        rendererAPI?.initialize()
     }
     
     // For each frame
     public static func makeCommandBuffer() {
-        rendererAPI.makeCommandBuffer()
+        rendererAPI?.makeCommandBuffer()
     }
     
     public static func beginRenderPass(type: RenderPassType, target: RenderPassTarget) {
-        rendererAPI.beginRenderPass(type: type, target: target)
+        rendererAPI?.beginRenderPass(type: type, target: target)
     }
     
     public static func render(/*renderable*/) {
-        rendererAPI.render()
+        rendererAPI?.render()
     }
     
     public static func endRenderPass() {
-        rendererAPI.endRenderPass()
+        rendererAPI?.endRenderPass()
     }
     
     public static func submitCommandBuffer() {
-        rendererAPI.submitCommandBuffer()
+        rendererAPI?.submitCommandBuffer()
     }
 }

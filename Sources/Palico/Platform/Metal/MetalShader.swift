@@ -21,7 +21,7 @@ class MetalShader: Shader {
             let source = try String(contentsOf: url)
             self.source = source
         } catch let error {
-            Log.error("\(error.localizedDescription)")
+            assertionFailure(error.localizedDescription)
         }
     }
     
@@ -38,7 +38,7 @@ extension MetalShader {
             let library = try MetalContext.device.makeLibrary(source: source, options: nil)
             MetalContext.updateShaderLibrary(library)
         } catch let error {
-            fatalError("Failed shader compilation: \(error.localizedDescription)")
+            assertionFailure("Failed shader compilation: \(error.localizedDescription)")
         }
     }
 }

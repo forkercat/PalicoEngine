@@ -46,7 +46,10 @@ class MetalPipelineState {
 
         do {
             colorPipelineState = try MetalContext.device.makeRenderPipelineState(descriptor: descriptor)
-        } catch let error { fatalError(error.localizedDescription) }
+        } catch let error {
+            assertionFailure(error.localizedDescription)
+            return
+        }
     }
     
     // Shadow
@@ -60,6 +63,9 @@ class MetalPipelineState {
 //        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(Model.defaultVertexDescriptor)
         do {
             shadowPipelineState = try MetalContext.device.makeRenderPipelineState(descriptor: descriptor)
-        } catch let error { fatalError(error.localizedDescription) }
+        } catch let error {
+            assertionFailure(error.localizedDescription)
+            return
+        }
     }
 }
