@@ -34,7 +34,8 @@ public struct ImGuiBackend {
         case .metal:
             graphicsDelegate = ImGuiBackendMetalGraphics()
         default:
-            fatalError("API \(api) is not supported!")
+            assertionFailure("API \(api) is not supported!")
+            return
         }
     }
     

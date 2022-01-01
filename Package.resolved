@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/forkercat/MathLib.git",
         "state": {
           "branch": "main",
-          "revision": "7f6a8d3ba27d322cae8703d74d365b21aa7f954c",
+          "revision": "a4630b983e1920b73a25bbdfafe38c99490be2bf",
           "version": null
         }
       },
@@ -24,16 +24,16 @@
         "repositoryURL": "https://github.com/forkercat/OhMyLog.git",
         "state": {
           "branch": "main",
-          "revision": "5e0a384bb0538e3642680e31d785728226b787ee",
+          "revision": "844c80af4b867fa693f1bdde7c1df80064e770be",
           "version": null
         }
       },
       {
         "package": "ImGui",
-        "repositoryURL": "https://github.com/ctreffs/SwiftImGui.git",
+        "repositoryURL": "https://github.com/forkercat/SwiftImGui.git",
         "state": {
-          "branch": "docking",
-          "revision": "b0f848e34d44fa0c9ad6082641d4793f30073e8d",
+          "branch": "update-1.86",
+          "revision": "9c9f427f3ee3bd6fcc89d5ac8d1a4120fc4b3ccb",
           "version": null
         }
       }

@@ -23,10 +23,10 @@ class ImGuiLayer: Layer {
         IMGUI_CHECKVERSION()
         _ = ImGuiCreateContext(nil)
         
-        let io = ImGuiGetIO()!
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableKeyboard.rawValue)
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_DockingEnable.rawValue)
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)
+//        let io = ImGuiGetIO()!
+//        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableKeyboard.rawValue)
+//        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_DockingEnable.rawValue)
+//        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)
         
         // ImGui Font
         setFonts()
@@ -48,11 +48,13 @@ class ImGuiLayer: Layer {
         let scaledFontSize = Float(dpi * fontSize)
         io.pointee.FontGlobalScale = 1 / dpi
         
-        /*
-        let robotoRegular = FileUtils.getURL(path: "Assets/Fonts/Roboto/Roboto-Regular.ttf").path  // Roboto
-         */
-        let openSansBold = FileUtils.getURL(path: "Assets/Fonts/OpenSans/OpenSans-Bold.ttf").path
-        let openSansRegular = FileUtils.getURL(path: "Assets/Fonts/OpenSans/OpenSans-Regular.ttf").path
+        // let robotoRegular = FileUtils.getURL(path: "Assets/Fonts/Roboto/Roboto-Regular.ttf").path  // Roboto
+        guard let openSansBold = FileUtils.getURL(path: "Assets/Fonts/OpenSans/OpenSans-Bold.ttf")?.path,
+              let openSansRegular = FileUtils.getURL(path: "Assets/Fonts/OpenSans/OpenSans-Regular.ttf")?.path
+        else {
+            Log.warn("Not able to load custom fonts.")
+            return
+        }
         
         ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, openSansBold, scaledFontSize, nil, nil)
         io.pointee.FontDefault = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, openSansRegular, scaledFontSize, nil, nil)
@@ -61,6 +63,7 @@ class ImGuiLayer: Layer {
     override func onDetach() {
         ImGuiBackend.implGraphicsShutdown()
         ImGui_ImplMetal_Shutdown()
+        ImGui_ImplOSX_Shutdown()
         ImGuiDestroyContext(nil)
     }
     

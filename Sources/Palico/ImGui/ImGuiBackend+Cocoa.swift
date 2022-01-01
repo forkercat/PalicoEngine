@@ -11,7 +11,7 @@ class ImGuiBackendCocoaPlatform: ImGuiBackendPlatformDelegate {
     init() { }
     
     func implPlatformInit() {
-        ImGui_ImplOSX_Init()
+        ImGui_ImplOSX_Init(GraphicsContext.view as! NSView)
     }
     
     func implPlatformNewFrame() {
