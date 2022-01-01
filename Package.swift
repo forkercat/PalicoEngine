@@ -38,7 +38,7 @@ let package = Package(
         .package(url: "https://github.com/forkercat/OhMyLog.git", .branch("main")),
         .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
         .package(url: "https://github.com/forkercat/CGLFW3.git", .branch("main")),
-        .package(url: "https://github.com/forkercat/SwiftImGui.git", .branch("update-1.86")),
+        .package(url: "https://github.com/forkercat/SwiftImGui.git", .branch("update-1.86-docking")),
     ],
     
     targets: [

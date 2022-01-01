@@ -32,8 +32,8 @@
         "package": "ImGui",
         "repositoryURL": "https://github.com/forkercat/SwiftImGui.git",
         "state": {
-          "branch": "update-1.86",
-          "revision": "9c9f427f3ee3bd6fcc89d5ac8d1a4120fc4b3ccb",
+          "branch": "update-1.86-docking",
+          "revision": "336ee0c6649149a2199dc44b7c5f8e5ca1fc0abd",
           "version": null
         }
       }
