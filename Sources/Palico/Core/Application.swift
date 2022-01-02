@@ -53,8 +53,14 @@ open class Application {
         pushOverlay(imGuiLayer)
     }
 
-    public func run() { Context.activate() }
-    public func close() { Context.deinitialize() }
+    public func run() {
+        Context.activate()
+    }
+    
+    public func close() {
+        popOverlay(imGuiLayer)
+        Context.deinitialize()
+    }
     
     public func pushLayer(_ layer: Layer) {
         layerStack.pushLayer(layer)
@@ -64,6 +70,16 @@ open class Application {
     public func pushOverlay(_ overlay: Layer) {
         layerStack.pushOverlay(overlay)
         overlay.onAttach()
+    }
+    
+    public func popLayer(_ layer: Layer) {
+        layerStack.popLayer(layer)
+        layer.onAttach()
+    }
+    
+    public func popOverlay(_ overlay: Layer) {
+        layerStack.popOverlay(overlay)
+        overlay.onDetach()
     }
 }
 
