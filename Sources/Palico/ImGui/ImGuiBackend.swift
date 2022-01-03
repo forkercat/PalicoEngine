@@ -28,15 +28,7 @@ public struct ImGuiBackend {
     
     public static func initialize() {
         platformDelegate = ImGuiBackendCocoaPlatform()
-        
-        let api = RendererAPI.getAPI()
-        switch api {
-        case .metal:
-            graphicsDelegate = ImGuiBackendMetalGraphics()
-        default:
-            assertionFailure("API \(api) is not supported!")
-            return
-        }
+        graphicsDelegate = ImGuiBackendMetalGraphics()
     }
     
     // Platform

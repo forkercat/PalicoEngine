@@ -12,7 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 }
 
-class CocoaContext: ContextDelegate {
+class CocoaContext: PlatformContextDelegate {
     let appDelegate: AppDelegate = AppDelegate()
     
     init() { }

@@ -12,7 +12,7 @@ fileprivate struct GLFWInt32 {
     static var TRUE: Int32 = 1
 }
 
-class GlfwContext: ContextDelegate {
+class GlfwContext: PlatformContextDelegate {
     init() { }
     
     var isAppRunning: Bool { isRunning }

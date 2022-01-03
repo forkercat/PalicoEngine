@@ -1,11 +1,11 @@
 //
-//  Context.swift
+//  PlatformContext.swift
 //  Palico
 //
 //  Created by Junhao Wang on 12/25/21.
 //
 
-protocol ContextDelegate {
+protocol PlatformContextDelegate {
     var isAppRunning: Bool { get }
     var isAppActive:  Bool { get }
     var currentTime:  Timestep { get }
@@ -15,7 +15,7 @@ protocol ContextDelegate {
     func deinitialize()
 }
 
-public struct Context {
+public struct PlatformContext {
     private static let contextDelegate = CocoaContext()
     
     public static var currentTime: Timestep { get {

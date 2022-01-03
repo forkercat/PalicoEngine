@@ -11,12 +11,14 @@ class ImGuiBackendCocoaPlatform: ImGuiBackendPlatformDelegate {
     init() { }
     
     func implPlatformInit() {
-        ImGui_ImplOSX_Init(GraphicsContext.view as! NSView)
+        ImGui_ImplOSX_Init(MetalContext.view)
     }
     
     func implPlatformNewFrame() {
-        ImGui_ImplOSX_NewFrame(GraphicsContext.view as! NSView)
+        ImGui_ImplOSX_NewFrame(MetalContext.view)
     }
     
-    func implPlatformShutdown() { }
+    func implPlatformShutdown() {
+        ImGui_ImplOSX_Shutdown()
+    }
 }

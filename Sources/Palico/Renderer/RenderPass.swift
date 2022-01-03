@@ -1,5 +1,5 @@
 //
-//  MetalRenderPass.swift
+//  RenderPass.swift
 //  Palico
 //
 //  Created by Junhao Wang on 12/27/21.
@@ -42,7 +42,7 @@ private extension MTLRenderPassDescriptor {
     }
 }
 
-class MetalRenderPass {
+class RenderPass {
     
     var colorPassDescriptor: MTLRenderPassDescriptor = MTLRenderPassDescriptor()
     var colorTexture: MTLTexture!
@@ -53,7 +53,7 @@ class MetalRenderPass {
     }
     
     private func buildColorTexture(size: CGSize) {
-        colorTexture = MetalTexture.make(pixelFormat: .bgra8Unorm, size: size, label: "Color Texture")
+        colorTexture = Texture.make(pixelFormat: .bgra8Unorm, size: size, label: "Color Texture")
     }
     
     private func configureColorPassDescriptor() {
@@ -67,7 +67,7 @@ class MetalRenderPass {
         switch (type, target) {
         // Color Pass
         case (.colorPass, .framebuffer):
-            descriptor = MetalContext.mtkView.currentRenderPassDescriptor!
+            descriptor = MetalContext.view.currentRenderPassDescriptor!
         case (.colorPass, .texture):
             descriptor = colorPassDescriptor
             assertionFailure("Not supported yet!")

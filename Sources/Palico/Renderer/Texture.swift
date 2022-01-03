@@ -1,5 +1,5 @@
 //
-//  MetalTexture.swift
+//  Texture.swift
 //  Palico
 //
 //  Created by Junhao Wang on 12/27/21.
@@ -7,7 +7,7 @@
 
 import MetalKit
 
-enum MetalTexture {
+enum Texture {
     static func make(pixelFormat: MTLPixelFormat, size: CGSize, label: String) -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(
             pixelFormat: pixelFormat,

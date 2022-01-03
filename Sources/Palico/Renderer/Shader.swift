@@ -5,14 +5,38 @@
 //  Created by Junhao Wang on 12/28/21.
 //
 
-import Foundation
+import Metal
 
-public protocol Shader {
-    var name: String { get }
-    var filepath: String { get }
-    var source: String? { get }
-    var isCompiled: Bool { get set }
+public class Shader {
+    let name: String
+    let filepath: String
+    var source: String? = nil
+    var isCompiled: Bool = false
     
-    init(name: String, url: URL)
-    init(name: String, source: String)
+    init(name: String, url: URL) {
+        self.name = name
+        self.filepath = url.path
+        
+        do {
+            let source = try String(contentsOf: url)
+            self.source = source
+        } catch let error {
+            assertionFailure(error.localizedDescription)
+        }
+    }
+    
+    required init(name: String, source: String) {
+        self.name = name
+        self.filepath = ""
+        self.source = source
+    }
+    
+    static func compile(source: String) {
+        do {
+            let library = try MetalContext.device.makeLibrary(source: source, options: nil)
+            MetalContext.updateShaderLibrary(library)
+        } catch let error {
+            assertionFailure("Failed shader compilation: \(error.localizedDescription)")
+        }
+    }
 }

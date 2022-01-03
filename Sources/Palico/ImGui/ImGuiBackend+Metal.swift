@@ -19,7 +19,7 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
     }
     
     func implGraphicsNewFrame() {
-        guard let mtkView = MetalContext.mtkView,
+        guard let mtkView = MetalContext.view,
               let commandBuffer = MetalContext.commandQueue.makeCommandBuffer(),
               let renderPassDescriptor = mtkView.currentRenderPassDescriptor
         else {
@@ -31,7 +31,7 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
         
         // Config
         let io = ImGuiGetIO()!
-        let dpi: Float = GraphicsContext.dpi
+        let dpi: Float = MetalContext.dpi
         io.pointee.DisplayFramebufferScale = ImVec2(x: dpi, y: dpi)
         io.pointee.DisplaySize = ImVec2(x: Float(mtkView.bounds.width), y: Float(mtkView.bounds.height))
         io.pointee.DeltaTime = 1.0 / Float(mtkView.preferredFramesPerSecond)
@@ -53,7 +53,11 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
         
         renderCommandEncoder.popDebugGroup()
         renderCommandEncoder.endEncoding()
-        commandBuffer.present(MetalContext.mtkView.currentDrawable!)
+        guard let drawable = MetalContext.view.currentDrawable else {
+            Log.warn("Drawable is nil!")
+            return
+        }
+        commandBuffer.present(drawable)
         commandBuffer.commit()
     }
 }

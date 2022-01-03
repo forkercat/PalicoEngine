@@ -24,17 +24,14 @@ open class Application {
     public init(name: String = "Palico Engine", arguments: [String] = []) {
         Log.registerLogger(name: "Palico", level: .trace)
         Log.info("Arguments[1:]: \(arguments.dropFirst())")
-
+        
         // Applicaiton
         assert(Application.instance == nil, "Only one application is allowed!")
         defer { Application.instance = self }
         
         // Context
-        Context.initialize()          // application
-        GraphicsContext.initialize()  // graphics
-        defer {
-            GraphicsContext.setViewCallbacks(update: onUpdate, resize: onResize)
-        }
+        PlatformContext.initialize()  // application
+        MetalContext.initialize()  // graphics
         
         let width: UInt32 = 1280
         let height: UInt32 = 720
@@ -54,12 +51,12 @@ open class Application {
     }
 
     public func run() {
-        Context.activate()
+        PlatformContext.activate()
     }
     
     public func close() {
         popOverlay(imGuiLayer)
-        Context.deinitialize()
+        PlatformContext.deinitialize()
     }
     
     public func pushLayer(_ layer: Layer) {
@@ -86,13 +83,11 @@ open class Application {
 // Graphics Context Callbacks
 extension Application {
     func onUpdate() {
-        guard Context.isAppRunning && !window.isMinimized else {
+        guard PlatformContext.isAppRunning && !window.isMinimized else {
             return
         }
         
-        if false {  // show FPS?
-//            Log.debug("FPS: \(Int(1.0 / deltaTime))")
-        }
+        // Log.debug("FPS: \(Int(1.0 / deltaTime))")
         
         // - 1. Layer Update
         for layer in layerStack.layers {

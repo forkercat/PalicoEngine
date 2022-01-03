@@ -83,7 +83,7 @@ class ImGuiLayer: Layer {
     private func setFonts() {
         let io = ImGuiGetIO()!
         
-        let dpi: Float = GraphicsContext.dpi
+        let dpi: Float = MetalContext.dpi
         let fontSize = Float(18.0)
         let scaledFontSize = Float(dpi * fontSize)
         io.pointee.FontGlobalScale = 1 / dpi

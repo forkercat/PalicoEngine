@@ -75,7 +75,6 @@ class EditorLayer: Layer {
         
         ImGuiTextV(String(format: "Application average %.3f ms/frame (%.1f FPS)", avg, fps))
         
-        
         ImGuiEnd()
         //End()
         

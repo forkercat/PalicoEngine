@@ -17,6 +17,6 @@ extension Timestep {
 
 public enum Time {
     public static var currentTime: Timestep {
-        get { Context.currentTime }
+        get { PlatformContext.currentTime }
     }
 }

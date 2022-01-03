@@ -31,4 +31,5 @@ protocol Window {
 
 protocol WindowDelegate: AnyObject {
     func onEvent(event: Event)
+    func onUpdate()
 }

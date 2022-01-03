@@ -9,31 +9,16 @@ import Foundation
 
 public struct ShaderLibrary {
     private static var shaderCache: [String: Shader] = [:]
-    
     public static var shaderCount: Int { get { shaderCache.count } }
     
     public static func makeShader(name: String, url: URL) -> Shader? {
-        Log.debug("ShaderLibrary::Making shader -> \(name) (\(url.lastPathComponent))")
-        let api = RendererAPI.getAPI()
-        switch api {
-        case .metal:
-            return MetalShader(name: name, url: url)
-        default:
-            assertionFailure("API \(api) is not supported!")
-            return nil
-        }
+        Log.debug("Making shader -> \(name) (\(url.lastPathComponent))")
+        return Shader(name: name, url: url)
     }
     
     public static func makeShader(name: String, source: String) -> Shader? {
-        Log.debug("ShaderLibrary::Making shader -> \(name) (source code)")
-        let api = RendererAPI.getAPI()
-        switch api {
-        case .metal:
-            return MetalShader(name: name, source: source)
-        default:
-            assertionFailure("API \(api) is not supported!")
-            return nil
-        }
+        Log.debug("Making shader -> \(name) (source code)")
+        return Shader(name: name, source: source)
     }
     
     public static func add(shader: Shader?) {
@@ -81,27 +66,20 @@ public struct ShaderLibrary {
         }
         
         // compile
-        let api = RendererAPI.getAPI()
-        switch api {
-        case .metal:
-            MetalShader.compile(source: shaderSource)
-        default:
-            assertionFailure("API \(api) is not supported!")
-            return
-        }
+        Shader.compile(source: shaderSource)
         
-        for var shader in shaderCache.values {
+        for shader in shaderCache.values {
             shader.isCompiled = true
         }
         
         Log.info("""
-                 ShaderLibrary::Compiled \(nameSet.count) shader file(s) \
+                 Compiled \(nameSet.count) shader file(s) \
                  that contain \(MetalContext.library.functionNames.count) function(s): \(MetalContext.library.functionNames)
                  """)
     }
     
     public static func empty() {
-        Log.debug("ShaderLibrary::Remove all cached shaders!")
+        Log.debug("Remove all cached shaders!")
         shaderCache.removeAll(keepingCapacity: true)
     }
     
