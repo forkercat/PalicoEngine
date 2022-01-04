@@ -20,7 +20,7 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
     
     func implGraphicsNewFrame() {
         guard let mtkView = MetalContext.view,
-              let commandBuffer = MetalContext.commandQueue.makeCommandBuffer(),
+              let commandBuffer = Renderer.currentCommandBuffer,
               let renderPassDescriptor = mtkView.currentRenderPassDescriptor
         else {
             Log.warn("ImplGraphicsNewFrame: Required resources are not available!")
@@ -36,6 +36,10 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
         io.pointee.DisplaySize = ImVec2(x: Float(mtkView.bounds.width), y: Float(mtkView.bounds.height))
         io.pointee.DeltaTime = 1.0 / Float(mtkView.preferredFramesPerSecond)
 
+        // Keeping results from other render passes that run first
+        renderPassDescriptor.colorAttachments[0].loadAction = .load
+        renderPassDescriptor.depthAttachment.loadAction = .load
+        
         let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         commandEncoder.pushDebugGroup("ImGui Layer")
         
@@ -53,11 +57,5 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
         
         renderCommandEncoder.popDebugGroup()
         renderCommandEncoder.endEncoding()
-        guard let drawable = MetalContext.view.currentDrawable else {
-            Log.warn("Drawable is nil!")
-            return
-        }
-        commandBuffer.present(drawable)
-        commandBuffer.commit()
     }
 }

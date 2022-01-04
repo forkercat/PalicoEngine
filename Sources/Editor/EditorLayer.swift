@@ -37,16 +37,13 @@ class EditorLayer: Layer {
     }
     
     override func onUpdate(deltaTime: Timestep) {
-        Renderer.begin()
-
-        Renderer.beginRenderPass(type: .colorPass)
-
+        Renderer.beginRenderPass(type: .colorPass, begin: .clear)
         Renderer.render(gameObject: sphere)
-        Renderer.render(gameObject: cube)
-
         Renderer.endRenderPass()
-
-        Renderer.end()
+        
+        Renderer.beginRenderPass(type: .colorPass, begin: .keep)
+        Renderer.render(gameObject: cube)
+        Renderer.endRenderPass()
     }
     
     override func onImGuiRender() {

@@ -22,11 +22,10 @@ namespace Palico {
     };
     
     vertex VertexOut vertex_main(VertexIn in [[ stage_in ]]) {
-        VertexOut out {
-            .position = in.position,
-            .normal = in.normal,
-            .uv = in.uv
-        };
+        VertexOut out;
+        out.position = in.position;
+        out.normal = in.normal;
+        out.uv = in.uv;
         
         return out;
     }

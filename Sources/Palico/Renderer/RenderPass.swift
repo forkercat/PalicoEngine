@@ -7,6 +7,37 @@
 
 import MetalKit
 
+public enum RenderPassBeginAction {
+    case clear
+    case keep
+    case dontCare
+}
+
+public enum RenderPassEndAction {
+    case store
+    case dontCare
+}
+
+func convertMTLLoadAction(_ action: RenderPassBeginAction) -> MTLLoadAction {
+    switch action {
+    case .clear:
+        return .clear
+    case .keep:
+        return .load
+    case .dontCare:
+        return .dontCare
+    }
+}
+
+func convertMTLStoreAction(_ action: RenderPassEndAction) -> MTLStoreAction {
+    switch action {
+    case .store:
+        return .store
+    case .dontCare:
+        return .dontCare
+    }
+}
+
 class RenderPass {
     enum TextureType {
         case color

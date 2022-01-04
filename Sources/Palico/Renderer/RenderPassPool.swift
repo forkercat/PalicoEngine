@@ -5,7 +5,7 @@
 //  Created by Junhao Wang on 1/3/22.
 //
 
-import Foundation
+import Metal
 
 public enum RenderPassType {
     case colorPass

@@ -14,6 +14,10 @@ public class Renderer {
     
     private static var depthStencilState: MTLDepthStencilState! = nil
     
+    public static var currentCommandBuffer: MTLCommandBuffer? {
+        return commandBuffer
+    }
+    
     private init() { }
     
     public static func initialize() {
@@ -52,12 +56,20 @@ public class Renderer {
     }
     
     // Create command encoder
-    public static func beginRenderPass(type: RenderPassType) {
+    public static func beginRenderPass(type: RenderPassType,
+                                       begin beginAction: RenderPassBeginAction = .clear,
+                                       end endAction: RenderPassEndAction = .store) {
         // Get render pass
         let renderPass: RenderPass = RenderPassPool.shared.fetchRenderPass(type: type)
         
-        // TODO: TESTING
+        // TODO: REMOVE TESTING
         renderPass.descriptor = MetalContext.view.currentRenderPassDescriptor!
+        
+        // Action Configurations
+        renderPass.descriptor.colorAttachments[0].loadAction = convertMTLLoadAction(beginAction)
+        renderPass.descriptor.depthAttachment.loadAction = convertMTLLoadAction(beginAction)
+        renderPass.descriptor.colorAttachments[0].storeAction = convertMTLStoreAction(endAction)
+        renderPass.descriptor.depthAttachment.storeAction = convertMTLStoreAction(endAction)
         
         // Get command encoder
         guard let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPass.descriptor) else {
