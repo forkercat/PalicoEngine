@@ -7,22 +7,88 @@
 
 import MetalKit
 
-// RenderTarget: Texture or...
-// CullMode
-// label/DebugGroup
-// DepthStencil
-// - mtkview.renderPass
-// - texture
-
-// move to other places
-public enum RenderPassType {
-    case colorPass
-    case shadowPass
-}
-
-public enum RenderPassTarget {
-    case framebuffer
-    case texture
+class RenderPass {
+    enum TextureType {
+        case color
+        case depth
+        case normal
+        case position
+        // ...
+    }
+    
+    var descriptor: MTLRenderPassDescriptor = MTLRenderPassDescriptor()
+    var textures: [TextureType: MTLTexture] = [:]
+    
+    let name: String
+    
+    init(name: String, size: CGSize) {
+        self.name = name
+        textures[.color] = buildColorTexture(size: size)
+        textures[.depth] = buildDepthTexture(size: size)
+    }
+    
+    func addNormalTexture(size: CGSize) {
+        textures[.normal] = buildNormalTexture(size: size)
+    }
+    
+    func addPositionTexture(size: CGSize) {
+        textures[.position] = buildPositionTexture(size: size)
+    }
+    
+    func updateTextures(size: CGSize) {
+        guard size.width != 0 && size.height != 0 else {
+            return
+        }
+        
+        if textures[.color] != nil {
+            textures[.color] = buildColorTexture(size: size)
+        }
+        if textures[.depth] != nil {
+            textures[.depth] = buildDepthTexture(size: size)
+        }
+        if textures[.normal] != nil {
+            textures[.normal] = buildNormalTexture(size: size)
+        }
+        if textures[.position] != nil {
+            textures[.position] = buildPositionTexture(size: size)
+        }
+        descriptor = setupRenderPassDescriptor()
+    }
+    
+    private func setupRenderPassDescriptor() -> MTLRenderPassDescriptor {
+        let descriptor = MTLRenderPassDescriptor()
+        if let colorTexture = textures[.color] {
+            descriptor.setUpColorAttachment(position: 0, texture: colorTexture)
+        }
+        if let depthTexture = textures[.depth] {
+            descriptor.setUpDepthAttachment(texture: depthTexture)
+        }
+        return descriptor
+    }
+    
+    private func buildColorTexture(size: CGSize) -> MTLTexture {
+        return TextureUtils.buildTexture(size: size, label: name + "_color",
+                                         pixelFormat: .bgra8Unorm,
+                                         usage: [.renderTarget, .shaderRead])
+    }
+    
+    private func buildDepthTexture(size: CGSize) -> MTLTexture {
+        return TextureUtils.buildTexture(size: size, label: name + "_depth",
+                                         pixelFormat: .depth32Float,
+                                         usage: [.renderTarget, .shaderRead])
+    }
+    
+    private func buildNormalTexture(size: CGSize) -> MTLTexture {
+        return TextureUtils.buildTexture(size: size, label: name + "_normal",
+                                         pixelFormat: .bgra8Unorm,
+                                         usage: [.renderTarget, .shaderRead])
+    }
+    
+    private func buildPositionTexture(size: CGSize) -> MTLTexture {
+        return TextureUtils.buildTexture(size: size, label: name + "_position",
+                                         pixelFormat: .bgra8Unorm,
+                                         usage: [.renderTarget, .shaderRead])
+    }
 }
 
 private extension MTLRenderPassDescriptor {
@@ -38,61 +104,6 @@ private extension MTLRenderPassDescriptor {
         attachment.texture = texture
         attachment.loadAction = .clear
         attachment.storeAction = .store
-        attachment.clearColor = MTLClearColorMake(0.73, 0.92, 1, 1)
+        attachment.clearColor = MTLClearColorMake(0, 0, 0, 1)
     }
 }
-
-class RenderPass {
-    
-    var colorPassDescriptor: MTLRenderPassDescriptor = MTLRenderPassDescriptor()
-    var colorTexture: MTLTexture!
-    
-    init() {
-        buildColorTexture(size: CGSize(width: 10, height: 10))
-        configureColorPassDescriptor()
-    }
-    
-    private func buildColorTexture(size: CGSize) {
-        colorTexture = Texture.make(pixelFormat: .bgra8Unorm, size: size, label: "Color Texture")
-    }
-    
-    private func configureColorPassDescriptor() {
-        
-    }
-    
-    func fetchRenderPassDescriptor(type: RenderPassType, target: RenderPassTarget) -> MTLRenderPassDescriptor {
-        // Descriptor
-        var descriptor: MTLRenderPassDescriptor
-        
-        switch (type, target) {
-        // Color Pass
-        case (.colorPass, .framebuffer):
-            descriptor = MetalContext.view.currentRenderPassDescriptor!
-        case (.colorPass, .texture):
-            descriptor = colorPassDescriptor
-            assertionFailure("Not supported yet!")
-//            descriptor = colorPassDescriptor
-            // check size -> recreate texture
-        default:
-            fatalError("Not supported yet!")
-        }
-        
-        return descriptor
-    }
-}
-
-
-// RenderPass
-// - Target
-
-func buildColorRenderPass() {
-    
-}
-
-func buildShadowRenderPass() {
-    
-}
-
-
-// PipelineState
-

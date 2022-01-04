@@ -16,6 +16,9 @@ var f: Float = 0.0
 var counter: Int = 0
 
 class EditorLayer: Layer {
+    var cube: GameObject = Cube()
+    var sphere: GameObject = Sphere()
+    var plane: GameObject = Plane()
     
     override init() {
         super.init()
@@ -34,7 +37,16 @@ class EditorLayer: Layer {
     }
     
     override func onUpdate(deltaTime: Timestep) {
-        
+        Renderer.begin()
+
+        Renderer.beginRenderPass(type: .colorPass)
+
+        Renderer.render(gameObject: sphere)
+        Renderer.render(gameObject: cube)
+
+        Renderer.endRenderPass()
+
+        Renderer.end()
     }
     
     override func onImGuiRender() {

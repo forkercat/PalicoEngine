@@ -1,30 +1,23 @@
 //
-//  MetalPipelineState.swift
+//  PipelineStatePool.swift
 //  Palico
 //
 //  Created by Junhao Wang on 12/27/21.
 //
 
-import Metal
+import MetalKit
 
-// Shader
-// pixelFormat
-// vertexDescriptor (can be preset?)
-// - phong
-// - PBR
-// - depth
-// - geometry
-// - composite
-
-// - depthStencil
-class MetalPipelineState {
+class PipelineStatePool {
+    private(set) static var shared: PipelineStatePool = PipelineStatePool()
     
     var colorPipelineState: MTLRenderPipelineState!
     var shadowPipelineState: MTLRenderPipelineState!
+    var geometryPipelineState: MTLRenderPipelineState!
     
-    init() {
-//        buildColorPipelineState()
-//        buildShadowPipelineState()
+    private init() {
+        buildColorPipelineState()
+        buildShadowPipelineState()
+        geometryPipelineState = nil
     }
     
     func fetchPipelineState(type: RenderPassType) -> MTLRenderPipelineState {
@@ -33,17 +26,19 @@ class MetalPipelineState {
             return colorPipelineState
         case .shadowPass:
             return shadowPipelineState
+        default:
+            fatalError("Unsupported pipeline state!")
         }
     }
     
     private func buildColorPipelineState() {
         let descriptor = MTLRenderPipelineDescriptor()
-        descriptor.vertexFunction = nil
-        descriptor.fragmentFunction = nil
+        descriptor.vertexFunction = MetalContext.library.makeFunction(name: "Palico::vertex_main")
+        descriptor.fragmentFunction = MetalContext.library.makeFunction(name: "Palico::fragment_main")
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.depthAttachmentPixelFormat = .depth32Float
-        descriptor.vertexDescriptor = nil  // need to be updated
-
+        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(Mesh.defaultVertexDescriptor)
+        
         do {
             colorPipelineState = try MetalContext.device.makeRenderPipelineState(descriptor: descriptor)
         } catch let error {
@@ -55,12 +50,12 @@ class MetalPipelineState {
     // Shadow
     private func buildShadowPipelineState() {
         let descriptor = MTLRenderPipelineDescriptor()
-        descriptor.vertexFunction = nil
-        descriptor.fragmentFunction = nil
+        descriptor.vertexFunction = MetalContext.library.makeFunction(name: "Palico::vertex_main")
+        descriptor.fragmentFunction = MetalContext.library.makeFunction(name: "Palico::fragment_main")
         descriptor.colorAttachments[0].pixelFormat = .invalid
         descriptor.depthAttachmentPixelFormat = .depth32Float
-        
-//        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(Model.defaultVertexDescriptor)
+        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(Mesh.defaultVertexDescriptor)
+
         do {
             shadowPipelineState = try MetalContext.device.makeRenderPipelineState(descriptor: descriptor)
         } catch let error {

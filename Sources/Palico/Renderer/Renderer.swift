@@ -9,14 +9,12 @@ import Metal
 
 public class Renderer {
     private(set) static var commandQueue: MTLCommandQueue? = nil
-    
     private(set) static var commandBuffer: MTLCommandBuffer? = nil  // created at the beginning of each frame
-    private(set) static var renderEncoder: MTLRenderCommandEncoder? = nil  // created in begin render pass
-    
-    private static let renderPassResource: RenderPass = RenderPass()
-    private static let pipelineStateResource: MetalPipelineState = MetalPipelineState()
+    private(set) static var renderCommandEncoder: MTLRenderCommandEncoder? = nil  // created in begin render pass
     
     private static var depthStencilState: MTLDepthStencilState! = nil
+    
+    private init() { }
     
     public static func initialize() {
         // Command Queue
@@ -26,23 +24,25 @@ public class Renderer {
         }
         commandQueue = queue
         
-        // Stencil State
-        depthStencilState = Self.buildDepthStencilState()
-        
-        // RenderPass
-        
         // Load Shaders
-        guard let phongURL = FileUtils.getURL(path: "Assets/Shaders/Phong.metal"),
-              let pbrURL = FileUtils.getURL(path: "Assets/Shaders/PBR.metal")
+        guard let mainURL = FileUtils.getURL(path: "Assets/Shaders/Main.metal")
         else {
             Log.warn("Failed to load get shader URLs!")
             return
         }
-        ShaderLibrary.add(name: "Phong", url: phongURL)
-        ShaderLibrary.add(name: "PBR", url: pbrURL)
+        ShaderLibrary.add(name: "Main", url: mainURL)
         ShaderLibrary.compileAll()
+        
+        // Stencil State
+        depthStencilState = Self.buildDepthStencilState()
+        
+        // RenderPass & PipelineState
+        RenderPassPool.shared.updateAllTextureSizes(size: MetalContext.view.bounds.size)
+        _ = PipelineStatePool.shared
+        // TODO: Update texture size
     }
     
+    // Create command buffer
     public static func begin() {
         guard let buffer = commandQueue?.makeCommandBuffer() else {
             assertionFailure("Cannot make command queue from Metal device!")
@@ -51,34 +51,49 @@ public class Renderer {
         commandBuffer = buffer
     }
     
-    public static func beginRenderPass(type: RenderPassType, target: RenderPassTarget) {
+    // Create command encoder
+    public static func beginRenderPass(type: RenderPassType) {
         // Get render pass
-        let renderPassDescriptor = renderPassResource.fetchRenderPassDescriptor(type: type, target: target)
+        let renderPass: RenderPass = RenderPassPool.shared.fetchRenderPass(type: type)
         
-        // Get render encoder
-        guard let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+        // TODO: TESTING
+        renderPass.descriptor = MetalContext.view.currentRenderPassDescriptor!
+        
+        // Get command encoder
+        guard let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPass.descriptor) else {
             fatalError("Cannot create render pass (MTLRenderEncoder) as command buffer is not created!")
         }
         
         // Get pipeline state & depth stencil state
-        let renderPipelineState = pipelineStateResource.fetchPipelineState(type: type)
+        let renderPipelineState = PipelineStatePool.shared.fetchPipelineState(type: type)
         encoder.setRenderPipelineState(renderPipelineState)
         encoder.setDepthStencilState(depthStencilState)
-        
+
         // Configure render encoder
         
         
         // Set as current encoder (used in render step)
-        renderEncoder = encoder
+        renderCommandEncoder = encoder
     }
     
-    public static func render(/* something renderable */) {
-        // if metal renderable
-        //     renderable.render(MTLEncoder)
+    
+    public static func render(gameObject: GameObject) {
+        guard let encoder = renderCommandEncoder else {
+            Log.warn("Render command encoder is nil!")
+            return
+        }
+        
+        // Get all MeshRendererComponent
+        let component = gameObject.getComponent(at: 2)
+        if let meshRenderer = component as? MeshRendererComponent {
+            meshRenderer.onRender(encoder: encoder)
+        } else {
+            Log.error("It is not a mesh renderer component!")
+        }
     }
     
     public static func endRenderPass() {
-        renderEncoder?.endEncoding()
+        renderCommandEncoder?.endEncoding()
     }
     
     public static func end() {
@@ -87,6 +102,7 @@ public class Renderer {
             return
         }
         commandBuffer?.present(drawable)
+        commandBuffer?.commit()
     }
     
     // Depth Stencil
