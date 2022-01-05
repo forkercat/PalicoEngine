@@ -23,7 +23,8 @@ class ImGuiLayer: Layer {
         _ = ImGuiCreateContext(nil)
         
         let io = ImGuiGetIO()!
-        // io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableKeyboard.rawValue)
+        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableKeyboard.rawValue)
+        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableGamepad.rawValue)
         io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_DockingEnable.rawValue)
         io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)
         
@@ -32,6 +33,17 @@ class ImGuiLayer: Layer {
         
         // ImGui Style
         ImGuiStyleColorsDark(nil)
+        
+        /*
+        let style = ImGuiGetStyle()!
+        if (io.pointee.ConfigFlags & Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)) != 0 {
+            style.pointee.WindowRounding = 0.0
+            CArray<ImVec4>.write(&style.pointee.Colors) { colors in
+                colors[Int(ImGuiCol_WindowBg.rawValue)].w = 1.0
+            }
+        }
+         */
+        
         setThemeColors()
         
         // Setup Platform/Renderer Bindings
@@ -71,13 +83,10 @@ class ImGuiLayer: Layer {
         let drawData = ImGuiGetDrawData()!
         ImGuiBackend.implGraphicsRenderDrawData(drawData.pointee)
         
-//        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-//        {
-//            GLFWwindow* backup_current_context = glfwGetCurrentContext();
-//            ImGui::UpdatePlatformWindows();
-//            ImGui::RenderPlatformWindowsDefault();
-//            glfwMakeContextCurrent(backup_current_context);
-//        }
+        if (ImGuiGetIO()!.pointee.ConfigFlags & Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)) != 0 {
+            ImGuiUpdatePlatformWindows()
+            ImGuiRenderPlatformWindowsDefault(nil, nil)
+        }
     }
     
     private func setFonts() {

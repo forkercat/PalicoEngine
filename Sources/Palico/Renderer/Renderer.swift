@@ -63,7 +63,7 @@ public class Renderer {
         let renderPass: RenderPass = RenderPassPool.shared.fetchRenderPass(type: type)
         
         // TODO: REMOVE TESTING
-        renderPass.descriptor = MetalContext.view.currentRenderPassDescriptor!
+//        renderPass.descriptor = MetalContext.view.currentRenderPassDescriptor!
         
         // Action Configurations
         renderPass.descriptor.colorAttachments[0].loadAction = convertMTLLoadAction(beginAction)

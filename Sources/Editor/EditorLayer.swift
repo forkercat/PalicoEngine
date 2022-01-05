@@ -15,10 +15,22 @@ var clear_color: SIMD3<Float> = .init(x: 0.28, y: 0.36, z: 0.5)
 var f: Float = 0.0
 var counter: Int = 0
 
+fileprivate var dockspaceOpen: Bool = true
+fileprivate var optFullscreenPersistent: Bool = true
+fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Int32(ImGuiDockNodeFlags_None.rawValue)
+
 class EditorLayer: Layer {
     var cube: GameObject = Cube()
     var sphere: GameObject = Sphere()
     var plane: GameObject = Plane()
+    
+    // Panels
+    let hierarchyPanel: HierarchyPanel = HierarchyPanel()
+    let statsPanel: StatsPanel = StatsPanel()
+    let viewportPanel: ViewportPanel = ViewportPanel()
+    let inspectorPanel: InspectorPanel = InspectorPanel()
+    let consolePanel: ConsolePanel = ConsolePanel()
+    let imguiDemoPanel: ImGuiDemoPanel = ImGuiDemoPanel()
     
     override init() {
         super.init()
@@ -37,6 +49,13 @@ class EditorLayer: Layer {
     }
     
     override func onUpdate(deltaTime: Timestep) {
+        // Resize
+        
+        
+        // Update
+        
+        // Render
+        
         Renderer.beginRenderPass(type: .colorPass, begin: .clear)
         Renderer.render(gameObject: sphere)
         Renderer.endRenderPass()
@@ -47,57 +66,100 @@ class EditorLayer: Layer {
     }
     
     override func onImGuiRender() {
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()!
-        // You can browse its code to learn more about Dear ImGui!).
-        if show_demo_window {
-            ImGuiShowDemoWindow(&show_demo_window)
+        let optFullscreen: Bool = optFullscreenPersistent
+        dockspaceFlags = Int32(ImGuiDockNodeFlags_None.rawValue)
+        
+        // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+        // because it would be confusing to have two docking targets within each others.
+        var windowFlags: ImGuiWindowFlags = Int32(ImGuiWindowFlags_MenuBar.rawValue) | Int32(ImGuiWindowFlags_NoDocking.rawValue)
+        if optFullscreen {
+            let viewport = ImGuiGetMainViewport()!
+            ImGuiSetNextWindowPos(viewport.pointee.Pos, Int32(ImGuiCond_None.rawValue), ImVec2(x: 0, y: 0))
+            ImGuiSetNextWindowSize(viewport.pointee.Size, Int32(ImGuiCond_None.rawValue))
+            ImGuiSetNextWindowViewport(viewport.pointee.ID)
+            ImGuiPushStyleVar(Int32(ImGuiStyleVar_WindowRounding.rawValue), 0.0)
+            ImGuiPushStyleVar(Int32(ImGuiStyleVar_WindowBorderSize.rawValue), 0.0)
+            windowFlags |= Int32(ImGuiWindowFlags_NoTitleBar.rawValue) | Int32(ImGuiWindowFlags_NoCollapse.rawValue) |
+                           Int32(ImGuiWindowFlags_NoResize.rawValue) | Int32(ImGuiWindowFlags_NoMove.rawValue)
+            windowFlags |= Int32(ImGuiWindowFlags_NoBringToFrontOnFocus.rawValue) | Int32(ImGuiWindowFlags_NoNavFocus.rawValue)
         }
         
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-        
-        // Create a window called "Hello, world!" and append into it.
-        ImGuiBegin("Begin", &show_demo_window, 0)
-        
-        // Display some text (you can use a format strings too)
-        ImGuiTextV("This is some useful text.")
-        
-        // Edit bools storing our window open/close state
-        ImGuiCheckbox("Demo Window", &show_demo_window)
-        ImGuiCheckbox("Another Window", &show_another_window)
-        
-        ImGuiSliderFloat("Float Slider", &f, 0.0, 1.0, nil, 1) // Edit 1 float using a slider from 0.0f to 1.0f
-        
-        ImGuiColorEdit3("clear color", &clear_color, 0) // Edit 3 floats representing a color
-        
-        if ImGuiButton("Button", ImVec2(x: 100,y: 20)) { // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter += 1
+        // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+        // and handle the pass-thru hole, so we ask Begin() to not render a background.
+        if (dockspaceFlags & Int32(ImGuiDockNodeFlags_PassthruCentralNode.rawValue)) != 0 {
+            windowFlags |= Int32(ImGuiWindowFlags_NoBackground.rawValue)
         }
         
-        //SameLine(offset_from_start_x: 0, spacing: 0)
+        // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+        // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+        // all active windows docked into it will lose their parent and become undocked.
+        // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+        // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+        ImGuiPushStyleVar(Int32(ImGuiStyleVar_WindowPadding.rawValue), ImVec2(x: 0, y: 0))
+        ImGuiBegin("DockSpace Demo", &dockspaceOpen, windowFlags)
+        ImGuiPopStyleVar(1)
         
-        ImGuiSameLine(0, 2)
-        ImGuiTextV(String(format: "counter = %d", counter))
+        if optFullscreen {
+            ImGuiPopStyleVar(2)
+        }
         
+        // Submit the DockSpace
         let io = ImGuiGetIO()!
-        let avg: Float = (1000.0 / io.pointee.Framerate)
-        let fps = io.pointee.Framerate
-        
-        ImGuiTextV(String(format: "Application average %.3f ms/frame (%.1f FPS)", avg, fps))
-        
-        ImGuiEnd()
-        //End()
-        
-        // 3. Show another simple window.
-        if show_another_window {
-            
-            ImGuiBegin("Another Window", &show_another_window, 0)  // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            
-            ImGuiTextV("Hello from another window!")
-            if ImGuiButton("Close Me", ImVec2(x: 100, y: 20)) {
-                show_another_window = false
-            }
-            ImGuiEnd()
+        let style = ImGuiGetStyle()!
+        let minWinSizeX = style.pointee.WindowMinSize.x  // backup
+        style.pointee.WindowMinSize.x = 370.0  // set min window size for dockspace's windows
+        if (io.pointee.ConfigFlags & Int32(ImGuiConfigFlags_DockingEnable.rawValue)) != 0 {
+            let dockspaceID = ImGuiGetID("MyDockSpace")
+            _ = ImGuiDockSpace(dockspaceID, ImVec2(x: 0, y: 0), dockspaceFlags, nil)
         }
+        style.pointee.WindowMinSize.x = minWinSizeX  // reset
+        
+        // Popup Booleans
+        
+        // var openScenePopup: Bool = false
+        // var saveSceneAsPopup: Bool = false
+        
+        if ImGuiBeginMenuBar() {
+            if ImGuiBeginMenu("File", true) {
+                // Disabling fullscreen would allow the window to be moved to the front of other windows,
+                // which we can't undo at the moment without finer window depth/z control.
+                
+                /*
+                if (ImGui::MenuItem("New", "Ctrl+N"))
+                    NewScene();
+                
+                if (ImGui::MenuItem("Open...", "Cmd+O"))
+                    openScenePopup = true;
+                
+                if (ImGui::MenuItem("Save As...", "Cmd+Shift+S"))
+                    saveSceneAsPopup = true;
+                
+                if (ImGui::MenuItem("Exit"))
+                    Application::Get().Close();
+                 */
+                
+                ImGuiEnd()
+            }
+            
+            ImGuiEndMenuBar()
+        }
+        
+        // Hierarchy Panel
+        hierarchyPanel.onImGuiRender()
+        
+        // Inspector Panel
+        inspectorPanel.onImGuiRender()
+        
+        // Stats Panel
+        statsPanel.onImGuiRender()
+        
+        // Viewport Panel
+        viewportPanel.onImGuiRender()
+        
+        // ImGui Demo
+        imguiDemoPanel.onImGuiRender()
+        
+        ImGuiEnd()  // Docking
     }
     
     override func onEvent(event: Event) {

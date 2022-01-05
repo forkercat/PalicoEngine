@@ -37,8 +37,10 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
         io.pointee.DeltaTime = 1.0 / Float(mtkView.preferredFramesPerSecond)
 
         // Keeping results from other render passes that run first
+        /*
         renderPassDescriptor.colorAttachments[0].loadAction = .load
         renderPassDescriptor.depthAttachment.loadAction = .load
+         */
         
         let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         commandEncoder.pushDebugGroup("ImGui Layer")
