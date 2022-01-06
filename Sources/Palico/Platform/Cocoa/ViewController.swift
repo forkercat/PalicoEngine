@@ -23,8 +23,6 @@ class ViewController: NSViewController {
         mtkView.device = MetalContext.device
         mtkView.wantsLayer = true
         mtkView.layer?.backgroundColor = .black
-        mtkView.colorPixelFormat = .bgra8Unorm
-        mtkView.depthStencilPixelFormat = .depth32Float
         mtkView.clearColor = .init(red: 0, green: 0, blue: 0, alpha: 1)
         mtkView.delegate = self
         MetalContext.updateMTKView(mtkView)

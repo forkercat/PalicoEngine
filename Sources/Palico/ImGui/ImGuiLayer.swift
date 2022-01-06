@@ -23,10 +23,10 @@ class ImGuiLayer: Layer {
         _ = ImGuiCreateContext(nil)
         
         let io = ImGuiGetIO()!
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableKeyboard.rawValue)
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_NavEnableGamepad.rawValue)
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_DockingEnable.rawValue)
-        io.pointee.ConfigFlags |= Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)
+        io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_NavEnableKeyboard)
+        io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_NavEnableGamepad)
+        io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_DockingEnable)
+        io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_ViewportsEnable)
         
         // ImGui Font
         setFonts()
@@ -36,10 +36,10 @@ class ImGuiLayer: Layer {
         
         /*
         let style = ImGuiGetStyle()!
-        if (io.pointee.ConfigFlags & Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)) != 0 {
+        if (io.pointee.ConfigFlags & Im(ImGuiConfigFlags_ViewportsEnable)) != 0 {
             style.pointee.WindowRounding = 0.0
             CArray<ImVec4>.write(&style.pointee.Colors) { colors in
-                colors[Int(ImGuiCol_WindowBg.rawValue)].w = 1.0
+                colors[Im(ImGuiCol_WindowBg)].w = 1.0
             }
         }
          */
@@ -83,7 +83,7 @@ class ImGuiLayer: Layer {
         let drawData = ImGuiGetDrawData()!
         ImGuiBackend.implGraphicsRenderDrawData(drawData.pointee)
         
-        if (ImGuiGetIO()!.pointee.ConfigFlags & Int32(ImGuiConfigFlags_ViewportsEnable.rawValue)) != 0 {
+        if (ImGuiGetIO()!.pointee.ConfigFlags & Im(ImGuiConfigFlags_ViewportsEnable)) != 0 {
             ImGuiUpdatePlatformWindows()
             ImGuiRenderPlatformWindowsDefault(nil, nil)
         }

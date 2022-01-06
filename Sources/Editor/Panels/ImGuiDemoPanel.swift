@@ -11,9 +11,12 @@ import ImGui
 class ImGuiDemoPanel: Panel {
     var panelName: String { "ImGui Demo" }
     
-    var open: Bool = true
+//    var open: Bool = true
+    var open: Bool = false
     
     func onImGuiRender() {
-        ImGuiShowDemoWindow(&open)
+        if open {
+            ImGuiShowDemoWindow(&open)
+        }
     }
 }
