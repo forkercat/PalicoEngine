@@ -6,6 +6,7 @@
 //
 
 import Metal
+import MathLib
 
 public enum RenderPassType {
     case colorPass
@@ -14,25 +15,25 @@ public enum RenderPassType {
 }
 
 class RenderPassPool {
-    private(set) static var shared: RenderPassPool = RenderPassPool()
+    static var shared: RenderPassPool = RenderPassPool()
     
     private let colorPass: RenderPass
     private let shadowPass: RenderPass
     private let geometryPass: RenderPass
     
-    private init(size: CGSize = CGSize(width: 1, height: 1)) {
-        colorPass = RenderPass(name: "ColorPass", size: size)
-        shadowPass = RenderPass(name: "ShadowPass", size: size)
-        geometryPass = RenderPass(name: "GeometryPass", size: size)
-        geometryPass.addNormalTexture(size: size)
-        geometryPass.addPositionTexture(size: size)
+    private init(size: Int2 = Int2(1, 1)) {
+        colorPass = RenderPass(name: "ColorPass", size: size, targets: [.color, .depth])
+        shadowPass = RenderPass(name: "ShadowPass", size: size, targets: [.depth])
+        geometryPass = RenderPass(name: "GeometryPass", size: size, targets: [.normal, .position])
     }
     
-    func updateAllTextureSizes(size: CGSize) {
-        colorPass.updateTextures(size: size)
-        shadowPass.updateTextures(size: size)
-        geometryPass.updateTextures(size: size)
+    /*
+    func resizeAllRenderPasses(size: Int2) {
+        colorPass.resizeTextures(size: size)
+        shadowPass.resizeTextures(size: size)
+        geometryPass.resizeTextures(size: size)
     }
+     */
     
     func fetchRenderPass(type: RenderPassType) -> RenderPass {
         switch type {

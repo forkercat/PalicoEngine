@@ -7,6 +7,7 @@
 
 import CGLFW3
 import Cocoa  // Is it possible not to use Cocoa?
+import MathLib
 
 fileprivate struct WindowData {
     var windowDelegate: WindowDelegate? = nil
@@ -24,8 +25,8 @@ fileprivate enum WindowDataOffsets {
 
 class GlfwWindow: Window {
     var title: String { data.title }
-    var width: UInt32 { data.width }
-    var height: UInt32 { data.height }
+    var width: Int { Int(data.width) }
+    var height: Int { Int(data.height) }
     var isMinimized: Bool { nsWindow.isMiniaturized }
     
     private var data: WindowData = WindowData()
@@ -92,7 +93,7 @@ private func glfwWindowResizeCallback(window: OpaquePointer?, width: Int32, heig
     dataPointer.storeBytes(of: w, toByteOffset: WindowDataOffsets.widthOffset, as: UInt32.self)
     dataPointer.storeBytes(of: h, toByteOffset: WindowDataOffsets.heightOffset, as: UInt32.self)
     
-    let event = WindowViewResizeEvent(width: w, height: h)
+    let event = WindowViewResizeEvent(size: Int2(Int(w), Int(h)))
     publishEvent(dataPointer: dataPointer, event: event)
 }
 

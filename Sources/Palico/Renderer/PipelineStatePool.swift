@@ -35,8 +35,8 @@ class PipelineStatePool {
         let descriptor = MTLRenderPipelineDescriptor()
         descriptor.vertexFunction = MetalContext.library.makeFunction(name: "Palico::vertex_main")
         descriptor.fragmentFunction = MetalContext.library.makeFunction(name: "Palico::fragment_main")
-        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        descriptor.depthAttachmentPixelFormat = .depth32Float
+        descriptor.colorAttachments[0].pixelFormat = RenderConfig.PixelFormat.color
+        descriptor.depthAttachmentPixelFormat = RenderConfig.PixelFormat.depth
         descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(Mesh.defaultVertexDescriptor)
         
         do {
@@ -53,7 +53,7 @@ class PipelineStatePool {
         descriptor.vertexFunction = MetalContext.library.makeFunction(name: "Palico::vertex_main")
         descriptor.fragmentFunction = MetalContext.library.makeFunction(name: "Palico::fragment_main")
         descriptor.colorAttachments[0].pixelFormat = .invalid
-        descriptor.depthAttachmentPixelFormat = .depth32Float
+        descriptor.depthAttachmentPixelFormat = RenderConfig.PixelFormat.depth
         descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(Mesh.defaultVertexDescriptor)
 
         do {

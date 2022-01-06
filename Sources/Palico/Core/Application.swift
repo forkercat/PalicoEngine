@@ -5,6 +5,8 @@
 //  Created by Junhao Wang on 12/15/21.
 //
 
+import MathLib
+
 open class Application {
     private(set) static var instance: Application?
 
@@ -21,7 +23,7 @@ open class Application {
         return deltaTime
     }}
 
-    public init(name: String = "Palico Engine", arguments: [String] = []) {
+    public init(name: String = "Palico Engine", arguments: [String] = [], size: Int2) {
         Log.registerLogger(name: "Palico", level: .trace)
         Log.info("Arguments[1:]: \(arguments.dropFirst())")
         
@@ -33,11 +35,8 @@ open class Application {
         PlatformContext.initialize()  // application
         MetalContext.initialize()  // graphics
         
-        let width: UInt32 = 1280
-        let height: UInt32 = 720
-
         // Window
-        let windowDescriptor = WindowDescriptor(title: name, width: width, height: height)
+        let windowDescriptor = WindowDescriptor(title: name, width: size.width, height: size.height)
         window = CocoaWindow(descriptor: windowDescriptor)
         defer {
             window.windowDelegate = self
@@ -89,13 +88,13 @@ extension Application {
         
         // Log.debug("FPS: \(Int(1.0 / deltaTime))")
         
-        Renderer.begin()
+        Renderer.begin()  // begin
         
         // - 1. Layer Update
         for layer in layerStack.layers {
             layer.onUpdate(deltaTime: deltaTime)
         }
-
+        
         // - 2. Layer ImGuiRender
         imGuiLayer.begin()
         for layer in layerStack.layers {
@@ -103,11 +102,11 @@ extension Application {
         }
         imGuiLayer.end()
         
-        Renderer.end()
+        Renderer.end()  // end
     }
     
-    func onResize(width: UInt32, height: UInt32) {
-        let event = WindowViewResizeEvent(width: width, height: height)
+    func onResize(size: Int2) {
+        let event = WindowViewResizeEvent(size: size)
         onEvent(event: event)
     }
 }
@@ -147,7 +146,7 @@ extension Application: WindowDelegate {
     }
 
     private func onWindowViewResize(event: WindowViewResizeEvent) -> Bool {
-        if event.width == 0 || event.height == 0 {
+        if event.size.width == 0 || event.size.height == 0 {
             Log.warn("Window view size is 0. Do not updating.")
             return false
         }

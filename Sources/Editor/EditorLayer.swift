@@ -17,7 +17,7 @@ var counter: Int = 0
 
 fileprivate var dockspaceOpen: Bool = true
 fileprivate var optFullscreenPersistent: Bool = true
-fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Int32(ImGuiDockNodeFlags_None.rawValue)
+fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Im(ImGuiDockNodeFlags_None)
 
 class EditorLayer: Layer {
     var cube: GameObject = Cube()
@@ -41,53 +41,60 @@ class EditorLayer: Layer {
     }
     
     override func onAttach() {
-        
+        viewportPanel.onAttach()
     }
     
     override func onDetach() {
         
     }
     
-    override func onUpdate(deltaTime: Timestep) {
+    override func onUpdate(deltaTime ts: Timestep) {
         // Resize
-        
+        if viewportPanel.viewportDidResize() {
+            
+        }
         
         // Update
         
-        // Render
         
+        // Update Scene
+        
+        // Render Scene
         Renderer.beginRenderPass(type: .colorPass, begin: .clear)
         Renderer.render(gameObject: sphere)
         Renderer.endRenderPass()
         
-        Renderer.beginRenderPass(type: .colorPass, begin: .keep)
-        Renderer.render(gameObject: cube)
-        Renderer.endRenderPass()
+//        Renderer.beginRenderPass(type: .colorPass, begin: .keep)
+//        Renderer.render(gameObject: cube)
+//        Renderer.endRenderPass()
+        
+        // Event
     }
     
+    // Called after onUpdate()
     override func onImGuiRender() {
         let optFullscreen: Bool = optFullscreenPersistent
-        dockspaceFlags = Int32(ImGuiDockNodeFlags_None.rawValue)
+        dockspaceFlags = Im(ImGuiDockNodeFlags_None)
         
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        var windowFlags: ImGuiWindowFlags = Int32(ImGuiWindowFlags_MenuBar.rawValue) | Int32(ImGuiWindowFlags_NoDocking.rawValue)
+        var windowFlags: ImGuiWindowFlags = Im(ImGuiWindowFlags_MenuBar) | Im(ImGuiWindowFlags_NoDocking)
         if optFullscreen {
             let viewport = ImGuiGetMainViewport()!
-            ImGuiSetNextWindowPos(viewport.pointee.Pos, Int32(ImGuiCond_None.rawValue), ImVec2(x: 0, y: 0))
-            ImGuiSetNextWindowSize(viewport.pointee.Size, Int32(ImGuiCond_None.rawValue))
+            ImGuiSetNextWindowPos(viewport.pointee.Pos, Im(ImGuiCond_None), ImVec2(0, 0))
+            ImGuiSetNextWindowSize(viewport.pointee.Size, Im(ImGuiCond_None))
             ImGuiSetNextWindowViewport(viewport.pointee.ID)
-            ImGuiPushStyleVar(Int32(ImGuiStyleVar_WindowRounding.rawValue), 0.0)
-            ImGuiPushStyleVar(Int32(ImGuiStyleVar_WindowBorderSize.rawValue), 0.0)
-            windowFlags |= Int32(ImGuiWindowFlags_NoTitleBar.rawValue) | Int32(ImGuiWindowFlags_NoCollapse.rawValue) |
-                           Int32(ImGuiWindowFlags_NoResize.rawValue) | Int32(ImGuiWindowFlags_NoMove.rawValue)
-            windowFlags |= Int32(ImGuiWindowFlags_NoBringToFrontOnFocus.rawValue) | Int32(ImGuiWindowFlags_NoNavFocus.rawValue)
+            ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowRounding), 0.0)
+            ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowBorderSize), 0.0)
+            windowFlags |= Im(ImGuiWindowFlags_NoTitleBar) | Im(ImGuiWindowFlags_NoCollapse) |
+                             Im(ImGuiWindowFlags_NoResize) | Im(ImGuiWindowFlags_NoMove)
+            windowFlags |= Im(ImGuiWindowFlags_NoBringToFrontOnFocus) | Im(ImGuiWindowFlags_NoNavFocus)
         }
         
         // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
         // and handle the pass-thru hole, so we ask Begin() to not render a background.
-        if (dockspaceFlags & Int32(ImGuiDockNodeFlags_PassthruCentralNode.rawValue)) != 0 {
-            windowFlags |= Int32(ImGuiWindowFlags_NoBackground.rawValue)
+        if (dockspaceFlags & Im(ImGuiDockNodeFlags_PassthruCentralNode)) != 0 {
+            windowFlags |= Im(ImGuiWindowFlags_NoBackground)
         }
         
         // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
@@ -95,7 +102,7 @@ class EditorLayer: Layer {
         // all active windows docked into it will lose their parent and become undocked.
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        ImGuiPushStyleVar(Int32(ImGuiStyleVar_WindowPadding.rawValue), ImVec2(x: 0, y: 0))
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowPadding), ImVec2(0, 0))
         ImGuiBegin("DockSpace Demo", &dockspaceOpen, windowFlags)
         ImGuiPopStyleVar(1)
         
@@ -108,9 +115,9 @@ class EditorLayer: Layer {
         let style = ImGuiGetStyle()!
         let minWinSizeX = style.pointee.WindowMinSize.x  // backup
         style.pointee.WindowMinSize.x = 370.0  // set min window size for dockspace's windows
-        if (io.pointee.ConfigFlags & Int32(ImGuiConfigFlags_DockingEnable.rawValue)) != 0 {
+        if (io.pointee.ConfigFlags & Im(ImGuiConfigFlags_DockingEnable)) != 0 {
             let dockspaceID = ImGuiGetID("MyDockSpace")
-            _ = ImGuiDockSpace(dockspaceID, ImVec2(x: 0, y: 0), dockspaceFlags, nil)
+            _ = ImGuiDockSpace(dockspaceID, ImVec2(0, 0), dockspaceFlags, nil)
         }
         style.pointee.WindowMinSize.x = minWinSizeX  // reset
         

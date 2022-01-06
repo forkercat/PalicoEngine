@@ -7,10 +7,11 @@
 
 import Cocoa
 import MetalKit
+import MathLib
 
 typealias MouseEventCallback = (NSEvent) -> Void
 typealias ViewDrawCallback = () -> Void
-typealias ViewResizeCallback = (UInt32, UInt32) -> Void
+typealias ViewResizeCallback = (Int2) -> Void
 
 class ViewController: NSViewController {
     let mtkView = MTKView()
@@ -58,6 +59,6 @@ extension ViewController: MTKViewDelegate {
     }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        viewResizeCallback?(UInt32(size.width), UInt32(size.height))
+        viewResizeCallback?(Int2(Int(size.width), Int(size.height)))
     }
 }

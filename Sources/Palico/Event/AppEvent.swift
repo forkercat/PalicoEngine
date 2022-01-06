@@ -5,12 +5,13 @@
 //  Created by Junhao Wang on 12/19/21.
 //
 
+import MathLib
+
 internal protocol AppEvent: Event { }
 
 // WindowViewResize
 public class WindowViewResizeEvent: AppEvent {
-    public let width: UInt32
-    public let height: UInt32
+    public let size: Int2
     
     public static var staticEventType: EventType { .windowViewResize }
     
@@ -18,13 +19,12 @@ public class WindowViewResizeEvent: AppEvent {
     public var categoryFlags: EventCategory { [.application] }
     public var handled: Bool = false
     
-    public init(width: UInt32, height: UInt32) {
-        self.width = width
-        self.height = height
+    public init(size: Int2) {
+        self.size = size
     }
     
     public var toString: String {
-        "[Event] type=WindowViewResize, size=(\(width) x \(height)), handled=\(handled)"
+        "[Event] type=WindowViewResize, size=(\(size.width) x \(size.height)), handled=\(handled)"
     }
 }
 

@@ -5,13 +5,15 @@
 //  Created by Junhao Wang on 1/2/22.
 //
 
+import MathLib
+
 extension CocoaWindow {
     func onViewDraw() {
         windowDelegate?.onUpdate()
     }
     
-    func onViewResize(width: UInt32, height: UInt32) {
-        let event = WindowViewResizeEvent(width: width, height: height)
+    func onViewResize(size: Int2) {
+        let event = WindowViewResizeEvent(size: size)
         publishEvent(event)
     }
 }

@@ -30,37 +30,23 @@
  */
 
 import MetalKit
+import MathLib
 
 public enum TextureUtils {
-    static func loadTexture(imageName: String) throws -> MTLTexture? {
+    public static func loadTexture(url: URL) throws -> MTLTexture? {
         let textureLoader = MTKTextureLoader(device: MetalContext.device)
         
-        let textureLoaderOptions: [MTKTextureLoader.Option: Any] =
-        [.origin: MTKTextureLoader.Origin.bottomLeft,
-         .SRGB: false,
-         .generateMipmaps: NSNumber(booleanLiteral: true)]
-        let fileExtension =
-        URL(fileURLWithPath: imageName).pathExtension.isEmpty ?
-        "png" : nil
-        guard let url = Bundle.main.url(forResource: imageName,
-                                        withExtension: fileExtension)
-        else {
-            let texture = try? textureLoader.newTexture(name: imageName,
-                                                        scaleFactor: 1.0,
-                                                        bundle: Bundle.main, options: nil)
-            if texture == nil {
-                print("WARNING: Texture not found: \(imageName)")
-            }
-            return texture
-        }
-        
+        let textureLoaderOptions: [MTKTextureLoader.Option: Any] = [.origin: MTKTextureLoader.Origin.bottomLeft,
+                                                                    .SRGB: false,
+                                                                    .generateMipmaps: NSNumber(booleanLiteral: true)]
         let texture = try textureLoader.newTexture(URL: url,
                                                    options: textureLoaderOptions)
         print("loaded texture: \(url.lastPathComponent)")
+        
         return texture
     }
     
-    static func loadTexture(texture: MDLTexture) throws -> MTLTexture? {
+    public static func loadTexture(texture: MDLTexture) throws -> MTLTexture? {
         let textureLoader = MTKTextureLoader(device: MetalContext.device)
         let textureLoaderOptions: [MTKTextureLoader.Option: Any] =
         [.origin: MTKTextureLoader.Origin.bottomLeft,
@@ -72,7 +58,7 @@ public enum TextureUtils {
         return texture
     }
     
-    static func loadCubeTexture(imageName: String) throws -> MTLTexture {
+    public static func loadCubeTexture(imageName: String) throws -> MTLTexture {
         let textureLoader = MTKTextureLoader(device: MetalContext.device)
         if let texture = MDLTexture(cubeWithImagesNamed: [imageName]) {
             let options: [MTKTextureLoader.Option: Any] =
@@ -86,11 +72,11 @@ public enum TextureUtils {
         return texture
     }
     
-    static func loadTextureArray(textureNames: [String]) -> MTLTexture? {
+    public static func loadTextureArray(urls: [URL]) -> MTLTexture? {
         var textures: [MTLTexture] = []
-        for textureName in textureNames {
+        for url in urls {
             do {
-                if let texture = try self.loadTexture(imageName: textureName) {
+                if let texture = try self.loadTexture(url: url) {
                     textures.append(texture)
                 }
             }
@@ -122,16 +108,17 @@ public enum TextureUtils {
         return arrayTexture
     }
     
-    static func buildTexture(size: CGSize,
-                             label: String,
-                             pixelFormat: MTLPixelFormat,
-                             usage: MTLTextureUsage) -> MTLTexture {
+    public static func buildTexture(size: Int2,
+                                    label: String,
+                                    pixelFormat: MTLPixelFormat = .rgba8Unorm,
+                                    usage: MTLTextureUsage = [.shaderRead],
+                                    storage: MTLStorageMode = .managed) -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat,
-                                                                  width: Int(size.width),
-                                                                  height: Int(size.height),
+                                                                  width: size.width,
+                                                                  height: size.height,
                                                                   mipmapped: false)
         descriptor.sampleCount = 1
-        descriptor.storageMode = .private
+        descriptor.storageMode = storage
         descriptor.textureType = .type2D
         descriptor.usage = usage
         guard let texture = MetalContext.device.makeTexture(descriptor: descriptor) else {

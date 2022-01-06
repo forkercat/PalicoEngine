@@ -9,8 +9,8 @@ import Cocoa
 
 class CocoaWindow: Window {
     var title: String { nsWindow.title }
-    var width: UInt32 { UInt32(nsWindow.contentView?.bounds.width ?? 0) }
-    var height: UInt32 { UInt32(nsWindow.contentView?.bounds.height ?? 0) }
+    var width: Int { Int(nsWindow.contentView?.bounds.width ?? 0) }
+    var height: Int { Int(nsWindow.contentView?.bounds.height ?? 0) }
     var isMinimized: Bool { nsWindow.isMiniaturized }
     
     weak var windowDelegate: WindowDelegate? = nil

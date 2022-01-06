@@ -6,6 +6,17 @@
 //
 
 import Metal
+import MathLib
+
+enum RenderConfig {
+    enum PixelFormat {
+        static let color: MTLPixelFormat = .rgba8Unorm
+        static let depth: MTLPixelFormat = .depth32Float
+        static let depthStencil: MTLPixelFormat = .depth32Float_stencil8
+        static let normal: MTLPixelFormat = .rgba16Float
+        static let position: MTLPixelFormat = .rgba16Float
+    }
+}
 
 public class Renderer {
     private(set) static var commandQueue: MTLCommandQueue? = nil
@@ -18,7 +29,11 @@ public class Renderer {
         return commandBuffer
     }
     
-    private init() { }
+    public static let dpi: Int = Int(MetalContext.dpi)
+    
+    private init() {
+        
+    }
     
     public static func initialize() {
         // Command Queue
@@ -41,9 +56,8 @@ public class Renderer {
         depthStencilState = Self.buildDepthStencilState()
         
         // RenderPass & PipelineState
-        RenderPassPool.shared.updateAllTextureSizes(size: MetalContext.view.bounds.size)
+        _ = RenderPassPool.shared
         _ = PipelineStatePool.shared
-        // TODO: Update texture size
     }
     
     // Create command buffer
@@ -54,25 +68,29 @@ public class Renderer {
         }
         commandBuffer = buffer
     }
-    
+        
     // Create command encoder
     public static func beginRenderPass(type: RenderPassType,
                                        begin beginAction: RenderPassBeginAction = .clear,
                                        end endAction: RenderPassEndAction = .store) {
         // Get render pass
-        let renderPass: RenderPass = RenderPassPool.shared.fetchRenderPass(type: type)
+        let renderPass = RenderPassPool.shared.fetchRenderPass(type: type)
+        guard let renderPassDescriptor = renderPass.descriptor else {
+            Log.error("Cannot get render pass descriptor. Skipping rendering!")
+            return
+        }
         
         // TODO: REMOVE TESTING
-//        renderPass.descriptor = MetalContext.view.currentRenderPassDescriptor!
+        // renderPass.descriptor = MetalContext.view.currentRenderPassDescriptor!
         
         // Action Configurations
-        renderPass.descriptor.colorAttachments[0].loadAction = convertMTLLoadAction(beginAction)
-        renderPass.descriptor.depthAttachment.loadAction = convertMTLLoadAction(beginAction)
-        renderPass.descriptor.colorAttachments[0].storeAction = convertMTLStoreAction(endAction)
-        renderPass.descriptor.depthAttachment.storeAction = convertMTLStoreAction(endAction)
+        renderPassDescriptor.colorAttachments[0].loadAction = convertMTLLoadAction(beginAction)
+        renderPassDescriptor.depthAttachment.loadAction = convertMTLLoadAction(beginAction)
+        renderPassDescriptor.colorAttachments[0].storeAction = convertMTLStoreAction(endAction)
+        renderPassDescriptor.depthAttachment.storeAction = convertMTLStoreAction(endAction)
         
         // Get command encoder
-        guard let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPass.descriptor) else {
+        guard let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
             fatalError("Cannot create render pass (MTLRenderEncoder) as command buffer is not created!")
         }
         
@@ -87,7 +105,6 @@ public class Renderer {
         // Set as current encoder (used in render step)
         renderCommandEncoder = encoder
     }
-    
     
     public static func render(gameObject: GameObject) {
         guard let encoder = renderCommandEncoder else {
@@ -115,6 +132,15 @@ public class Renderer {
         }
         commandBuffer?.present(drawable)
         commandBuffer?.commit()
+    }
+    
+    public static func getRenderPass(type: RenderPassType = .colorPass) -> RenderPass {
+        return RenderPassPool.shared.fetchRenderPass(type: type)
+    }
+    
+    public static func resizeRenderPass(type: RenderPassType = .colorPass, size: Int2) {
+        let renderPass = RenderPassPool.shared.fetchRenderPass(type: type)
+        renderPass.resizeTextures(size: size)
     }
     
     // Depth Stencil

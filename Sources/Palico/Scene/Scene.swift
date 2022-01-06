@@ -6,8 +6,8 @@
 //
 
 class Scene {
-    var viewportWidth: UInt32 = 0
-    var viewportHeight: UInt32 = 0
+    var viewportWidth: Int = 0
+    var viewportHeight: Int = 0
     
     var gameObjects: [GameObject] = []
     
@@ -19,7 +19,7 @@ class Scene {
         
     }
     
-    func onViewportResize(width: UInt32, height: UInt32) {
+    func onViewportResize(width: Int, height: Int) {
         
     }
 }

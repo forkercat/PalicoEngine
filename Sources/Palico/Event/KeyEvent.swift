@@ -18,9 +18,9 @@ public class KeyPressedEvent: KeyEvent {
     public var handled: Bool = false
     
     public let key: Key
-    public let repeatCount: UInt32
+    public let repeatCount: UInt
     
-    public init(keyCode: KeyCode, repeat repeatCount: UInt32) {
+    public init(keyCode: KeyCode, repeat repeatCount: UInt) {
         key = Key(rawValue: keyCode) ?? .unknown
         self.repeatCount = repeatCount
     }

@@ -7,10 +7,10 @@
 
 struct WindowDescriptor {
     var title: String
-    var width: UInt32
-    var height: UInt32
+    var width: Int
+    var height: Int
     
-    init(title: String = "Palico Engine", width: UInt32 = 1280, height: UInt32 = 720) {
+    init(title: String = "Palico Engine", width: Int, height: Int) {
         self.title = title
         self.width = width
         self.height = height
@@ -20,8 +20,8 @@ struct WindowDescriptor {
 /* Conformed by Cocoa, GLFW, etc */
 protocol Window {
     var title: String { get }
-    var width: UInt32 { get }
-    var height: UInt32 { get }
+    var width: Int { get }
+    var height: Int { get }
     var isMinimized: Bool { get }
     
     var windowDelegate: WindowDelegate? { get set }
