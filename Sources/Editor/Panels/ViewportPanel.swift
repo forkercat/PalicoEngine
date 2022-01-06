@@ -10,7 +10,7 @@ import ImGui
 import MathLib
 
 class ViewportPanel: Panel {
-    var panelName: String { "Viewport" }
+    var panelName: String { "Editor Camera" }
     
     var viewportSize: Int2 = Int2(0, 0)
     
