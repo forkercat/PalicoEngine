@@ -48,6 +48,30 @@ class ViewController: NSViewController {
         mouseEventCallback?(event)
     }
     
+    override func rightMouseDown(with event: NSEvent) {
+        mouseEventCallback?(event)
+    }
+    
+    override func rightMouseUp(with event: NSEvent) {
+        mouseEventCallback?(event)
+    }
+    
+    override func rightMouseDragged(with event: NSEvent) {
+        mouseEventCallback?(event)
+    }
+    
+    override func otherMouseDown(with event: NSEvent) {
+        mouseEventCallback?(event)
+    }
+    
+    override func otherMouseUp(with event: NSEvent) {
+        mouseEventCallback?(event)
+    }
+    
+    override func otherMouseDragged(with event: NSEvent) {
+        mouseEventCallback?(event)
+    }
+    
     override func scrollWheel(with event: NSEvent) {
         mouseEventCallback?(event)
     }
