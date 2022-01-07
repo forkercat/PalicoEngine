@@ -55,7 +55,20 @@ public struct ShaderLibrary {
         let nameSet = Set(names)
         
         var shaderSource: String = ""
+        
+        // Common (compile this first!)
+        if let commonHeader = get(name: "Common") {
+            shaderSource.append(contentsOf: "\(commonHeader.source ?? "")\n")
+        } else {
+            Log.warn("Cannot compile common header. Skipping compilation!")
+        }
+        
+        // Compile other files
         for name in nameSet {
+            guard name != "Common" else {
+                continue  // skip Common.metal
+            }
+            
             guard let shader = get(name: name) else {
                 let message = "Unknown shader name: \(name)"
                 assertionFailure(message)
