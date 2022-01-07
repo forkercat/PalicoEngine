@@ -23,7 +23,7 @@ public class WindowViewResizeEvent: AppEvent {
         self.size = size
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=WindowViewResize, size=(\(size.width) x \(size.height)), handled=\(handled)"
     }
 }
@@ -38,7 +38,7 @@ public class WindowCloseEvent: AppEvent {
     
     public init() { }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=WindowClose, handled=\(handled)"
     }
 }

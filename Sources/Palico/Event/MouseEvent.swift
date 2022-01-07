@@ -23,7 +23,7 @@ public class MouseMovedEvent: MouseEvent {
         self.ypos = ypos
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=MouseMoved, position=(\(xpos), \(ypos)), handled=\(handled)"
     }
 }
@@ -44,7 +44,7 @@ public class MouseScrolledEvent: MouseEvent {
         self.yoffset = yoffset
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=MouseScrolled, offset=(\(xoffset), \(yoffset)), handled=\(handled)"
     }
 }
@@ -67,7 +67,7 @@ public class MouseButtonPressedEvent: MouseButtonEvent {
         self.button = Mouse(rawValue: mouseCode) ?? .unknown
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=MouseButtonPressed, button=\(button), handled=\(handled)"
     }
 }
@@ -86,7 +86,7 @@ public class MouseButtonReleasedEvent: MouseButtonEvent {
         self.button = Mouse(rawValue: mouseCode) ?? .unknown
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=MouseButtonReleased, button=\(button), handled=\(handled)"
     }
 }

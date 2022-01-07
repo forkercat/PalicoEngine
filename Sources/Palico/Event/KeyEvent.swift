@@ -25,7 +25,7 @@ public class KeyPressedEvent: KeyEvent {
         self.repeatCount = repeatCount
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=KeyPressed, key=\(key), repeat=\(repeatCount), handled=\(handled)"
     }
 }
@@ -44,7 +44,7 @@ public class KeyReleasedEvent: KeyEvent {
         key = Key(rawValue: keyCode) ?? .unknown
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=KeyReleased, key=\(key), handled=\(handled)"
     }
 }
@@ -63,7 +63,7 @@ public class CharTypedEvent: Event {
         self.char = char
     }
     
-    public var toString: String {
+    public var description: String {
         "[Event] type=KeyTyped, char=\(char)), handled=\(handled)"
     }
 }

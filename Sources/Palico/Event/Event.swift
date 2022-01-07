@@ -34,12 +34,11 @@ public struct EventCategory: OptionSet {
 }
 
 // Event
-public protocol Event {
+public protocol Event: CustomStringConvertible {
     static var staticEventType: EventType { get }
     var eventType: EventType { get }
     var categoryFlags: EventCategory { get }
     var handled: Bool { get set }
-    var toString: String { get }
 }
 
 public typealias EventCallback<T> = (T) -> Bool where T: Event
