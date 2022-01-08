@@ -12,10 +12,10 @@ import MathLib
 class ViewportPanel: Panel {
     var panelName: String { "Editor Camera" }
     
-    var viewportSize: Int2 = Int2(0, 0)
+    var viewportSize: Int2 = [0, 0]
     
-    var viewportBoundsMin: Float2 = Float2(0, 0)
-    var viewportBoundsMax: Float2 = Float2(0, 0)
+    var viewportBoundsMin: Float2 = [0, 0]
+    var viewportBoundsMax: Float2 = [0, 0]
     
     var isFocused: Bool = false
     var isHovered: Bool = false
@@ -101,15 +101,15 @@ extension ViewportPanel{
         ImGuiGetWindowContentRegionMax(&viewportMaxRegion)
         ImGuiGetWindowPos(&viewportOffset)
         
-        viewportBoundsMin = Float2(x: viewportMinRegion.x + viewportOffset.x,
-                                   y: viewportMinRegion.y + viewportOffset.y)
-        viewportBoundsMax = Float2(x: viewportMaxRegion.x + viewportOffset.x,
-                                   y: viewportMaxRegion.y + viewportOffset.y)
+        viewportBoundsMin = [viewportMinRegion.x + viewportOffset.x,
+                             viewportMinRegion.y + viewportOffset.y]
+        viewportBoundsMax = [viewportMaxRegion.x + viewportOffset.x,
+                             viewportMaxRegion.y + viewportOffset.y]
         
         var viewportPanelSize: ImVec2 = ImVec2(0, 0)
         ImGuiGetContentRegionAvail(&viewportPanelSize)
         
-        viewportSize = Int2(Int(viewportPanelSize.x), Int(viewportPanelSize.y))
+        viewportSize = [Int(viewportPanelSize.x), Int(viewportPanelSize.y)]
     }
     
     private func updateViewportTexture() {

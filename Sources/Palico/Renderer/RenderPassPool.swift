@@ -21,7 +21,7 @@ class RenderPassPool {
     private let shadowPass: RenderPass
     private let geometryPass: RenderPass
     
-    private init(size: Int2 = Int2(1, 1)) {
+    private init(size: Int2 = [1, 1]) {
         colorPass = RenderPass(name: "ColorPass", size: size, targets: [.color, .depth])
         shadowPass = RenderPass(name: "ShadowPass", size: size, targets: [.depth])
         geometryPass = RenderPass(name: "GeometryPass", size: size, targets: [.normal, .position])

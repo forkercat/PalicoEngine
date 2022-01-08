@@ -27,7 +27,7 @@ public class RenderPass {
     public var normalTexture: MTLTexture? = nil
     public var positionTexture: MTLTexture? = nil
     
-    public private(set) var size: Int2 = Int2(1, 1)
+    public private(set) var size: Int2 = [1, 1]
     
     public let name: String
     

@@ -48,23 +48,22 @@ public class EditorCamera: Camera {
         let yFactor = 0.0366 * y * y - 0.1778 + 0.3021
         
         let scale: Float = 0.4  // change speed
-        
         return Float2(xFactor, yFactor) * scale
     }}
     
     // Private
-    private var focusPoint: Float3       = Float3(0, 0, 0)
-    private var position: Float3         = Float3(0, 0, 0)
+    private var focusPoint: Float3       = [0, 0, 0]
+    private var position: Float3         = [0, 0, 0]
     private var distance: Float          = 10.0
-    private var pitchAtFocus: Float  = 0.0
-    private var yawAtFocus: Float    = 0.0
-    private var viewportSize: Int2       = Int2(1280, 720)
+    private var pitchAtFocus: Float      = 0.0
+    private var yawAtFocus: Float        = 0.0
+    private var viewportSize: Int2       = [1280, 720]
     
     // Output
     public private(set) var viewMatrix: Float4x4       = .identity
     public private(set) var projectionMatrix: Float4x4 = .identity
     
-    private var initialMousePosition: Float2 = Float2(0, 0)
+    private var initialMousePosition: Float2 = [0, 0]
     
     public init() {
         updateProjection()

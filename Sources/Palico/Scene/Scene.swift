@@ -10,7 +10,7 @@ import MathLib
 public class Scene {
     public private(set) var gameObjects: [GameObject] = []
     
-    private var viewportSize: Int2 = Int2(0, 0)
+    private var viewportSize: Int2 = [0, 0]
     
     let cube = Cube(name: "Cube", position: [0, 0, 0])
     let sphere = Sphere(name: "Sphere",
