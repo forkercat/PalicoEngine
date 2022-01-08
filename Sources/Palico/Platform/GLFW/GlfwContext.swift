@@ -17,7 +17,7 @@ class GlfwContext: PlatformContextDelegate {
     
     var isAppRunning: Bool { isRunning }
     var isAppActive: Bool { isActive }
-    var currentTime: Timestep { glfwGetTime() }
+    var currentTime: Double { glfwGetTime() }
     
     private var isRunning: Bool = false
     private var isActive: Bool = false

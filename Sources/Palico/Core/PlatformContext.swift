@@ -8,7 +8,7 @@
 protocol PlatformContextDelegate {
     var isAppRunning: Bool { get }
     var isAppActive:  Bool { get }
-    var currentTime:  Timestep { get }
+    var currentTime:  Double { get }
     
     func initialize()
     func activate()
@@ -18,7 +18,7 @@ protocol PlatformContextDelegate {
 public struct PlatformContext {
     private static let contextDelegate = CocoaContext()
     
-    public static var currentTime: Timestep { get {
+    public static var currentTime: Double { get {
         return Self.contextDelegate.currentTime
     }}
     

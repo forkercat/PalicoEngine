@@ -23,8 +23,10 @@ class ImGuiLayer: Layer {
         _ = ImGuiCreateContext(nil)
         
         let io = ImGuiGetIO()!
+        /*
         io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_NavEnableKeyboard)
         io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_NavEnableGamepad)
+         */
         io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_DockingEnable)
         io.pointee.ConfigFlags |= Im(ImGuiConfigFlags_ViewportsEnable)
         

@@ -34,7 +34,7 @@ class ImGuiBackendMetalGraphics: ImGuiBackendGraphicsDelegate {
         let dpi: Float = MetalContext.dpi
         io.pointee.DisplayFramebufferScale = ImVec2(dpi, dpi)
         io.pointee.DisplaySize = ImVec2(Float(mtkView.bounds.width), Float(mtkView.bounds.height))
-        io.pointee.DeltaTime = 1.0 / Float(mtkView.preferredFramesPerSecond)
+        io.pointee.DeltaTime = Time.deltaTime
 
         // Keeping results from other render passes that run first
         /*

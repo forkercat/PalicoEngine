@@ -79,6 +79,7 @@ class ViewController: NSViewController {
 
 extension ViewController: MTKViewDelegate {
     func draw(in view: MTKView) {
+        Time.update()  // only used here to update deltaTime
         viewDrawCallback?()
     }
     

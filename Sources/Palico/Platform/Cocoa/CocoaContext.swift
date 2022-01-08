@@ -19,7 +19,7 @@ class CocoaContext: PlatformContextDelegate {
     
     var isAppRunning: Bool { NSApp.isRunning }
     var isAppActive: Bool { NSApp.isActive }
-    var currentTime: Timestep { NSDate().timeIntervalSince1970 }
+    var currentTime: Double { CFAbsoluteTimeGetCurrent() }
     
     func initialize() {
         _ = NSApplication.shared

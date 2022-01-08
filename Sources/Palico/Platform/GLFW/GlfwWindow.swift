@@ -36,7 +36,7 @@ class GlfwWindow: Window {
         set { data.windowDelegate = newValue }
     }
     
-    private var lastFrameTime: Timestep = Time.currentTime
+    private var lastFrameTime: Double = Time.currentTime
     
     private let nativeWindow: OpaquePointer!
     private let nsWindow: NSWindow

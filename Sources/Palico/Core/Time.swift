@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias Timestep = TimeInterval
+public typealias Timestep = Float
 
 extension Timestep {
     public var toMilliSeconds: Timestep {
@@ -16,7 +16,23 @@ extension Timestep {
 }
 
 public enum Time {
-    public static var currentTime: Timestep {
-        get { PlatformContext.currentTime }
+    public private(set) static var lastFrameTime: Double = currentTime
+    
+    public static var currentTime: Double { get {
+        PlatformContext.currentTime
+        
+    }}
+    
+    public static var deltaTime: Timestep { get {
+        _deltaTime
+    }}
+    
+    private static var _deltaTime: Timestep = 0.0
+    
+    // Used only internally - cannot be called by client (eg. Editor)
+    internal static func update() {
+        let time: Double = currentTime
+        _deltaTime = Timestep(time - lastFrameTime)
+        lastFrameTime = time
     }
 }

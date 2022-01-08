@@ -151,3 +151,10 @@ public class Renderer {
         return MetalContext.device.makeDepthStencilState(descriptor: descriptor)!
     }
 }
+
+// MARK: - Other
+extension Renderer {
+    public static func setPreferredFPS(_ fps: Int) {
+        MetalContext.setPreferredFps(fps)
+    }
+}

@@ -15,14 +15,6 @@ open class Application {
 
     private(set) var window: Window
     
-    private var lastFrameTime: Timestep = Time.currentTime
-    private var deltaTime: Timestep { get {
-        let currentTime = Time.currentTime
-        let deltaTime = currentTime - lastFrameTime
-        lastFrameTime = currentTime
-        return deltaTime
-    }}
-
     public init(name: String = "Palico Engine", arguments: [String] = [], size: Int2) {
         Log.registerLogger(name: "Palico", level: .trace)
         Log.info("Arguments[1:]: \(arguments.dropFirst())")
@@ -44,6 +36,7 @@ open class Application {
 
         // Renderer
         Renderer.initialize()
+        Renderer.setPreferredFPS(60)
 
         // ImGui
         pushOverlay(imGuiLayer)
@@ -86,21 +79,22 @@ extension Application {
             return
         }
         
-        // Log.debug("FPS: \(Int(1.0 / deltaTime))")
+        // Log.debug("FPS:       \(1.0 / Time.deltaTime)")
+        // Log.debug("DeltaTime: \(Time.deltaTime)")
         
         Renderer.begin()  // begin
         
         // - 1. Layer Update
         for layer in layerStack.layers {
-            layer.onUpdate(deltaTime: deltaTime)
+            layer.onUpdate(deltaTime: Time.deltaTime)
         }
         
         // - 2. Layer ImGuiRender
-        imGuiLayer.begin()
-        for layer in layerStack.layers {
-            layer.onImGuiRender()
-        }
-        imGuiLayer.end()
+//        imGuiLayer.begin()
+//        for layer in layerStack.layers {
+//            layer.onImGuiRender()
+//        }
+//        imGuiLayer.end()
         
         Renderer.end()  // end
     }

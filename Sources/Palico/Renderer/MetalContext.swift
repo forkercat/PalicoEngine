@@ -43,4 +43,8 @@ class MetalContext {
     static func updateMTKView(_ mtkView: MTKView) {
         Self.view = mtkView
     }
+    
+    static func setPreferredFps(_ fps: Int) {
+        Self.view?.preferredFramesPerSecond = fps
+    }
 }
