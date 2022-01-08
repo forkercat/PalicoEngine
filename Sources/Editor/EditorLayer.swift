@@ -26,7 +26,7 @@ class EditorLayer: Layer {
     let viewportPanel: ViewportPanel = ViewportPanel()
     let inspectorPanel: InspectorPanel = InspectorPanel()
     let consolePanel: ConsolePanel = ConsolePanel()
-    let imguiDemoPanel: ImGuiDemoPanel = ImGuiDemoPanel()
+    let imGuiDemoPanel: ImGuiDemoPanel = ImGuiDemoPanel()
     
     // Scene
     var scene: Scene? = nil
@@ -151,7 +151,7 @@ class EditorLayer: Layer {
         }
         
         // ImGui Demo
-        imguiDemoPanel.onImGuiRender()
+        imGuiDemoPanel.onImGuiRender()
         
         // Hierarchy Panel
         hierarchyPanel.onImGuiRender()

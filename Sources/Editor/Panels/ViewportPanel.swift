@@ -51,20 +51,17 @@ class ViewportPanel: Panel {
         }
         
         let currentRenderPassSize: Int2 = Renderer.getRenderPass(type: currentRenderPassType).size
+        let textureWidth: Int = viewportSize.width * Renderer.dpi
+        let textureHeight: Int = viewportSize.height * Renderer.dpi
         
-        if currentRenderPassSize.width != viewportSize.width || currentRenderPassSize.height != viewportSize.height {
+        if currentRenderPassSize.width != textureWidth || currentRenderPassSize.height != textureHeight {
             // Resize
-            resizeRenderPassAndCameras()
+            Renderer.resizeRenderPass(type: currentRenderPassType, size: [textureWidth, textureHeight])
+            editorCamera.setViewportSize(viewportSize)
             return true
         }
         
         return false
-    }
-    
-    private func resizeRenderPassAndCameras() {
-        // Log.debug("Resizing viewport: \(viewportSize)")
-        Renderer.resizeRenderPass(type: currentRenderPassType, size: Int2(viewportSize.width, viewportSize.height))
-        editorCamera.setViewportSize(viewportSize)
     }
 }
 
