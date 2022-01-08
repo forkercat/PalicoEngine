@@ -8,13 +8,6 @@
 import Palico
 import ImGui
 
-// testing
-var show_demo_window: Bool = true
-var show_another_window: Bool = false
-var clear_color: SIMD3<Float> = .init(x: 0.28, y: 0.36, z: 0.5)
-var f: Float = 0.0
-var counter: Int = 0
-
 fileprivate var dockspaceOpen: Bool = true
 fileprivate var optFullscreenPersistent: Bool = true
 fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Im(ImGuiDockNodeFlags_None)

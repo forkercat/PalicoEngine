@@ -10,19 +10,22 @@ import Foundation
 public class Console {
     public struct Message {
         public enum Level: Int {
-            case debug
-            case info
-            case warn
-            case error
+            case debug = 0
+            case info  = 1
+            case warn  = 2
+            case error = 3
             
             public var str: String {
                 switch self {
-                case .debug:  return "DEBUG"
-                case .info:   return "INFO"
-                case .warn:   return "WARN"
-                case .error:  return "ERROR"
+                case .debug:  return Self.levelStrings[0]
+                case .info:   return Self.levelStrings[1]
+                case .warn:   return Self.levelStrings[2]
+                case .error:  return Self.levelStrings[3]
                 }
             }
+            
+            public static let levelStrings: [String] = ["DEBUG", "INFO", "WARN", "ERROR"]
+            public static var numLevels: Int = levelStrings.count
         }
         
         public var timestamp: String = "00:00:00.000"
@@ -30,11 +33,11 @@ public class Console {
         public var content: String = ""
         
         public var str: String { get {
-            "[\(timestamp)] \(level.str): \(content)"
+            "[\(timestamp)] \(level.str) - \(content)"
         }}
     }
     
-    private static let maxMessageCount: Int = 10
+    private static let maxMessageCount: Int = 30
     private static var messages: [Message?] = [Message?](repeating: nil, count: maxMessageCount)
     private static var start: Int = 0
     private static var end: Int = 0

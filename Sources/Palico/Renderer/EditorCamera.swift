@@ -66,7 +66,7 @@ public class EditorCamera: Camera {
     public private(set) var viewMatrix: Float4x4       = .identity
     public private(set) var projectionMatrix: Float4x4 = .identity
     
-    private var initialMousePosition: Float2 = [0, 0]
+    private var initialMousePosition: Float2 = [-1, -1]
     
     public init() {
         updateProjection()
@@ -127,6 +127,12 @@ extension EditorCamera {
 extension EditorCamera {
     public func onUpdate(deltaTime ts: Timestep) {
         let mouse: Float2 = Input.mousePos
+        
+        guard initialMousePosition.x != -1 else {
+            initialMousePosition = mouse
+            return
+        }
+        
         let delta: Float2 = (mouse - initialMousePosition) * ts
         initialMousePosition = mouse
         

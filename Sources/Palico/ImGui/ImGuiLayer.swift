@@ -12,11 +12,13 @@ class ImGuiLayer: Layer {
     var tryToBlockEvents: Bool = true
     
     override init() {
-        super.init(name: "ImGuiLayer")
+        super.init(name: "ImGui Layer")
     }
     
     override func onAttach() {
         ImGuiBackend.initialize()
+        
+        Console.debug("ImGui Version: \(ImGuiGetVersion() ?? "unknown")")
         
         // ImGui Context
         IMGUI_CHECKVERSION()

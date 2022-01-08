@@ -48,7 +48,7 @@ class ViewportPanel: Panel {
     
     func checkIfViewportNeedsResize() -> Bool {
         guard viewportSize.width > 0 && viewportSize.height > 0 else {
-            // Log.warn("Viewport size has zero width or height. Skipping resize!")
+            Console.warn("Viewport size has zero width or height. Skipping resize!")
             return false
         }
         

@@ -37,6 +37,9 @@ open class Application {
         defer {
             window.windowDelegate = self
         }
+        Console.info("Aruguments: \(arguments.dropFirst())")
+        Console.info("Platform: \(info)")
+        Console.info("Window: [\(size.width) x \(size.height)]")
 
         // Renderer
         Renderer.initialize()
@@ -58,11 +61,13 @@ open class Application {
     public func pushLayer(_ layer: Layer) {
         layerStack.pushLayer(layer)
         layer.onAttach()
+        Console.debug("LayerStack: add layer [\(layer.debugName)]")
     }
 
     public func pushOverlay(_ overlay: Layer) {
         layerStack.pushOverlay(overlay)
         overlay.onAttach()
+        Console.debug("LayerStack: add overlay [\(overlay.debugName)]")
     }
     
     public func popLayer(_ layer: Layer) {

@@ -27,9 +27,6 @@ class MetalContext {
         }
         Self.device = device
         Self.commandQueue = queue
-    
-        // Info
-        Log.info("Metal Info: \(device.name)")
     }
     
     func deinitialize() {
