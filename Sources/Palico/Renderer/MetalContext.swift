@@ -14,6 +14,8 @@ class MetalContext {
     
     private(set) static var view: MTKView! = nil
     
+    static var apiName: String { get { "Metal" }}
+    static var deviceName: String { get { device?.name ?? "Unknown" } }
     static var dpi: Float { Float(Self.view?.window?.screen?.backingScaleFactor ?? 1.0) }
     
     static func initialize() {

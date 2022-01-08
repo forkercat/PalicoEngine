@@ -30,7 +30,9 @@ class ViewportPanel: Panel {
     }
     
     func onUpdate(deltaTime ts: Timestep) {
-        editorCamera.onUpdate(deltaTime: ts)
+        if isHovered {
+            editorCamera.onUpdate(deltaTime: ts)
+        }
     }
     
     func onEvent(event: Event) {

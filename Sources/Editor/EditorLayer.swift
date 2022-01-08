@@ -147,6 +147,16 @@ class EditorLayer: Layer {
                 ImGuiEnd()
             }
             
+            if ImGuiBeginMenu("Edit", true) {
+                if ImGuiMenuItem("Undo", "CMD+Z", false, true) { }
+                if ImGuiMenuItem("Redo", "CMD+Y", false, false) { } // disabled item
+                ImGuiSeparator()
+                if ImGuiMenuItem("Cut", "CMD+X", false, true) { }
+                if ImGuiMenuItem("Copy", "CMD+C", false, true) { }
+                if ImGuiMenuItem("Paste", "CMD+V", false, true) {}
+                ImGuiEndMenu()
+            }
+            
             ImGuiEndMenuBar()
         }
         

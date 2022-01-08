@@ -15,6 +15,9 @@ fileprivate struct GLFWInt32 {
 class GlfwContext: PlatformContextDelegate {
     init() { }
     
+    var osName: String { "macOS" }
+    var osVersion: String { "" }
+    var platformName: String { "GLFW" }
     var isAppRunning: Bool { isRunning }
     var isAppActive: Bool { isActive }
     var currentTime: Double { glfwGetTime() }

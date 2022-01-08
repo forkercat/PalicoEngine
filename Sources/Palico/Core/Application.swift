@@ -27,8 +27,12 @@ open class Application {
         PlatformContext.initialize()  // application
         MetalContext.initialize()  // graphics
         
+        // Console
+        Console.initialize()
+        
         // Window
-        let windowDescriptor = WindowDescriptor(title: name, width: size.width, height: size.height)
+        let info = "\(PlatformContext.osName) & \(PlatformContext.platformName) [\(MetalContext.apiName) on \(MetalContext.deviceName)]"
+        let windowDescriptor = WindowDescriptor(title: "\(name) - \(info)", width: size.width, height: size.height)
         window = CocoaWindow(descriptor: windowDescriptor)
         defer {
             window.windowDelegate = self

@@ -17,6 +17,8 @@ class CocoaContext: PlatformContextDelegate {
     
     init() { }
     
+    var osName: String { "macOS" }
+    var platformName: String { "Cocoa" }
     var isAppRunning: Bool { NSApp.isRunning }
     var isAppActive: Bool { NSApp.isActive }
     var currentTime: Double { CFAbsoluteTimeGetCurrent() }

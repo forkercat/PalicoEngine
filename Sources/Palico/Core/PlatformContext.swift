@@ -6,6 +6,8 @@
 //
 
 protocol PlatformContextDelegate {
+    var osName: String { get }
+    var platformName: String { get }
     var isAppRunning: Bool { get }
     var isAppActive:  Bool { get }
     var currentTime:  Double { get }
@@ -17,6 +19,14 @@ protocol PlatformContextDelegate {
 
 public struct PlatformContext {
     private static let contextDelegate = CocoaContext()
+    
+    public static var osName: String { get {
+        return Self.contextDelegate.osName
+    }}
+    
+    public static var platformName: String { get {
+        return Self.contextDelegate.platformName
+    }}
     
     public static var currentTime: Double { get {
         return Self.contextDelegate.currentTime
