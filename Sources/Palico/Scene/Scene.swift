@@ -9,6 +9,7 @@ import MathLib
 
 public class Scene {
     public private(set) var gameObjects: [GameObject] = []
+    public var bgColor: Color = .black
     
     private var viewportSize: Int2 = [0, 0]
     
@@ -19,14 +20,15 @@ public class Scene {
                         scale: [0.5, 0.5, 0.5])
     
     public init() {
-        
+        bgColor = Color(r: 0.1, g: 0.1, b: 0.1, a: 1.0)
     }
 }
 
 // Update
 extension Scene {
     public func onUpdateEditor(deltaTime ts: Timestep, editorCamera: EditorCamera) {
-        Renderer.beginRenderPass(type: .colorPass, begin: .clear)
+        Renderer.beginRenderPass(type: .colorPass, begin: .clear,
+                                 clearColor: bgColor)
         
         // Setup
         Renderer.preRenderSetup(scene: self, camera: editorCamera)

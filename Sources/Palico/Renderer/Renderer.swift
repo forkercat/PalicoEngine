@@ -82,7 +82,9 @@ extension Renderer {
     // Create command encoder
     public static func beginRenderPass(type: RenderPassType,
                                        begin beginAction: RenderPassBeginAction = .clear,
-                                       end endAction: RenderPassEndAction = .store) {
+                                       end endAction: RenderPassEndAction = .store,
+                                       clearColor: Color = Color(0, 0, 0, 1),
+                                       clearDepth: Float = 1.0) {
         // Get render pass
         let renderPass = RenderPassPool.shared.fetchRenderPass(type: type)
         guard let renderPassDescriptor = renderPass.descriptor else {
@@ -102,6 +104,11 @@ extension Renderer {
         renderPassDescriptor.depthAttachment.loadAction = convertMTLLoadAction(beginAction)
         renderPassDescriptor.colorAttachments[0].storeAction = convertMTLStoreAction(endAction)
         renderPassDescriptor.depthAttachment.storeAction = convertMTLStoreAction(endAction)
+        
+        let clearColor = MTLClearColor(red: Double(clearColor.r), green: Double(clearColor.g),
+                                       blue: Double(clearColor.b), alpha: Double(clearColor.a))
+        renderPassDescriptor.colorAttachments[0].clearColor = clearColor
+        renderPassDescriptor.depthAttachment.clearDepth = Double(clearDepth)
         
         // Get command encoder
         guard let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
