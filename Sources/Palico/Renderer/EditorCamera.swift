@@ -33,6 +33,9 @@ public class EditorCamera: Camera {
     private var rotationSpeed: Float { get {
         0.2
     }}
+    private var lookAroundSpeed: Float { get {
+        0.1
+    }}
     private var zoomSpeed: Float { get {
         let dist = max(distance * 0.2, 0)
         let speed = min(dist * dist, 20)  // max speed is 20
@@ -85,8 +88,7 @@ public class EditorCamera: Camera {
 extension EditorCamera {
     private func updateView() {
         /* Lock camera's orientation
-         yaw = 0
-         pitch = 0
+         yaw = 0, pitch = 0
          */
         position = focusPoint - forwardDirection * distance
         
@@ -131,11 +133,15 @@ extension EditorCamera {
         if Input.isPressed(key: .option) || Input.isPressed(key: .command) {
             if Input.isPressed(mouse: .left) {
                 rotateAroundFocusPoint(delta: delta)
-            } else if Input.isPressed(mouse: .right) {
-                zoom(delta: delta.y)
             }
-        } else if Input.isPressed(mouse: .middle) {
+        }
+        
+        if Input.isPressed(mouse: .middle) {
             pan(delta: delta)
+        }
+        
+        if Input.isPressed(mouse: .right) {
+            lookAround(delta: delta)
         }
         
         updateView()
@@ -172,5 +178,11 @@ extension EditorCamera {
             focusPoint += forwardDirection
             distance = 1.0
         }
+    }
+    
+    private func lookAround(delta: Float2) {
+        pitchAtFocus += delta.y * lookAroundSpeed
+        yawAtFocus += delta.x * lookAroundSpeed
+        focusPoint = position + forwardDirection * distance
     }
 }
