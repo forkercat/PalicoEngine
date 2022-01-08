@@ -20,10 +20,6 @@ fileprivate var optFullscreenPersistent: Bool = true
 fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Im(ImGuiDockNodeFlags_None)
 
 class EditorLayer: Layer {
-    var cube: GameObject = Cube()
-    var sphere: GameObject = Sphere()
-    var plane: GameObject = Plane()
-    
     // Panels
     let hierarchyPanel: HierarchyPanel = HierarchyPanel()
     let statsPanel: StatsPanel = StatsPanel()
@@ -32,16 +28,23 @@ class EditorLayer: Layer {
     let consolePanel: ConsolePanel = ConsolePanel()
     let imguiDemoPanel: ImGuiDemoPanel = ImGuiDemoPanel()
     
+    // Scene
+    var scene: Scene? = nil
+    
     override init() {
         super.init()
     }
     
-    override init(name: String) {
+    override init(name: String = "Editor Layer") {
         super.init(name: name)
     }
     
     override func onAttach() {
+        // EditorCamera
         viewportPanel.onAttach()
+        
+        // Scene
+        scene = Scene()
     }
     
     override func onDetach() {
@@ -50,23 +53,19 @@ class EditorLayer: Layer {
     
     override func onUpdate(deltaTime ts: Timestep) {
         // Resize
-        if viewportPanel.viewportDidResize() {
+        if viewportPanel.checkIfViewportNeedsResize() {
+            // TODO: resize active scene
             
         }
         
-        // Update
-        
+        // onUpdate
+        viewportPanel.onUpdate(deltaTime: ts)
+        hierarchyPanel.onUpdate(deltaTime: ts)
         
         // Update Scene
         
-        // Render Scene
-        Renderer.beginRenderPass(type: .colorPass, begin: .clear)
-        Renderer.render(gameObject: sphere)
-        Renderer.endRenderPass()
-        
-//        Renderer.beginRenderPass(type: .colorPass, begin: .keep)
-//        Renderer.render(gameObject: cube)
-//        Renderer.endRenderPass()
+        // Render Scene        
+        scene?.onUpdateEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
         
         // Event
     }
@@ -151,6 +150,9 @@ class EditorLayer: Layer {
             ImGuiEndMenuBar()
         }
         
+        // ImGui Demo
+        imguiDemoPanel.onImGuiRender()
+        
         // Hierarchy Panel
         hierarchyPanel.onImGuiRender()
         
@@ -163,23 +165,28 @@ class EditorLayer: Layer {
         // Viewport Panel
         viewportPanel.onImGuiRender()
         
-        // ImGui Demo
-        imguiDemoPanel.onImGuiRender()
+        // Console Panel
+        consolePanel.onImGuiRender()
         
         ImGuiEnd()  // Docking
     }
     
     override func onEvent(event: Event) {
+        viewportPanel.onEvent(event: event)  // editor camera
+        
         let dispatcher = EventDispatcher(event: event)
-        _ = dispatcher.dispatch(callback: onKeyPressed)
-        _ = dispatcher.dispatch(callback: onMouseButtonPressed)
+        dispatcher.dispatch(callback: onKeyPressed)
+        dispatcher.dispatch(callback: onMouseButtonPressed)
     }
-    
+}
+
+// Key & Mouse Event Callbacks
+extension EditorLayer {
     private func onKeyPressed(event: KeyPressedEvent) -> Bool {
         return true
     }
     
-    private func onMouseButtonPressed(evet: MouseButtonPressedEvent) -> Bool {
+    private func onMouseButtonPressed(event: MouseButtonPressedEvent) -> Bool {
         return true
     }
 }

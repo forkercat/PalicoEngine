@@ -14,7 +14,10 @@ open class GameObject {
     
     
     
-    init(name: String = "Unnamed GameObject", position: Float3 = [0, 0, 0]) {
+    init(name: String = "Unnamed GameObject",
+         position: Float3 = [0, 0, 0],
+         rotation: Float3 = [0, 0, 0],
+         scale: Float3 = [1, 1, 1]) {
         self.name = name
         
         let transform = TransformComponent()
@@ -58,8 +61,11 @@ public protocol Primitive {
 }
 
 public class Cube: GameObject, Primitive {
-    public override init(name: String = "Cube", position: Float3 = [0, 0, 0]) {
-        super.init(name: name, position: position)
+    public override init(name: String = "Cube",
+                         position: Float3 = [0, 0, 0],
+                         rotation: Float3 = [0, 0, 0],
+                         scale: Float3 = [1, 1, 1]) {
+        super.init(name: name, position: position, rotation: rotation, scale: scale)
         
         let mesh = MeshFactory.getPrimitiveMesh(type: .cube)
         addComponent(MeshRendererComponent(mesh: mesh))
@@ -67,8 +73,11 @@ public class Cube: GameObject, Primitive {
 }
 
 public class Sphere: GameObject, Primitive {
-    public override init(name: String = "Sphere", position: Float3 = [0, 0, 0]) {
-        super.init(name: name, position: position)
+    public override init(name: String = "Sphere",
+                         position: Float3 = [0, 0, 0],
+                         rotation: Float3 = [0, 0, 0],
+                         scale: Float3 = [1, 1, 1]) {
+        super.init(name: name, position: position, rotation: rotation, scale: scale)
         
         let mesh = MeshFactory.getPrimitiveMesh(type: .sphere)
         addComponent(MeshRendererComponent(mesh: mesh))
@@ -85,8 +94,11 @@ public class Sphere: GameObject, Primitive {
 //}
 
 public class Plane: GameObject, Primitive {
-    public override init(name: String = "Plane", position: Float3 = [0, 0, 0]) {
-        super.init(name: name, position: position)
+    public override init(name: String = "Plane",
+                         position: Float3 = [0, 0, 0],
+                         rotation: Float3 = [0, 0, 0],
+                         scale: Float3 = [1, 1, 1]) {
+        super.init(name: name, position: position, rotation: rotation, scale: scale)
         
         let mesh = MeshFactory.getPrimitiveMesh(type: .plane)
         addComponent(MeshRendererComponent(mesh: mesh))

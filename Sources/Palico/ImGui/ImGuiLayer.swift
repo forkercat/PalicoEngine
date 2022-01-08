@@ -9,7 +9,7 @@ import ImGui
 
 class ImGuiLayer: Layer {
     // Determine if the events are dispatched to subsequent layers.
-    var blockEvents: Bool = true
+    var tryToBlockEvents: Bool = true
     
     override init() {
         super.init(name: "ImGuiLayer")
@@ -61,7 +61,7 @@ class ImGuiLayer: Layer {
     
     override func onEvent(event: Event) {
         var event = event
-        if blockEvents {
+        if tryToBlockEvents {
             let io = ImGuiGetIO()!
             
             let mouse = EventUtils.isInCategory(event: event, category: [.mouse]) && io.pointee.WantCaptureMouse
@@ -70,6 +70,7 @@ class ImGuiLayer: Layer {
             let keyboard = EventUtils.isInCategory(event: event, category: [.keyboard]) && io.pointee.WantCaptureKeyboard
             event.handled = event.handled || keyboard
         }
+        // Otherwise: evnets are not handled by ImGui
     }
     
     func begin() {

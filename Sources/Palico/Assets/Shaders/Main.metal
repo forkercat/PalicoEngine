@@ -19,28 +19,37 @@ namespace Palico {
     // Out
     struct VertexOut {
         float4 position   [[ position ]];
-        float3 normal;
         float2 uv;
+        float3 worldNormal;
+        float3 worldPosition;
     };
 
     // Vertex
     vertex VertexOut vertex_main(
             const VertexIn in                          [[ stage_in ]], 
-            constant VertexUniformData& vertexUniforms [[ buffer(Buffer::vertexUniform) ]]) {
-        
-        VertexOut out;
-        out.position = in.position;
-        out.normal = in.normal;
-        out.uv = in.uv;
+            constant VertexUniformData& vertexUniform  [[ buffer(Buffer::vertexUniform) ]]) {
+    
+        float4 positionOS = in.position;
+        float4 positionWS = vertexUniform.modelMatrix * positionOS;
+
+        float4 output = vertexUniform.projectionMatrix * vertexUniform.viewMatrix * positionWS;
+
+        VertexOut out {
+            .position = output,
+            .worldNormal = vertexUniform.normalMatrix * in.normal,
+            .worldPosition = positionWS.xyz,
+            .uv = in.uv
+        };
         return out;
     }
 
     // Fragment
     fragment float4 fragment_main(
             const VertexOut in                             [[ stage_in ]],
-            constant FragmentUniformData& fragmentUniforms [[ buffer(Buffer::fragmentUniform) ]]) {
+            constant FragmentUniformData& fragmentUniform  [[ buffer(Buffer::fragmentUniform) ]]) {
         
-        return float4(in.uv.x, in.uv.y, 0.8, 1.0);
+        // return float4(in.uv.x, in.uv.y, 0.8, 1.0);
+        return fragmentUniform.tintColor;
     }
 
 }  // Palico

@@ -5,33 +5,60 @@
 //  Created by Junhao Wang on 12/26/21.
 //
 
-class Scene {
-    var viewportWidth: Int = 0
-    var viewportHeight: Int = 0
+import MathLib
+
+public class Scene {
+    public private(set) var gameObjects: [GameObject] = []
     
-    var gameObjects: [GameObject] = []
+    private var viewportSize: Int2 = Int2(0, 0)
     
-    func onUpdateRuntime(deltaTime: Timestep) {
-        
-    }
+    let cube = Cube(name: "Cube", position: [0, 0, 0])
+    let sphere = Sphere(name: "Sphere",
+                        position: [4, 3, 20],
+                        rotation: [0, 0, 0],
+                        scale: [0.5, 0.5, 0.5])
     
-    func onUpdateEditor(deltaTime: Timestep) {
-        
-    }
-    
-    func onViewportResize(width: Int, height: Int) {
+    public init() {
         
     }
 }
 
-
-// GameObject
+// Update
 extension Scene {
-    func createGameObject() {
+    public func onUpdateEditor(deltaTime ts: Timestep, editorCamera: EditorCamera) {
+        Renderer.beginRenderPass(type: .colorPass, begin: .clear)
+        
+        // Setup
+        Renderer.preRenderSetup(scene: self, camera: editorCamera)
+        
+        // Renderer.render(scene: self)
+        
+        Renderer.render(gameObject: cube)
+        Renderer.render(gameObject: sphere)
+        
+        Renderer.endRenderPass()
+    }
+    
+    public func onUpdateRuntime(deltaTime ts: Timestep) {
+        
+        
         
     }
     
-    func destroyGameObject() {
+    public func onViewportResize(size: Int2) {
+        viewportSize = size
+        
+        // TODO: Resize scene cameras
+    }
+}
+
+// GameObject
+extension Scene {
+    public func createGameObject() {
+        
+    }
+    
+    public func destroyGameObject() {
         
     }
 }

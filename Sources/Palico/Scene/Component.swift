@@ -6,7 +6,6 @@
 //
 
 import MathLib
-import simd
 import MetalKit
 
 public protocol Component {
@@ -20,8 +19,6 @@ public class TagComponent: Component {
     public var title: String { "Tag" }
     public var tag: String = "Default"
 }
-
-public typealias Quaternion = simd_quatf
 
 // Transform
 public class TransformComponent: Component {
@@ -58,14 +55,8 @@ public class MeshRendererComponent: Component {
     }
     
     func onRender(encoder: MTLRenderCommandEncoder) {
-        encoder.setVertexBuffer(mesh.nativeMesh.vertexBuffers[0].buffer, offset: 0, index: 0)
-        for submesh in mesh.submeshes {
-            encoder.drawIndexedPrimitives(type: .triangle,
-                                          indexCount: submesh.nativeSubmesh.indexCount,
-                                          indexType: submesh.nativeSubmesh.indexType,
-                                          indexBuffer: submesh.nativeSubmesh.indexBuffer.buffer,
-                                          indexBufferOffset: 0)
-        }
+        // TODO: Remove this function
+        assertionFailure("Do not call me!")
     }
 }
 

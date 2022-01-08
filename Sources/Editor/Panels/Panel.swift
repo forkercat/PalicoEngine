@@ -13,6 +13,7 @@ protocol Panel {
     func onAttach()
     func onUpdate(deltaTime ts: Timestep)
     func onImGuiRender()
+    func onEvent(event: Event)
 }
 
 // Optional
@@ -22,6 +23,10 @@ extension Panel {
     }
     
     func onUpdate(deltaTime ts: Timestep) {
+        
+    }
+    
+    func onEvent(event: Event) {
         
     }
 }

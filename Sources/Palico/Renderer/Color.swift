@@ -20,7 +20,7 @@ extension Color {
     public static let magneta   = Color(1, 0, 1, 1)
     
     public static let grey      = Color(0.5, 0.5, 0.5, 1)
-    public static let lightGrey = Color(0.3, 0.3, 0.3, 1)
+    public static let lightGrey = Color(0.7, 0.7, 0.7, 1)
     
     public var r: Float { x }
     public var g: Float { y }

@@ -8,11 +8,11 @@
 import MathLib
 
 open class Application {
-    private(set) static var instance: Application?
+    public private(set) static var shared: Application?
 
     private let layerStack: LayerStack = LayerStack()
     private let imGuiLayer: ImGuiLayer = ImGuiLayer()
-
+    
     private(set) var window: Window
     
     public init(name: String = "Palico Engine", arguments: [String] = [], size: Int2) {
@@ -20,8 +20,8 @@ open class Application {
         Log.info("Arguments[1:]: \(arguments.dropFirst())")
         
         // Applicaiton
-        assert(Application.instance == nil, "Only one application is allowed!")
-        defer { Application.instance = self }
+        assert(Application.shared == nil, "Only one application is allowed!")
+        defer { Application.shared = self }
         
         // Context
         PlatformContext.initialize()  // application
@@ -90,11 +90,11 @@ extension Application {
         }
         
         // - 2. Layer ImGuiRender
-//        imGuiLayer.begin()
-//        for layer in layerStack.layers {
-//            layer.onImGuiRender()
-//        }
-//        imGuiLayer.end()
+        imGuiLayer.begin()
+        for layer in layerStack.layers {
+            layer.onImGuiRender()
+        }
+        imGuiLayer.end()
         
         Renderer.end()  // end
     }
@@ -114,7 +114,7 @@ extension Application: WindowDelegate {
         dispatcher.dispatch(callback: onWindowClose)
         dispatcher.dispatch(callback: onWindowViewResize)
         dispatcher.dispatch(callback: onEscPressedForDebugging)
-
+        
         // 2. Layer Level
         // Process events in layers (reversed order) Ex: [back, ..., front]
         for layer in layerStack.layers.reversed() {
@@ -149,5 +149,11 @@ extension Application: WindowDelegate {
         // Ex: Renderer::onWindowViewResize
 
         return false
+    }
+}
+
+extension Application {
+    public func SetShouldImGuiTryToBlockEvents(_ blockEvents: Bool) {
+        imGuiLayer.tryToBlockEvents = blockEvents
     }
 }

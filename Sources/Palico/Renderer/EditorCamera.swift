@@ -17,8 +17,7 @@ public class EditorCamera: Camera {
     
     // Orientation
     public var orientation: Quaternion { get {
-        let rotationMatrix = Float4x4(rotation: Float3(-pitch, -yaw, 0))
-        return Quaternion(rotationMatrix)
+        return Quaternion(eulerAngles: [-pitchAtFocus, yawAtFocus, 0])
     }}
     public var rightDirection: Float3 { get {
         return orientation.act(Float3.right)
@@ -31,30 +30,35 @@ public class EditorCamera: Camera {
     }}
     
     // Config
-    private let rotationSpeed: Float = 0.8
+    private var rotationSpeed: Float { get {
+        0.2
+    }}
     private var zoomSpeed: Float { get {
         let dist = max(distance * 0.2, 0)
-        let speed = min(dist * dist, 100)  // max speed is 100
+        let speed = min(dist * dist, 20)  // max speed is 20
         return speed
     }}
     private var panSpeed: Float2 { get {
+        // Source: EditorCamera.cpp in Hazel Engine (by The Cherno)
         // Calculate based on the viewport size
-        let x: Float = min(Float(viewportSize.width) / 1000.0, 2.4)  // max = 2.4
+        let x: Float = min(Float(viewportSize.width) / 1000.0, 2.4)   // min = 2.4
         let xFactor: Float = 0.0366 * x * x - 0.1778 * x + 0.3021
         
-        let y: Float = min(Float(viewportSize.height) / 1000.0, 2.4)  // max = 2.4
+        let y: Float = min(Float(viewportSize.height) / 1000.0, 2.4)  // min = 2.4
         let yFactor = 0.0366 * y * y - 0.1778 + 0.3021
         
-        return Float2(xFactor, yFactor)
+        let scale: Float = 0.4  // change speed
+        
+        return Float2(xFactor, yFactor) * scale
     }}
     
     // Private
-    private var focusPoint: Float3 = Float3(0, 0, 0)
-    private var position: Float3   = Float3(0, 0, 0)
-    private var distance: Float    = 10.0
-    private var pitch:    Float    = 0.0
-    private var yaw: Float         = 0.0
-    private var viewportSize: Int2 = Int2(1280, 720)
+    private var focusPoint: Float3       = Float3(0, 0, 0)
+    private var position: Float3         = Float3(0, 0, 0)
+    private var distance: Float          = 10.0
+    private var pitchAtFocus: Float  = 0.0
+    private var yawAtFocus: Float    = 0.0
+    private var viewportSize: Int2       = Int2(1280, 720)
     
     // Output
     public private(set) var viewMatrix: Float4x4       = .identity
@@ -72,6 +76,7 @@ public class EditorCamera: Camera {
         self.aspectRatio = aspect
         self.nearClip = nearClip
         self.farClip = farClip
+        
         updateProjection()
         updateView()
     }
@@ -121,20 +126,17 @@ extension EditorCamera {
 extension EditorCamera {
     public func onUpdate(deltaTime ts: Timestep) {
         let mouse: Float2 = Input.mousePos
-        let delta = mouse - initialMousePosition
+        let delta: Float2 = (mouse - initialMousePosition) * ts
         initialMousePosition = mouse
         
         if Input.isPressed(key: .option) || Input.isPressed(key: .command) {
             if Input.isPressed(mouse: .left) {
-                print("MouseRotate: \(delta)")
-//                rotate(delta: delta)
+                rotateAroundFocusPoint(delta: delta)
             } else if Input.isPressed(mouse: .right) {
-                print("MouseZoom: \(delta.y)")
-//                zoom(delta: delta.y)
+                zoom(delta: delta.y)
             }
         } else if Input.isPressed(mouse: .middle) {
-            print("MousePan: \(delta)")
-//            pan(delta: delta)
+            pan(delta: delta)
         }
         
         updateView()
@@ -154,14 +156,15 @@ extension EditorCamera {
     
     private func pan(delta: Float2) {
         let speed = panSpeed
-        focusPoint += -rightDirection * delta.x * speed.x * distance
-        focusPoint += upDirection * delta.y * speed.y * distance
+        // Should be opposite as you pan to other direction
+        focusPoint -= rightDirection * delta.x * speed.x * distance
+        focusPoint -= upDirection * delta.y * speed.y * distance
     }
     
-    private func rotate(delta: Float2) {
+    private func rotateAroundFocusPoint(delta: Float2) {
         let yawSign: Float = upDirection.y < 0 ? -1.0 : 1.0
-        yaw += yawSign * delta.x * rotationSpeed
-        pitch += delta.y * rotationSpeed
+        yawAtFocus += yawSign * delta.x * rotationSpeed
+        pitchAtFocus += delta.y * rotationSpeed
     }
     
     private func zoom(delta: Float) {

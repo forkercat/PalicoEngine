@@ -23,13 +23,30 @@ class ViewportPanel: Panel {
     var currentRenderPassType: RenderPassType = .colorPass
     var currentTargetType: RenderPass.Target = .color
     
+    var editorCamera: EditorCamera = EditorCamera()
+    
     func onAttach() {
-        
+        editorCamera = EditorCamera(fov: 30.0, aspect: 1.778)
     }
     
-    func viewportDidResize() -> Bool {
+    func onUpdate(deltaTime ts: Timestep) {
+        editorCamera.onUpdate(deltaTime: ts)
+    }
+    
+    func onEvent(event: Event) {
+        // TODO: Verify later if it works as expected in any case!
+        if event.eventType == .mouseScrolled && !isHovered {
+            return
+        }
+        
+        if isFocused || isHovered {
+            editorCamera.onEvent(event: event)
+        }
+    }
+    
+    func checkIfViewportNeedsResize() -> Bool {
         guard viewportSize.width > 0 && viewportSize.height > 0 else {
-            Log.warn("Viewport size has zero width or height. Skipping resize!")
+            // Log.warn("Viewport size has zero width or height. Skipping resize!")
             return false
         }
         
@@ -37,14 +54,18 @@ class ViewportPanel: Panel {
         
         if currentRenderPassSize.width != viewportSize.width || currentRenderPassSize.height != viewportSize.height {
             // Resize
-            Renderer.resizeRenderPass(type: currentRenderPassType, size: Int2(viewportSize.width, viewportSize.height))
-            // Log.debug("Resizing viewport: \(viewportSize)")
+            resizeRenderPassAndCameras()
             return true
         }
         
         return false
     }
     
+    private func resizeRenderPassAndCameras() {
+        // Log.debug("Resizing viewport: \(viewportSize)")
+        Renderer.resizeRenderPass(type: currentRenderPassType, size: Int2(viewportSize.width, viewportSize.height))
+        editorCamera.setViewportSize(viewportSize)
+    }
 }
 
 // Functions called during ImGui rendering
@@ -58,9 +79,10 @@ extension ViewportPanel{
         isFocused = ImGuiIsWindowFocused(ImGuiFlag_None)
         isHovered = ImGuiIsWindowHovered(ImGuiFlag_None)
         
-        // Blocked Events
-//        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-        
+        // Tell ImGuiLayer if it should handle events and do not dispatch them to following layers.
+        // If viewport is EITHER hovered OR focused, ImGui should not get the chance to block events.
+        // Otherwise, it is possible to block events.
+        Application.shared?.SetShouldImGuiTryToBlockEvents(!isFocused && !isHovered)
         
         updateViewportTexture()
         
@@ -96,6 +118,6 @@ extension ViewportPanel{
         }
         
         ImGuiImage(textureID, ImVec2(Float(viewportSize.width), Float(viewportSize.height)),
-                   ImVec2(0, 1), ImVec2(1, 0), ImVec4(1), ImVec4(0))
+                   ImVec2(0, 0), ImVec2(1, 1), ImVec4(1), ImVec4(0))
     }
 }
