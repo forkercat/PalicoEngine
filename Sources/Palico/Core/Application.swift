@@ -37,7 +37,7 @@ open class Application {
         defer {
             window.windowDelegate = self
         }
-        Console.info("Aruguments: \(arguments.dropFirst())")
+        Console.info("Welcome to Palico Engine!!!😊")
         Console.info("Platform: \(info)")
         Console.info("Window: [\(size.width) x \(size.height)]")
 

@@ -11,21 +11,21 @@ import MathLib
 // with shader files (Common.metal).
 
 // Index
-enum Attribute: Int {
+public enum Attribute: Int {
     case position        = 0
     case normal          = 1
     case uv              = 2
 }
 
-enum BufferIndex: Int {
+public enum BufferIndex: Int {
     case vertices        = 0
     case vertexUniform   = 11
     case fragmentUniform = 12
-    case lights          = 13
+    case lightData       = 13
     // skybox...
 }
 
-enum TextureIndex: Int {
+public enum TextureIndex: Int {
     case baseColor       = 0
     case normal          = 1
     case roughness       = 2
@@ -34,17 +34,35 @@ enum TextureIndex: Int {
 }
 
 // Uniforms
-struct VertexUniformData {
+public struct VertexUniformData {
     var modelMatrix:     Float4x4 = .identity
     var viewMatrix:      Float4x4 = .identity
     var projectionMatrx: Float4x4 = .identity
     var normalMatrix:    Float3x3 = .identity
 }
 
-struct FragmentUniformData {
+public struct FragmentUniformData {
     var tintColor: Color = .white
-    // light count
-    // eyePos
+    var lightCount: Int32 = 0
+    var cameraPosition: Float3 = [0, 0, 0]
 }
 
+// Light
+public enum LightType: Int {
+    case dirLight       = 1
+    case pointLight     = 2
+    case spotLight      = 3
+    case ambientLight   = 4
+}
 
+public struct LightData {
+    var type: LightType = .dirLight
+    var position: Float3 = [0, 0, 0]
+    var color: Color = .white
+    var intensity: Float = 1.0
+    var direction: Float3 = normalize([1, 1, 1])
+    var attenuation: Float3 = [1, 0, 0]
+    var coneAngle: Float = 0
+    var coneDirection: Float3 = [0, 0, 0]
+    var coneAttenuation: Float3 = [1, 0, 0]
+}

@@ -13,11 +13,15 @@ public class Scene {
     
     private var viewportSize: Int2 = [0, 0]
     
+    // Testing
+    // TODO: Remove after using ECS!
     let cube = Cube(name: "Cube", position: [0, 0, 0])
     let sphere = Sphere(name: "Sphere",
                         position: [4, 3, 20],
                         rotation: [0, 0, 0],
                         scale: [0.5, 0.5, 0.5])
+    let lights: [SceneLight] = [SceneLight(name: "DirLight", type: .dirLight),
+                                SceneLight(name: "PointLight", type: .pointLight)]
     
     public init() {
         bgColor = Color(r: 0.1, g: 0.1, b: 0.1, a: 1.0)

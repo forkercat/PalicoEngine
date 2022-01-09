@@ -132,11 +132,26 @@ extension Renderer {
         // Camera (view & projection)
         vertexUniformData.viewMatrix = camera.viewMatrix
         vertexUniformData.projectionMatrx = camera.projectionMatrix
+        fragmentUniformData.cameraPosition = camera.position
         
-        fragmentUniformData.tintColor = Color.yellow
+        // Light Data
+        fragmentUniformData.lightCount = Int32(scene.lights.count)
         
-        // Lighting
-        // TODO: encoder.setFragmentBytes(, length: , index: )
+        guard let encoder = renderCommandEncoder else {
+            Log.warn("Render command encoder is nil!")
+            return
+        }
+        
+        var lightData: [LightData] = []
+        for sceneLight in scene.lights {
+            // TODO: ECS
+            if let lightComponent = sceneLight.getComponent(at: 3) as? LightComponent {
+                lightData.append(lightComponent.light.lightData)
+            }
+        }
+        encoder.setFragmentBytes(&lightData,
+                                 length: MemoryLayout<LightData>.stride * scene.lights.count,
+                                 index: BufferIndex.lightData.rawValue)
     }
 }
 
@@ -157,21 +172,22 @@ extension Renderer {
         }
         
         // Get mesh renderer component
-        let component1 = gameObject.getComponent(at: 2)
-        guard let meshRenderer = component1 as? MeshRendererComponent else {
+        // TODO: ECS
+        guard let meshRenderer = gameObject.getComponent(at: 2) as? MeshRendererComponent else {
             Log.error("It is not a mesh renderer component!")
             return
         }
         
         // Get transform component
-        let component2 = gameObject.getComponent(at: 0)
-        guard let transform = component2 as? TransformComponent else {
+        guard let transform = gameObject.getComponent(at: 1) as? TransformComponent else {
             fatalError("Not a transform component!")
         }
         
         // Setup uniform data
         vertexUniformData.modelMatrix = transform.modelMatrix
+        vertexUniformData.normalMatrix = transform.modelMatrix.normalMatrix
         
+        // TODO: Set up tint color (or material) based on model's mesh renderer
         if gameObject is Cube {
             fragmentUniformData.tintColor = .yellow
         } else {

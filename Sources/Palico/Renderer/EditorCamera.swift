@@ -6,10 +6,10 @@
 //
 
 import MathLib
-import simd
 
 public class EditorCamera: Camera {
     // Parameters
+    public private(set) var position: Float3   = [0, 0, 0]
     public private(set) var fov: Float         = 45.0
     public private(set) var aspectRatio: Float = 1.778
     public private(set) var nearClip: Float    = 0.1
@@ -19,13 +19,13 @@ public class EditorCamera: Camera {
     public var orientation: Quaternion { get {
         return Quaternion(eulerAngles: [-pitchAtFocus, yawAtFocus, 0])
     }}
-    public var rightDirection: Float3 { get {
+    public var rightDirection: Float3 { get {    // X
         return orientation.act(Float3.right)
     }}
-    public var upDirection: Float3 { get {
+    public var upDirection: Float3 { get {       // Y
         return orientation.act(Float3.up)
     }}
-    public var forwardDirection: Float3 { get {
+    public var forwardDirection: Float3 { get {  // Z
         return orientation.act(Float3.forward)
     }}
     
@@ -55,12 +55,11 @@ public class EditorCamera: Camera {
     }}
     
     // Private
-    private var focusPoint: Float3       = [0, 0, 0]
-    private var position: Float3         = [0, 0, 0]
-    private var distance: Float          = 10.0
-    private var pitchAtFocus: Float      = 0.0
-    private var yawAtFocus: Float        = 0.0
-    private var viewportSize: Int2       = [1280, 720]
+    private var focusPoint: Float3           = [0, 0, 0]
+    private var distance: Float              = 10.0
+    private var pitchAtFocus: Float          = 0.0
+    private var yawAtFocus: Float            = 0.0
+    private var viewportSize: Int2           = [1280, 720]
     
     // Output
     public private(set) var viewMatrix: Float4x4       = .identity
@@ -94,7 +93,7 @@ extension EditorCamera {
         
         let R = Float4x4(orientation)
         let T = Float4x4(translation: position)
-        viewMatrix = (T * R).inverse
+        viewMatrix = mul(T, R).inverse
     }
     
     private func updateProjection() {

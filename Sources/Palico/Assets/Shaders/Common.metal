@@ -21,7 +21,7 @@ namespace Palico {
         vertices          = 0,
         vertexUniform     = 11,
         fragmentUniform   = 12,
-        lights            = 13
+        lightData         = 13
     };
 
     enum Texture {
@@ -42,6 +42,29 @@ namespace Palico {
 
     struct FragmentUniformData {
         float4 tintColor;
+        uint   lightCount;
+        float3 cameraPosition;
     };
-
+    
+    // Light
+    enum LightType {
+        NoLight           = 0,
+        DirLight          = 1,
+        PointLight        = 2,
+        SpotLight         = 3,
+        AmbientLight      = 4
+    };
+    
+    struct LightData {
+        LightType type;
+        float3    position;
+        float4    color;
+        float     intensity;
+        float3    direction;
+        float3    attenuation;
+        float     coneAngle;
+        float3    coneDirection;
+        float3    coneAttenuation;
+    };
+        
 }  // Palico
