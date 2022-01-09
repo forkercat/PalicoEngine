@@ -15,7 +15,7 @@ fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Im(ImGuiDockNodeFlags_None)
 class EditorLayer: Layer {
     // Panels
     let hierarchyPanel: HierarchyPanel = HierarchyPanel()
-    let statsPanel: StatsPanel = StatsPanel()
+    let assetPanel: AssetPanel = AssetPanel()
     let viewportPanel: ViewportPanel = ViewportPanel()
     let inspectorPanel: InspectorPanel = InspectorPanel()
     let consolePanel: ConsolePanel = ConsolePanel()
@@ -106,7 +106,7 @@ class EditorLayer: Layer {
         let io = ImGuiGetIO()!
         let style = ImGuiGetStyle()!
         let minWinSizeX = style.pointee.WindowMinSize.x  // backup
-        style.pointee.WindowMinSize.x = 370.0  // set min window size for dockspace's windows
+        style.pointee.WindowMinSize.x = 350.0  // set min window size for dockspace's windows
         if (io.pointee.ConfigFlags & Im(ImGuiConfigFlags_DockingEnable)) != 0 {
             let dockspaceID = ImGuiGetID("MyDockSpace")
             _ = ImGuiDockSpace(dockspaceID, ImVec2(0, 0), dockspaceFlags, nil)
@@ -119,10 +119,16 @@ class EditorLayer: Layer {
         // var saveSceneAsPopup: Bool = false
         
         if ImGuiBeginMenuBar() {
-            if ImGuiBeginMenu("File", true) {
+            if ImGuiBeginMenu("\(FAIcon.file) File", true) {
                 // Disabling fullscreen would allow the window to be moved to the front of other windows,
                 // which we can't undo at the moment without finer window depth/z control.
                 
+                if ImGuiMenuItem("\(FAIcon.folderPlus) New", "CMD+N", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.folderOpen) Open...", "CMD+O", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.save) Save", "CMD+S", false, true) { }
+                ImGuiSeparator()
+                if ImGuiMenuItem("\(FAIcon.signOutAlt) Exit", "CMD+Q", false, true) { }
+
                 /*
                 if (ImGui::MenuItem("New", "Ctrl+N"))
                     NewScene();
@@ -140,15 +146,19 @@ class EditorLayer: Layer {
                 ImGuiEnd()
             }
             
-            if ImGuiBeginMenu("Edit", true) {
-                if ImGuiMenuItem("Undo", "CMD+Z", false, true) { }
-                if ImGuiMenuItem("Redo", "CMD+Y", false, false) { } // disabled item
+            if ImGuiBeginMenu("\(FAIcon.edit) Edit", true) {
+                if ImGuiMenuItem("\(FAIcon.undo) Undo", "CMD+Z", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.redo) Redo", "CMD+Y", false, false) { } // disabled item
                 ImGuiSeparator()
-                if ImGuiMenuItem("Cut", "CMD+X", false, true) { }
-                if ImGuiMenuItem("Copy", "CMD+C", false, true) { }
-                if ImGuiMenuItem("Paste", "CMD+V", false, true) {}
+                if ImGuiMenuItem("\(FAIcon.cut) Cut", "CMD+X", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.copy) Copy", "CMD+C", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.paste) Paste", "CMD+V", false, true) {}
                 ImGuiEndMenu()
             }
+            
+            if ImGuiBeginMenu("\(FAIcon.cube) GameObject", true) { ImGuiEndMenu() }
+            if ImGuiBeginMenu("\(FAIcon.windowRestore) Window", true) { ImGuiEndMenu() }
+            if ImGuiBeginMenu("\(FAIcon.questionCircle) Help", true) { ImGuiEndMenu() }
             
             ImGuiEndMenuBar()
         }
@@ -162,8 +172,8 @@ class EditorLayer: Layer {
         // Inspector Panel
         inspectorPanel.onImGuiRender()
         
-        // Stats Panel
-        statsPanel.onImGuiRender()
+        // Asset Panel
+        assetPanel.onImGuiRender()
         
         // Viewport Panel
         viewportPanel.onImGuiRender()

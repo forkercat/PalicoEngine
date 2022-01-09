@@ -17,7 +17,8 @@ class ImGuiDemoPanel: Panel {
     func onImGuiRender() {
         if open {
             ImGuiShowDemoWindow(&open)
-            ImGuiShowMetricsWindow(nil)
+//            ImGuiShowMetricsWindow(nil)
+//            ImGuiShowStyleEditor(nil)
         }
     }
 }

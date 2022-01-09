@@ -25,6 +25,10 @@ public class Console {
             }
             
             public static let levelStrings: [String] = ["DEBUG", "INFO", "WARN", "ERROR"]
+            public static let levelStringsWithIcons: [String] = ["\(FAIcon.search) DEBUG",
+                                                                 "\(FAIcon.commentDots) INFO",
+                                                                 "\(FAIcon.exclamationTriangle) WARN",
+                                                                 "\(FAIcon.timesCircle) ERROR"]
             public static var numLevels: Int = levelStrings.count
         }
         

@@ -36,18 +36,7 @@ class ImGuiLayer: Layer {
         setFonts()
         
         // ImGui Style
-        ImGuiStyleColorsDark(nil)
-        
-        /*
-        let style = ImGuiGetStyle()!
-        if (io.pointee.ConfigFlags & Im(ImGuiConfigFlags_ViewportsEnable)) != 0 {
-            style.pointee.WindowRounding = 0.0
-            CArray<ImVec4>.write(&style.pointee.Colors) { colors in
-                colors[Int(Im(ImGuiCol_WindowBg))].w = 1.0
-            }
-        }
-         */
-        
+        setStyles()
         setThemeColors()
         
         // Setup Platform/Renderer Bindings
@@ -94,23 +83,72 @@ class ImGuiLayer: Layer {
         }
     }
     
+    private static var iconRanges: [ImWchar] = [0xe00f, 0xf8ff, 0]
+    private static var config: ImFontConfig = ImFontConfig_ImFontConfig().pointee  // don't use ImFontConfig()
+    
     private func setFonts() {
         let io = ImGuiGetIO()!
         
         let dpi: Float = MetalContext.dpi
         let fontSize = Float(16.0)
         let scaledFontSize = Float(dpi * fontSize)
+        let iconFontSize = Float(12.0)
+        let iconScaledFontSize = Float(dpi * iconFontSize)
         io.pointee.FontGlobalScale = 1 / dpi
         
         guard let fontBold = FileUtils.getURL(path: "Assets/Fonts/Ruda/Ruda-Bold.ttf")?.path,
-              let fontRegular = FileUtils.getURL(path: "Assets/Fonts/Ruda/Ruda-SemiBold.ttf")?.path
+              // let fontRegular = FileUtils.getURL(path: "Assets/Fonts/Ruda/Ruda-SemiBold.ttf")?.path,
+              let fontSolidIcon = FileUtils.getURL(path: "Assets/Fonts/FontAwesome5/fa-solid-900.ttf")?.path,
+              let fontRegularIcon = FileUtils.getURL(path: "Assets/Fonts/FontAwesome5/fa-regular-400.ttf")?.path,
+              let fontBrandsIcon = FileUtils.getURL(path: "Assets/Fonts/FontAwesome5/fa-brands-400.ttf")?.path
         else {
             Log.warn("Not able to load custom fonts.")
             return
         }
         
-        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontBold, scaledFontSize, nil, nil)
-        io.pointee.FontDefault = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontRegular, scaledFontSize, nil, nil)
+        io.pointee.FontDefault = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontBold, scaledFontSize, nil, nil)
+        
+        // FontAwesome5
+        Self.config.MergeMode = true
+        Self.config.GlyphMinAdvanceX = scaledFontSize  // Use if you want to make the icon monospaced
+        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontSolidIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
+        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontRegularIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
+        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontBrandsIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
+        
+        // ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontRegular, scaledFontSize, nil, nil)
+    }
+    
+    private func setStyles() {
+        let style = ImGuiGetStyle()!
+        
+        ImGuiStyleColorsDark(nil)
+        
+        // Rounding
+        style.pointee.WindowRounding = 4.0
+        style.pointee.ChildRounding = 4.0
+        style.pointee.FrameRounding = 4.0
+        style.pointee.TabRounding = 4.0
+        style.pointee.PopupRounding = 4.0
+        style.pointee.GrabRounding = 3.0
+        
+        // Padding
+        style.pointee.FramePadding = ImVec2(6, 3)
+        
+        // Size
+        style.pointee.GrabMinSize = 11.0
+        
+        // Show/Hide
+        style.pointee.WindowMenuButtonPosition = Im(ImGuiDir_Right)
+        
+        /*
+         let style = ImGuiGetStyle()!
+         if (io.pointee.ConfigFlags & Im(ImGuiConfigFlags_ViewportsEnable)) != 0 {
+             style.pointee.WindowRounding = 0.0
+             CArray<ImVec4>.write(&style.pointee.Colors) { colors in
+                 colors[Int(Im(ImGuiCol_WindowBg))].w = 1.0
+             }
+         }
+         */
     }
     
     private func setThemeColors() {

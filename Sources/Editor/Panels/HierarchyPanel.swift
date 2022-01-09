@@ -9,10 +9,11 @@ import Palico
 import ImGui
 
 class HierarchyPanel: Panel {
+//    var panelName: String { "\(FAIcon.sitemap) Scene Hierarchy" }
     var panelName: String { "Scene Hierarchy" }
     
     func onImGuiRender() {
-        ImGuiBegin(panelName, nil, 0)
+        ImGuiBegin("\(FAIcon.list) \(panelName)", nil, 0)
         
         
         
@@ -24,7 +25,7 @@ class InspectorPanel: Panel {
     var panelName: String { "Inspector" }
     
     func onImGuiRender() {
-        ImGuiBegin(panelName, nil, 0)
+        ImGuiBegin("\(FAIcon.palette) \(panelName)", nil, 0)
         
         
         

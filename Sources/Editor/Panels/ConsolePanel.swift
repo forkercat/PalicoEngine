@@ -17,7 +17,7 @@ class ConsolePanel: Panel {
     func onImGuiRender() {
         let io = ImGuiGetIO()!
         
-        ImGuiBegin(panelName, nil, 0)
+        ImGuiBegin("\(FAIcon.terminal) \(panelName)", nil, 0)
         
         // Header
         ImGuiTextV(String(format: "FPS: %.1f (%.3f ms/frame)", io.pointee.Framerate, 1000.0 / io.pointee.Framerate))
@@ -45,18 +45,18 @@ class ConsolePanel: Panel {
         }
          */
 
-        ImGuiSameLine(ImGuiGetWindowWidth() - 150 - 75, -1)  // TODO: Use calculated width
+        ImGuiSameLine(ImGuiGetWindowWidth() - 150 - 95 - 20, -1)  // TODO: Use calculated width
         ImGuiCheckbox("Auto-Scroll", &autoScrolled)
         ImGuiSameLine(0, -1)
         
-        ImGuiPushItemWidth(70)
+        ImGuiPushItemWidth(90)
         ImGuiCombo("##OutputLevelCombo", &currentMessageLevel,
-                   Console.Message.Level.levelStrings,
+                   Console.Message.Level.levelStringsWithIcons,
                    Int32(Console.Message.Level.numLevels), -1)
         ImGuiPopItemWidth()
         
         ImGuiSameLine(0, -1)
-        if ImGuiButton("Clear", ImVec2(0, 0)) {
+        if ImGuiButton("\(FAIcon.trashAlt) Clear", ImVec2(0, 0)) {
             Console.clear()
         }
         
@@ -67,7 +67,7 @@ class ConsolePanel: Panel {
         ImGuiBeginChild("##ConsoleScrollRegion", ImVec2(0, 0), false, Im(ImGuiWindowFlags_HorizontalScrollbar))
 
         if ImGuiBeginPopupContextWindow("##ConsoleClearPopup", 1) {
-            if ImGuiSelectable("Clear", false, ImGuiFlag_None, ImVec2(0, 0)) {
+            if ImGuiSelectable("\(FAIcon.trashAlt) Clear", false, ImGuiFlag_None, ImVec2(0, 0)) {
                 Console.clear()
             }
             ImGuiEndPopup()

@@ -71,7 +71,7 @@ class ViewportPanel: Panel {
 extension ViewportPanel{
     func onImGuiRender() {
         ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowPadding), ImVec2(0, 0))
-        ImGuiBegin(panelName, nil, ImGuiFlag_None)
+        ImGuiBegin("\(FAIcon.video) \(panelName)", nil, ImGuiFlag_None)
         
         updateViewportSize()
         

@@ -11,12 +11,12 @@ let CGLFW3 = Target.Dependency.product(name: "CGLFW3", package: "CGLFW3")
 
 // Engine Dependencies
 let engineDependencies: [Target.Dependency] = [
-    OhMyLog, MathLib, ImGui, CGLFW3,
+    OhMyLog, MathLib, ImGui, CGLFW3
 ]
 
 // Application Dependencies
 let appDependencies: [Target.Dependency] = [
-    OhMyLog, MathLib, ImGui,
+    OhMyLog, MathLib, ImGui
 ]
 
 let package = Package(
