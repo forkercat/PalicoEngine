@@ -10,8 +10,11 @@ import MetalKit
 enum PrimitiveType {
     case cube
     case sphere
+    case hemiSphere
     case plane
+    case capsule
     case cylinder
+    case cone
 }
 
 class MeshFactory {
@@ -35,26 +38,30 @@ class Mesh {
     init(type: PrimitiveType) {
         let allocator = MTKMeshBufferAllocator(device: MetalContext.device)
         
-        var mdlMesh: MDLMesh? = nil
+        var mdlMesh: MDLMesh
         
         switch type {
         case .cube:
             mdlMesh = Self.getCubeMesh(allocator)
         case .sphere:
             mdlMesh = Self.getSphereMesh(allocator)
+        case .hemiSphere:
+            mdlMesh = Self.getHemiSphereMesh(allocator)
         case .plane:
             mdlMesh = Self.getPlaneMesh(allocator)
-        default:
-            mdlMesh = nil
+        case .capsule:
+            mdlMesh = Self.getCapsule(allocator)
+        case .cylinder:
+            mdlMesh = Self.getCylinderMesh(allocator)
+        case .cone:
+            mdlMesh = Self.getConeMesh(allocator)
         }
-        
-        assert(mdlMesh != nil, "Unknown primitive type!")
                 
         do {
-            let mtkMesh = try MTKMesh(mesh: mdlMesh!, device: MetalContext.device)
+            let mtkMesh = try MTKMesh(mesh: mdlMesh, device: MetalContext.device)
             nativeMesh = mtkMesh
             
-            submeshes = mdlMesh?.submeshes?.enumerated().compactMap { index, submesh in
+            submeshes = mdlMesh.submeshes?.enumerated().compactMap { index, submesh in
                 (submesh as? MDLSubmesh).map {
                     Submesh(submesh: mtkMesh.submeshes[index], mdlSubmesh: $0)
                 }
@@ -66,14 +73,6 @@ class Mesh {
 }
 
 extension Mesh {
-    private static func getSphereMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
-        return MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5],  // radius
-                       segments: [100, 100],
-                       inwardNormals: false,
-                       geometryType: .triangles,
-                       allocator: allocator)
-    }
-    
     private static func getCubeMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
         return MDLMesh(boxWithExtent: [1, 1, 1],
                        segments: [1, 1, 1],
@@ -82,9 +81,54 @@ extension Mesh {
                        allocator: allocator)
     }
     
+    private static func getSphereMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
+        return MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5],  // radius
+                       segments: [50, 50],
+                       inwardNormals: false,
+                       geometryType: .triangles,
+                       allocator: allocator)
+    }
+    
+    private static func getHemiSphereMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
+        return MDLMesh(hemisphereWithExtent: [0.5, 0.5, 0.5],
+                       segments: [50, 50],
+                       inwardNormals: false,
+                       cap: true,
+                       geometryType: .triangles,
+                       allocator: allocator)
+    }
+    
     private static func getPlaneMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
         return MDLMesh(planeWithExtent: [1, 1, 1],
                        segments: [1, 1],
+                       geometryType: .triangles,
+                       allocator: allocator)
+    }
+    
+    private static func getCapsule(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
+        return MDLMesh(capsuleWithExtent: [0.5, 2, 0.5],
+                       cylinderSegments: [50, 50],
+                       hemisphereSegments: 50,
+                       inwardNormals: false,
+                       geometryType: .triangles,
+                       allocator: allocator)
+    }
+    
+    private static func getCylinderMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
+        return MDLMesh(cylinderWithExtent: [0.5, 1, 0.5],
+                       segments: [50, 50],
+                       inwardNormals: false,
+                       topCap: true,
+                       bottomCap: true,
+                       geometryType: .triangles,
+                       allocator: allocator)
+    }
+    
+    private static func getConeMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
+        return MDLMesh(coneWithExtent: [1, 1, 1],
+                       segments: [50, 50],
+                       inwardNormals: false,
+                       cap: true,
                        geometryType: .triangles,
                        allocator: allocator)
     }
