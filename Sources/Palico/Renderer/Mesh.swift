@@ -67,7 +67,7 @@ class Mesh {
 
 extension Mesh {
     private static func getSphereMesh(_ allocator: MTKMeshBufferAllocator) -> MDLMesh {
-        return MDLMesh(sphereWithExtent: [1, 1, 1],
+        return MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5],  // radius
                        segments: [100, 100],
                        inwardNormals: false,
                        geometryType: .triangles,

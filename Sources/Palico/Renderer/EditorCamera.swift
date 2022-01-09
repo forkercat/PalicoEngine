@@ -48,8 +48,8 @@ public class EditorCamera: Camera {
         0.1
     }}
     private var zoomSpeed: Float { get {
-        let dist = max(distance * 0.2, 0)
-        let speed = min(dist * dist, 20)  // max speed is 20
+        let dist = max(distance * 0.15, 0)
+        let speed = min(dist * dist, 15)  // max speed is 15
         return speed
     }}
     private var panSpeed: Float2 { get {
