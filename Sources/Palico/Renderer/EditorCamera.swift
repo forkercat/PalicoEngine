@@ -15,12 +15,23 @@ public class EditorCamera: Camera {
     public private(set) var nearClip: Float    = 0.1
     public private(set) var farClip: Float     = 1000.0
     
+    
     // Orientation
     public var orientation: Quaternion { get {
-        return Quaternion(eulerAngles: [-pitchAtFocus, yawAtFocus, 0])
+        // Order matters! We want:
+        // 1. Rotation around X-axis behaves like as in local space
+        // 2. Rotation around Y-axis behaves like as in world space
+        // Thus, rotation order: X -> Y (in quaternion it is inverse)
+        return Quaternion(rotaionXYZ: [-pitchAtFocus, yawAtFocus, 0])
+        
+        // Equivalent:
+        // let qx = Quaternion(angle: -pitchAtFocus, axis: Float3.right)
+        // let qy = Quaternion(angle: yawAtFocus, axis: Float3.up)
+        // return mul(qy, qx)
     }}
     public var rightDirection: Float3 { get {    // X
         return orientation.act(Float3.right)
+        
     }}
     public var upDirection: Float3 { get {       // Y
         return orientation.act(Float3.up)
