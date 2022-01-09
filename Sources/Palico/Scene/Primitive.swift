@@ -7,7 +7,7 @@
 
 import MathLib
 
-public protocol Primitive {
+public protocol Primitive: AnyObject {
     
 }
 

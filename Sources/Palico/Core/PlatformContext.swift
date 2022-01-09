@@ -5,7 +5,7 @@
 //  Created by Junhao Wang on 12/25/21.
 //
 
-protocol PlatformContextDelegate {
+protocol PlatformContextDelegate: Any {
     var osName: String { get }
     var platformName: String { get }
     var isAppRunning: Bool { get }

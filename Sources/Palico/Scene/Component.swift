@@ -8,7 +8,7 @@
 import MathLib
 import MetalKit
 
-public protocol Component {
+public protocol Component: AnyObject {
     var title: String { get }
 }
 
@@ -27,7 +27,7 @@ public class TransformComponent: Component {
     public var position: Float3 = [0, 0, 0]
     public var rotation: Float3 = [0, 0, 0] {
         didSet {
-            let rotationMatrix = Float4x4(rotation: rotation)
+            let rotationMatrix = Float4x4(rotationZXY: rotation)  // Follow Unity (Extransic Order)
             quaternion = Quaternion(rotationMatrix)
         }
     }

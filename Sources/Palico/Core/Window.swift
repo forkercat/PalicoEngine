@@ -18,7 +18,7 @@ struct WindowDescriptor {
 }
 
 /* Conformed by Cocoa, GLFW, etc */
-protocol Window {
+protocol Window: AnyObject {
     var title: String { get }
     var width: Int { get }
     var height: Int { get }

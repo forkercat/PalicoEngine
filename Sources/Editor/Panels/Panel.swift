@@ -7,7 +7,7 @@
 
 import Palico
 
-protocol Panel {
+protocol Panel: AnyObject {
     var panelName: String { get }
     
     func onAttach()

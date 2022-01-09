@@ -7,7 +7,7 @@
 
 import MathLib
 
-public protocol Light {
+public protocol Light: Any {
     var type: LightType { get }
     var position: Float3 { get set }
     var color: Float4 { get set }

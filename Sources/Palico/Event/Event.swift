@@ -34,7 +34,7 @@ public struct EventCategory: OptionSet {
 }
 
 // Event
-public protocol Event: CustomStringConvertible {
+public protocol Event: AnyObject, CustomStringConvertible {
     static var staticEventType: EventType { get }
     var eventType: EventType { get }
     var categoryFlags: EventCategory { get }

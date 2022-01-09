@@ -7,13 +7,13 @@
 
 import ImGui
 
-protocol ImGuiBackendPlatformDelegate {
+protocol ImGuiBackendPlatformDelegate: AnyObject {
     func implPlatformInit()
     func implPlatformNewFrame()
     func implPlatformShutdown()
 }
 
-protocol ImGuiBackendGraphicsDelegate {
+protocol ImGuiBackendGraphicsDelegate: AnyObject {
     func implGraphicsInit()
     func implGraphicsNewFrame()
     func implGraphicsShutdown()

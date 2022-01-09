@@ -7,7 +7,7 @@
 
 import MathLib
 
-public protocol Camera {
+public protocol Camera: AnyObject {
     var position: Float3 { get }
     var viewMatrix: Float4x4 { get }
     var projectionMatrix: Float4x4 { get }

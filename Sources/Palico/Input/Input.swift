@@ -7,7 +7,7 @@
 
 import MathLib
 
-protocol InputDelegate {
+protocol InputDelegate: AnyObject {
     var mousePos: Float2 { get }
     
     func isPressed(key: Key) -> Bool
