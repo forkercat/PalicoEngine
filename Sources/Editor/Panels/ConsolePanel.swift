@@ -45,7 +45,7 @@ class ConsolePanel: Panel {
         }
          */
 
-        ImGuiSameLine(ImGuiGetWindowWidth() - 150 - 95 - 20, -1)  // TODO: Use calculated width
+        ImGuiSameLine(ImGuiGetWindowWidth() - 150 - 95 - 25, -1)  // TODO: Use calculated width
         ImGuiCheckbox("Auto-Scroll", &autoScrolled)
         ImGuiSameLine(0, -1)
         

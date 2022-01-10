@@ -196,8 +196,9 @@ extension EditorCamera {
     }
     
     private func lookAround(delta: Float2) {
+        let oldPosition = position
         pitchAtFocus += delta.y * lookAroundSpeed
         yawAtFocus += delta.x * lookAroundSpeed
-        focusPoint = position + forwardDirection * distance
+        focusPoint = oldPosition + forwardDirection * distance
     }
 }
