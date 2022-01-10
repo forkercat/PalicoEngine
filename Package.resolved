@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "CGLFW3",
-        "repositoryURL": "https://github.com/forkercat/CGLFW3.git",
-        "state": {
-          "branch": "main",
-          "revision": "8895107b44bbb5c7f7f991713d585b8f990d4650",
-          "version": null
-        }
-      },
-      {
         "package": "MathLib",
         "repositoryURL": "https://github.com/forkercat/MathLib.git",
         "state": {

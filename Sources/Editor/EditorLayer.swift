@@ -55,7 +55,7 @@ class EditorLayer: Layer {
         let coneMeshRenderer: MeshRendererComponent = cone.getComponent()!
         coneMeshRenderer.tintColor = .red
         
-        let cylinder = Cylinder(name: "Cyliner",
+        let cylinder = Cylinder(name: "Cylinder",
                                 position: [-4, 0.5, 0.5], rotation: [0, 0, 0], scale: [1, 1.5, 1])
         let cylinderMeshRenderer: MeshRendererComponent = cylinder.getComponent()!
         cylinderMeshRenderer.tintColor = .lightBlue
