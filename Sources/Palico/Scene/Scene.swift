@@ -8,16 +8,13 @@
 import MathLib
 
 public class Scene {
-    public var bgColor: Color = .black
+    public var bgColor: Color4 = .black
     
     internal var gameObjects: [GameObject] = []
     private var viewportSize: Int2 = [0, 0]
     
-    // Testing
-    // TODO: Remove after using ECS!
-    
     public init() {
-        bgColor = Color(r: 0.13, g: 0.13, b: 0.13, a: 1.0)
+        bgColor = Color4(r: 0.13, g: 0.13, b: 0.13, a: 1.0)
     }
 }
 

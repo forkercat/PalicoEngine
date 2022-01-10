@@ -67,7 +67,7 @@ public class EditorCamera: Camera {
     }}
     
     // Private
-    private var focusPoint: Float3           = [0, 0, 0]
+    private var focusPoint: Float3           = [0, 1.0, 0]
     private var distance: Float              = 10.0
     private var pitchAtFocus: Float          = Float(-20).toRadians
     private var yawAtFocus: Float            = Float(-135).toRadians  // within [+X, +Y, +Z] 10 away from origin

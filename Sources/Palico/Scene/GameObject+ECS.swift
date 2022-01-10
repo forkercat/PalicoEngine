@@ -37,7 +37,7 @@ extension GameObject {
         return MothECS.removeComponent(self, component)
     }
     
-    public func hasComponent<T: Component>(_ type: T.Type) -> Bool {
+    public func hasComponent<T: Component>(type: T.Type) -> Bool {
         return MothECS.hasComponent(self, type)
     }
 }

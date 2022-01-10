@@ -16,7 +16,7 @@ public class MeshRendererComponent: Component {
     var mesh: Mesh
     
     // Material
-    public var tintColor: Color
+    public var tintColor: Color4
     
     init(mesh: Mesh) {
         self.mesh = mesh

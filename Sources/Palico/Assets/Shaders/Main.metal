@@ -49,38 +49,59 @@ namespace Palico {
             constant FragmentUniformData& fragmentUniform  [[ buffer(Buffer::fragmentUniform) ]],
             constant LightData* lightData                  [[ buffer(Buffer::lightData) ]]) {
         
-        // return float4(in.worldNormal, 1.0);
-        // return float4(in.worldPosition, 1.0);
+        // Temp for light objects
+        if (fragmentUniform.noLight) {
+            return fragmentUniform.tintColor;
+        }
 
         float3 normalWS = normalize(in.worldNormal);
+        float3 tintColor = fragmentUniform.tintColor.xyz;
+        float materialShininess = 32;
+        float3 materialSpecularColor = float3(1, 1, 1);
 
-        /*
+        // Output Color
+        float3 diffuseColor = 0;
+        float3 specularColor = 0;
+        float3 ambientColor = 0;
+        
         for (uint i = 0; i < fragmentUniform.lightCount; i++) {
             LightData light = lightData[i];
+            if (light.type == DirLight) {
+                float3 lightDir = normalize(-light.direction);
+                float diffuseIntensity = saturate(dot(normalWS, lightDir));  // NdotL
+                float3 intensity = diffuseIntensity * light.intensity;
+                diffuseColor += light.color * tintColor * intensity;
+
+                if (diffuseIntensity > 0) {
+                    float3 reflectDir = normalize(reflect(-lightDir, normalWS));
+                    float3 viewDir = normalize(fragmentUniform.cameraPosition - in.worldPosition);
+                    float specularIntensity = pow(saturate(dot(reflectDir, viewDir)), materialShininess);
+                    float3 sIntensity = specularIntensity * light.intensity;
+                    specularColor += light.color * materialSpecularColor * sIntensity;
+                }
+            } else if (light.type == PointLight) {
+                float3 lightDir = normalize(light.position - in.worldPosition);
+                float diffuseIntensity = saturate(dot(normalWS, lightDir));  // NdotL
+                float3 intensity = diffuseIntensity * light.intensity;
+                diffuseColor += light.color * tintColor * intensity;
+
+                if (diffuseIntensity > 0) {
+                    float3 reflectDir = normalize(reflect(-lightDir, normalWS));
+                    float3 viewDir = normalize(fragmentUniform.cameraPosition - in.worldPosition);
+                    float specularIntensity = pow(saturate(dot(reflectDir, viewDir)), materialShininess);
+                    float3 sIntensity = specularIntensity * light.intensity;
+                    specularColor += light.color * materialSpecularColor * sIntensity;
+                }
+            } else if (light.type == SpotLight) {
+                continue;  // TODO: support spot light
+            } else if (light.type == AmbientLight) {
+                float3 intensity = light.intensity;
+                ambientColor += light.color * intensity;
+            }
         }
-        */
 
-        LightData light0 = lightData[0];
-        LightData light1 = lightData[1];
-
-        float3 baseColor = float3(1, 1, 1);  // tintColor
-
-        float3 diffuseColor = 0;
-
-        // float3 lightDir = normalize(-light0.direction);
-        // float3 lightDir = normalize(light1.position - in.worldPosition);
-        float3 lightDir = normalize(float3(-1, 1, -1) - in.worldPosition);
-
-        float diffuseIntensity = saturate(dot(normalWS, lightDir));  // NdotL
-
-        // fragmentUniform.cameraPosition
-
-        // return fragmentUniform.tintColor;
-        // return float4(diffuseIntensity);
-        // return float4(normalWS, 1.0);
-        return fragmentUniform.tintColor;
-    
-    
+        float3 color = diffuseColor + specularColor + ambientColor;
+        return float4(color, 1);
     }
 
 }  // Palico

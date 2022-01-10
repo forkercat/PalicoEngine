@@ -42,13 +42,14 @@ public struct VertexUniformData {
 }
 
 public struct FragmentUniformData {
-    var tintColor: Color = .white
-    var lightCount: Int32 = 0
+    var tintColor: Color4 = .white
     var cameraPosition: Float3 = [0, 0, 0]
+    var lightCount: Int32 = 0
+    var noLight: Int32 = 0
 }
 
 // Light
-public enum LightType: Int {
+public enum LightType: Int32 {
     case dirLight       = 1
     case pointLight     = 2
     case spotLight      = 3
@@ -56,9 +57,9 @@ public enum LightType: Int {
 }
 
 public struct LightData {
-    var type: LightType = .dirLight
+    var type: Int32 = LightType.dirLight.rawValue
     var position: Float3 = [0, 0, 0]
-    var color: Color = .white
+    var color: Color3 = .white
     var intensity: Float = 1.0
     var direction: Float3 = normalize([1, 1, 1])
     var attenuation: Float3 = [1, 0, 0]

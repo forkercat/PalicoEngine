@@ -39,18 +39,59 @@ class EditorLayer: Layer {
         // Scene
         scene = Scene()
         
+        // Primitives
         let cube = Cube(name: "Cube", position: [0, 0, 0])
+        let cubeMeshRenderer: MeshRendererComponent = cube.getComponent()!
+        cubeMeshRenderer.tintColor = .yellow
+        
         let sphere = Sphere(name: "Sphere",
-                            position: [-4, 2, -4],
-                            rotation: [0, 0, 0],
-                            scale: [0.5, 0.5, 0.5])
-        let lights: [SceneLight] = [
-            SceneLight(name: "DirLight", type: .dirLight),
-//            SceneLight(name: "PointLight", type: .pointLight)
-        ]
+                            position: [-6, 1.5, -4], rotation: [0, 0, 0], scale: [1.5, 1.5, 1.5])
+        let capsule = Capsule(name: "Capsule",
+                              position: [-0.5, 1, -4])
+        let capsuleMeshRenderer: MeshRendererComponent = capsule.getComponent()!
+        capsuleMeshRenderer.tintColor = .green
+        let cone = Cone(name: "Cone",
+                        position: [0, 1, 0], rotation: [0, 0, 0], scale: [0.8, 1, 0.8])
+        let coneMeshRenderer: MeshRendererComponent = cone.getComponent()!
+        coneMeshRenderer.tintColor = .red
+        
+        let cylinder = Cylinder(name: "Cyliner",
+                                position: [-4, 0.5, 0.5], rotation: [0, 0, 0], scale: [1, 1.5, 1])
+        let cylinderMeshRenderer: MeshRendererComponent = cylinder.getComponent()!
+        cylinderMeshRenderer.tintColor = .lightBlue
+        
         scene?.addGameObject(cube)
         scene?.addGameObject(sphere)
-        scene?.addGameObjects(lights)
+        scene?.addGameObject(capsule)
+        scene?.addGameObject(cone)
+        scene?.addGameObject(cylinder)
+        
+        // Light Data
+        let ambientLight = SceneLight(name: "AmbientLight", type: .ambientLight, position: [5, 5, -5])
+        let dirLight = SceneLight(name: "DirLight", type: .dirLight, position: [3, 3, -1])
+        let pointLight1 = SceneLight(name: "PointLight1", type: .pointLight, position: [4, 2, 1.5])
+        let pointLight2 = SceneLight(name: "PointLight2", type: .pointLight, position: [-3, 4, 1.5])
+        
+        // Config
+        let ambientLightTransform: TransformComponent = ambientLight.getComponent()!
+        ambientLightTransform.position = [5, 5, -5]
+        
+        let dirLightComponent: LightComponent = dirLight.getComponent()!
+        dirLightComponent.light.intensity = 0.6
+        dirLightComponent.light.color = .lightYellow
+        
+        let ambientLightComponent: LightComponent = ambientLight.getComponent()!
+        ambientLightComponent.light.intensity = 0.2
+        
+        let pointLightComponent1: LightComponent = pointLight1.getComponent()!
+        pointLightComponent1.light.intensity = 0.5
+        pointLightComponent1.light.color = .lightBlue
+        
+        let pointLightComponent2: LightComponent = pointLight2.getComponent()!
+        pointLightComponent2.light.intensity = 0.2
+        pointLightComponent2.light.color = .red
+        
+        scene?.addGameObjects([ambientLight, dirLight, pointLight1, pointLight2])
     }
     
     override func onDetach() {

@@ -83,7 +83,7 @@ extension Renderer {
     public static func beginRenderPass(type: RenderPassType,
                                        begin beginAction: RenderPassBeginAction = .clear,
                                        end endAction: RenderPassEndAction = .store,
-                                       clearColor: Color = Color(0, 0, 0, 1),
+                                       clearColor: Color4 = .black,
                                        clearDepth: Float = 1.0) {
         // Get render pass
         let renderPass = RenderPassPool.shared.fetchRenderPass(type: type)
@@ -146,6 +146,14 @@ extension Renderer {
             lightData.append(lightComponent.light.lightData)
         }
         
+        if lightData.isEmpty {
+            // If the does not apply scene light, create an ambient light,
+            // Otherwise, shader compilation will fail.
+            var ambientLight = AmbientLight()
+            ambientLight.intensity = 0.2
+            lightData.append(ambientLight.lightData)
+        }
+        
         uploadLightData(encoder, &lightData)
         fragmentUniformData.lightCount = Int32(lightData.count)  // will be uploaded later in render()
     }
@@ -165,12 +173,29 @@ extension Renderer {
             let gameObject = meshRenderer.gameObject  // through ECS
             let transform: TransformComponent = gameObject.getComponent()!  // transform is guaranteed
             let modelMatrix = transform.modelMatrix
+            
+            encoder.pushDebugGroup(gameObject.name)
+            
+            // Vertex Data
             vertexUniformData.modelMatrix = modelMatrix
             vertexUniformData.normalMatrix = modelMatrix.normalMatrix
             
-            // TODO: Tint Color
+            // Fragment Data
+            fragmentUniformData.tintColor = meshRenderer.tintColor
+            fragmentUniformData.noLight = 0  // false
+            
+            // For Light objects (override)
+            if let lightComponent: LightComponent = gameObject.getComponent() {
+                // let intensity = lightComponent.light.intensity
+                let intensity: Float = 1.0
+                fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
+                fragmentUniformData.noLight = 1  // true
+            }
+            
             uploadUniformData(encoder)
+            
             draw(encoder, mesh: meshRenderer.mesh)
+            encoder.popDebugGroup()
         }
     }
     
@@ -188,22 +213,29 @@ extension Renderer {
         
         let transform: TransformComponent = gameObject.getComponent()!  // transform is guaranteed
         
-        // Setup uniform data
+        encoder.pushDebugGroup(gameObject.name)
+        
+        // Vertex Data
         let modelMatrix = transform.modelMatrix
         vertexUniformData.modelMatrix = modelMatrix
         vertexUniformData.normalMatrix = modelMatrix.normalMatrix
         
-        // TODO: Tint Color (or material) based on model's mesh renderer
-        if gameObject is Cube {
-            fragmentUniformData.tintColor = .yellow
-        } else {
-            fragmentUniformData.tintColor = .green
+        // Fragment Data
+        fragmentUniformData.tintColor = meshRenderer.tintColor
+        
+        // For Light objects (override)
+        if let lightComponent: LightComponent = gameObject.getComponent() {
+            // let intensity = lightComponent.light.intensity
+            let intensity: Float = 1.0
+            fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
+            fragmentUniformData.noLight = 1  // true
         }
         
         uploadUniformData(encoder)
         
         // Draw vertex
         draw(encoder, mesh: meshRenderer.mesh)
+        encoder.popDebugGroup()
     }
 }
 

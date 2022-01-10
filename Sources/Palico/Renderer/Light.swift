@@ -10,7 +10,7 @@ import MathLib
 public protocol Light: Any {
     var type: LightType { get }
     var position: Float3 { get set }
-    var color: Float4 { get set }
+    var color: Color3 { get set }
     var intensity: Float { get set }
     var direction: Float3 { get set }
     
@@ -20,13 +20,13 @@ public protocol Light: Any {
 public struct DirectionalLight: Light {
     public var type: LightType { .dirLight }
     public var position: Float3 = [0, 0, 0]
-    public var color: Color = .white
+    public var color: Color3 = .white
     public var intensity: Float = 1.0
     public var direction: Float3 = normalize([-1, -1, 0])
     
     public var lightData: LightData {
         var data = LightData()
-        data.type = type
+        data.type = type.rawValue
         data.position = position
         data.color = color
         data.intensity = intensity
@@ -39,13 +39,13 @@ public struct DirectionalLight: Light {
 public struct PointLight: Light {
     public var type: LightType { .pointLight }
     public var position: Float3 = [0, 0, 0]
-    public var color: Color = .white
+    public var color: Color3 = .white
     public var intensity: Float = 1.0
     public var direction: Float3 = normalize([-1, -1, 0])
     
     public var lightData: LightData {
         var data = LightData()
-        data.type = type
+        data.type = type.rawValue
         data.position = position
         data.color = color
         data.intensity = intensity
@@ -58,13 +58,13 @@ public struct PointLight: Light {
 public struct SpotLight: Light {
     public var type: LightType { .spotLight }
     public var position: Float3 = [0, 0, 0]
-    public var color: Color = .white
+    public var color: Color3 = .white
     public var intensity: Float = 1.0
     public var direction: Float3 = normalize([-1, -1, 0])
     
     public var lightData: LightData {
         var data = LightData()
-        data.type = type
+        data.type = type.rawValue
         data.position = position
         data.color = color
         data.intensity = intensity
@@ -77,13 +77,13 @@ public struct SpotLight: Light {
 public struct AmbientLight: Light {
     public var type: LightType { .ambientLight }
     public var position: Float3 = [0, 0, 0]
-    public var color: Color = .white
+    public var color: Color3 = .white
     public var intensity: Float = 1.0
     public var direction: Float3 = normalize([-1, -1, 0])
     
     public var lightData: LightData {
         var data = LightData()
-        data.type = type
+        data.type = type.rawValue
         data.position = position
         data.color = color
         data.intensity = intensity

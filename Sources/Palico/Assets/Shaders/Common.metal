@@ -42,8 +42,9 @@ namespace Palico {
 
     struct FragmentUniformData {
         float4 tintColor;
-        uint   lightCount;
         float3 cameraPosition;
+        uint   lightCount;
+        uint   noLight;
     };
     
     // Light
@@ -58,7 +59,7 @@ namespace Palico {
     struct LightData {
         LightType type;
         float3    position;
-        float4    color;
+        float3    color;
         float     intensity;
         float3    direction;
         float3    attenuation;
