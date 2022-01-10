@@ -26,7 +26,7 @@ class ViewportPanel: Panel {
     var editorCamera: EditorCamera = EditorCamera()
     
     func onAttach() {
-        editorCamera = EditorCamera(fov: 30.0, aspect: 1.778)
+        editorCamera = EditorCamera(fov: 45.0, aspect: 1.778)
     }
     
     func onUpdate(deltaTime ts: Timestep) {

@@ -51,7 +51,6 @@ class ImGuiLayer: Layer {
     }
     
     override func onEvent(event: Event) {
-        var event = event
         if tryToBlockEvents {
             let io = ImGuiGetIO()!
             

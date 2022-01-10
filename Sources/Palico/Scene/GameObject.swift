@@ -6,16 +6,19 @@
 //
 
 import MathLib
+import Foundation
 
 open class GameObject {
+    public let uuid: String = UUID().uuidString
+    
     public var name: String = "Unnamed GameObject"
     
-    private var components: [Component] = []
+    internal var components: [Component] = []  // internally used in ECS
     
     public init(name: String = "Unnamed GameObject",
-         position: Float3 = [0, 0, 0],
-         rotation: Float3 = [0, 0, 0],
-         scale: Float3 = [1, 1, 1]) {
+                position: Float3 = [0, 0, 0],
+                rotation: Float3 = [0, 0, 0],
+                scale: Float3 = [1, 1, 1]) {
         self.name = name
         
         let transform = TransformComponent()
@@ -31,25 +34,5 @@ open class GameObject {
     
     public func onUpdate(deltaTime ts: Timestep) {
         
-    }
-}
-
-// Component Methods
-extension GameObject {
-    public func addComponent(_ component: Component) {
-        components.append(component)
-    }
-    
-    public func getComponent(at index: Int) -> Component {
-        assert(index >= 0 && index < components.count, "Component index out of bound!")
-        return components[index]
-    }
-    
-    public func removeComponent() {
-        
-    }
-    
-    public func hasComponent() -> Bool {
-        return false
     }
 }

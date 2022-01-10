@@ -129,40 +129,49 @@ extension Renderer {
     }
     
     public static func preRenderSetup(scene: Scene, camera: Camera) {
+        guard let encoder = renderCommandEncoder else {
+            Log.warn("Render command encoder is nil!")
+            return
+        }
+        
         // Camera (view & projection)
         vertexUniformData.viewMatrix = camera.viewMatrix
         vertexUniformData.projectionMatrx = camera.projectionMatrix
         fragmentUniformData.cameraPosition = camera.position
         
         // Light Data
-        fragmentUniformData.lightCount = Int32(scene.lights.count)
-        
-        guard let encoder = renderCommandEncoder else {
-            Log.warn("Render command encoder is nil!")
-            return
-        }
-        
         var lightData: [LightData] = []
-        for sceneLight in scene.lights {
-            // TODO: ECS
-            if let lightComponent = sceneLight.getComponent(at: 3) as? LightComponent {
-                lightData.append(lightComponent.light.lightData)
-            }
+        let lightComponents: [LightComponent] = scene.getComponentList()
+        for lightComponent in lightComponents {
+            lightData.append(lightComponent.light.lightData)
         }
-        encoder.setFragmentBytes(&lightData,
-                                 length: MemoryLayout<LightData>.stride * scene.lights.count,
-                                 index: BufferIndex.lightData.rawValue)
+        
+        uploadLightData(encoder, &lightData)
+        fragmentUniformData.lightCount = Int32(lightData.count)  // will be uploaded later in render()
     }
 }
 
 // MARK: - Render
 extension Renderer {
     public static func render(scene: Scene) {
-        // TODO: Render a scene
-        // Get a list of all MeshRendererComponents
-        //   Get their game object
-        //   Get transform component
-        //   Setup model matrix
+        guard let encoder = renderCommandEncoder else {
+            Log.warn("Render command encoder is nil!")
+            return
+        }
+        
+        let meshRendererList: [MeshRendererComponent] = scene.getComponentList()
+        
+        for meshRenderer in meshRendererList {
+            let gameObject = meshRenderer.gameObject  // through ECS
+            let transform: TransformComponent = gameObject.getComponent()!  // transform is guaranteed
+            let modelMatrix = transform.modelMatrix
+            vertexUniformData.modelMatrix = modelMatrix
+            vertexUniformData.normalMatrix = modelMatrix.normalMatrix
+            
+            // TODO: Tint Color
+            uploadUniformData(encoder)
+            draw(encoder, mesh: meshRenderer.mesh)
+        }
     }
     
     public static func render(gameObject: GameObject) {
@@ -172,22 +181,19 @@ extension Renderer {
         }
         
         // Get mesh renderer component
-        // TODO: ECS
-        guard let meshRenderer = gameObject.getComponent(at: 2) as? MeshRendererComponent else {
-            Log.error("It is not a mesh renderer component!")
+        guard let meshRenderer: MeshRendererComponent = gameObject.getComponent() else {
+            Log.error("This game object does not have mesh renderer component. Skipping rendering!")
             return
         }
         
-        // Get transform component
-        guard let transform = gameObject.getComponent(at: 1) as? TransformComponent else {
-            fatalError("Not a transform component!")
-        }
+        let transform: TransformComponent = gameObject.getComponent()!  // transform is guaranteed
         
         // Setup uniform data
-        vertexUniformData.modelMatrix = transform.modelMatrix
-        vertexUniformData.normalMatrix = transform.modelMatrix.normalMatrix
+        let modelMatrix = transform.modelMatrix
+        vertexUniformData.modelMatrix = modelMatrix
+        vertexUniformData.normalMatrix = modelMatrix.normalMatrix
         
-        // TODO: Set up tint color (or material) based on model's mesh renderer
+        // TODO: Tint Color (or material) based on model's mesh renderer
         if gameObject is Cube {
             fragmentUniformData.tintColor = .yellow
         } else {
@@ -199,13 +205,11 @@ extension Renderer {
         // Draw vertex
         draw(encoder, mesh: meshRenderer.mesh)
     }
-    
+}
+
+// MARK: - Upload/Draw Data
+extension Renderer {
     private static func uploadUniformData(_ encoder: MTLRenderCommandEncoder) {
-        guard let encoder = renderCommandEncoder else {
-            Log.warn("Render command encoder is nil!")
-            return
-        }
-        
         encoder.setVertexBytes(&vertexUniformData,
                                length: MemoryLayout<VertexUniformData>.stride,
                                index: BufferIndex.vertexUniform.rawValue)
@@ -213,6 +217,12 @@ extension Renderer {
         encoder.setFragmentBytes(&fragmentUniformData,
                                  length: MemoryLayout<FragmentUniformData>.stride,
                                  index: BufferIndex.fragmentUniform.rawValue)
+    }
+    
+    private static func uploadLightData(_ encoder: MTLRenderCommandEncoder, _ lightData: inout [LightData]) {
+        encoder.setFragmentBytes(&lightData,
+                                 length: MemoryLayout<LightData>.stride * lightData.count,
+                                 index: BufferIndex.lightData.rawValue)
     }
     
     private static func draw(_ encoder: MTLRenderCommandEncoder, mesh: Mesh) {

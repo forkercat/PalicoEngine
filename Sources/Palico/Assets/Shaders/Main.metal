@@ -46,10 +46,41 @@ namespace Palico {
     // Fragment
     fragment float4 fragment_main(
             const VertexOut in                             [[ stage_in ]],
-            constant FragmentUniformData& fragmentUniform  [[ buffer(Buffer::fragmentUniform) ]]) {
+            constant FragmentUniformData& fragmentUniform  [[ buffer(Buffer::fragmentUniform) ]],
+            constant LightData* lightData                  [[ buffer(Buffer::lightData) ]]) {
         
-        // return float4(in.uv.x, in.uv.y, 0.8, 1.0);
+        // return float4(in.worldNormal, 1.0);
+        // return float4(in.worldPosition, 1.0);
+
+        float3 normalWS = normalize(in.worldNormal);
+
+        /*
+        for (uint i = 0; i < fragmentUniform.lightCount; i++) {
+            LightData light = lightData[i];
+        }
+        */
+
+        LightData light0 = lightData[0];
+        LightData light1 = lightData[1];
+
+        float3 baseColor = float3(1, 1, 1);  // tintColor
+
+        float3 diffuseColor = 0;
+
+        // float3 lightDir = normalize(-light0.direction);
+        // float3 lightDir = normalize(light1.position - in.worldPosition);
+        float3 lightDir = normalize(float3(-1, 1, -1) - in.worldPosition);
+
+        float diffuseIntensity = saturate(dot(normalWS, lightDir));  // NdotL
+
+        // fragmentUniform.cameraPosition
+
+        // return fragmentUniform.tintColor;
+        // return float4(diffuseIntensity);
+        // return float4(normalWS, 1.0);
         return fragmentUniform.tintColor;
+    
+    
     }
 
 }  // Palico

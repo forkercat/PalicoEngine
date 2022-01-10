@@ -1,5 +1,5 @@
 //
-//  ForkerECS.swift
+//  MothECS.swift
 //  Palico
 //
 //  Created by Junhao Wang on 1/9/22.
@@ -7,12 +7,12 @@
 
 // Entity-Component System (trivial version ><)
 // Internal Usage in Palico (Editor has no idea what it is!)
-enum ForkerECS {
+enum MothECS {
     private static var componentGameObjectMap: [String: GameObject] = [:]  // UUID -> GameObject
 }
 
 // Scene Methods
-extension ForkerECS {
+extension MothECS {
     static func getComponentList<T: Component>(_ scene: Scene) -> [T] {
         var result: [T] = []
         
@@ -26,7 +26,7 @@ extension ForkerECS {
 }
 
 // Component Methods
-extension ForkerECS {
+extension MothECS {
     static func getGameObject(_ component: Component) -> GameObject {
         guard let gameObject = componentGameObjectMap[component.uuid] else {
             fatalError("This component \(component) does not belong to any GameObject!")
@@ -36,7 +36,7 @@ extension ForkerECS {
 }
 
 // GameObject Methods
-extension ForkerECS {
+extension MothECS {
     static func addComponent<T: Component>(_ gameObject: GameObject, _ component: T) {
         guard !Self.hasComponent(gameObject, T.self) else {
             Log.error("The component type (\(T.self)) already exists. Only one type of component is allowed!")

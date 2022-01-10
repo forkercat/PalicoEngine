@@ -38,6 +38,19 @@ class EditorLayer: Layer {
         
         // Scene
         scene = Scene()
+        
+        let cube = Cube(name: "Cube", position: [0, 0, 0])
+        let sphere = Sphere(name: "Sphere",
+                            position: [-4, 2, -4],
+                            rotation: [0, 0, 0],
+                            scale: [0.5, 0.5, 0.5])
+        let lights: [SceneLight] = [
+            SceneLight(name: "DirLight", type: .dirLight),
+//            SceneLight(name: "PointLight", type: .pointLight)
+        ]
+        scene?.addGameObject(cube)
+        scene?.addGameObject(sphere)
+        scene?.addGameObjects(lights)
     }
     
     override func onDetach() {
@@ -57,7 +70,7 @@ class EditorLayer: Layer {
         
         // Update Scene
         
-        // Render Scene        
+        // Render Scene
         scene?.onUpdateEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
         
         // Event
