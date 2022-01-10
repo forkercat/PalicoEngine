@@ -8,41 +8,45 @@
 import MathLib
 
 public class SceneLight: GameObject {
-    public override init(name: String = "Scene Light",
-                         position: Float3 = [0, 0, 0],
-                         rotation: Float3 = [Float(-45.0).toRadians,
-                                             Float(45.0).toRadians,
-                                             0],
-                         scale: Float3 = [1, 1, 1]) {
-        super.init(name: name, position: position, rotation: rotation, scale: scale)
-        
-        let mesh = MeshFactory.getPrimitiveMesh(type: .sphere)
-        addComponent(MeshRendererComponent(mesh: mesh))
-        addComponent(LightComponent(type: .dirLight))
-    }
-    
     public init(name: String = "Scene Light",
                 type: LightType = .dirLight,
-                position: Float3 = [0, 0, 0],
-                rotation: Float3 = [Float(-45.0).toRadians,
-                                    Float(45.0).toRadians,
-                                    0],
-                scale: Float3 = [1, 1, 1]) {
-        super.init(name: name, position: position, rotation: rotation, scale: scale)
+                position: Float3 = [3, 3, 0],
+                rotation: Float3 = [0, 0, 0]) {
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .sphere)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let defaultRotation: Float3 = (type == .dirLight || type == .spotLight) ? [0, 0, Float(-45).toRadians] : rotation
+        let defaultScale: Float3 = [0.2, 0.2, 0.2]
+        
+        super.init(name: name, position: position,
+                   rotation: defaultRotation,
+                   scale: defaultScale)
+        
+        addComponent(MeshRendererComponent(mesh: makeLightMesh(type: type)))
         addComponent(LightComponent(type: type))
     }
     
     public override func onUpdate(deltaTime ts: Timestep) {
         // TODO: Get LightComponent from ECS
         // Hard-coded
-        if let transform = getComponent(at: 1) as? TransformComponent {
-            if let lightComponent = getComponent(at: 3) as? LightComponent {
+        if let transform: TransformComponent = getComponent() {
+            if let lightComponent: LightComponent = getComponent() {
                 lightComponent.light.position = transform.position
                 lightComponent.light.direction = transform.forwardDirection  // points to Z
             }
         }
+    }
+    
+    private func makeLightMesh(type: LightType) -> Mesh {
+        var mesh: Mesh
+        switch type {
+        case .dirLight:
+            mesh = MeshFactory.makePrimitiveMesh(type: .cylinder)
+        case .pointLight:
+            mesh = MeshFactory.makePrimitiveMesh(type: .sphere)
+        case .spotLight:
+            mesh = MeshFactory.makePrimitiveMesh(type: .cone)
+        case .ambientLight:
+            mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
+        }
+        return mesh
     }
 }

@@ -18,7 +18,7 @@ public class Cube: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .cube)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .cube)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
@@ -30,7 +30,7 @@ public class Sphere: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .sphere)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .sphere)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
@@ -42,7 +42,7 @@ public class Hemisphere: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .hemiSphere)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
@@ -54,7 +54,7 @@ public class Plane: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .plane)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .plane)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
@@ -66,7 +66,7 @@ public class Capsule: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .capsule)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .capsule)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
@@ -78,7 +78,7 @@ public class Cylinder: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .cylinder)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .cylinder)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
@@ -90,7 +90,7 @@ public class Cone: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.getPrimitiveMesh(type: .cone)
+        let mesh = MeshFactory.makePrimitiveMesh(type: .cone)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
 }
