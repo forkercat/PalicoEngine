@@ -13,7 +13,8 @@ public class SceneLight: GameObject {
                 position: Float3 = [3, 3, 0],
                 rotation: Float3 = [0, 0, 0]) {
         
-        let defaultRotation: Float3 = (type == .dirLight || type == .spotLight) ? [0, 0, Float(-45).toRadians] : rotation
+        let defaultRotation: Float3 = (type == .dirLight || type == .spotLight)
+                                    ? [Float(-45).toRadians, Float(-90).toRadians, 0] : rotation
         let defaultScale: Float3 = [0.2, 0.2, 0.2]
         
         super.init(name: name, position: position,
@@ -24,14 +25,15 @@ public class SceneLight: GameObject {
         addComponent(LightComponent(type: type))
     }
     
-    public override func onUpdate(deltaTime ts: Timestep) {
-        // TODO: Get LightComponent from ECS
-        // Hard-coded
-        if let transform: TransformComponent = getComponent() {
-            if let lightComponent: LightComponent = getComponent() {
-                lightComponent.light.position = transform.position
-                lightComponent.light.direction = transform.forwardDirection  // points to Z
-            }
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        updateLightComponentData()
+    }
+    
+    private func updateLightComponentData() {
+        if let lightComponent: LightComponent = getComponent() {
+            let transform: TransformComponent = getComponent()!
+            lightComponent.light.position = transform.position
+            lightComponent.light.direction = -transform.upDirection  // points to -Y
         }
     }
     
@@ -39,13 +41,13 @@ public class SceneLight: GameObject {
         var mesh: Mesh
         switch type {
         case .dirLight:
-            mesh = MeshFactory.makePrimitiveMesh(type: .cylinder)
+            mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
         case .pointLight:
             mesh = MeshFactory.makePrimitiveMesh(type: .sphere)
         case .spotLight:
             mesh = MeshFactory.makePrimitiveMesh(type: .cone)
         case .ambientLight:
-            mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
+            mesh = MeshFactory.makePrimitiveMesh(type: .cube)
         }
         return mesh
     }

@@ -31,7 +31,7 @@ public struct DirectionalLight: Light {
         data.color = color
         data.intensity = intensity
         data.direction = direction
-
+        
         return data
     }
 }

@@ -23,7 +23,14 @@ public class Scene {
 
 // Update
 extension Scene {
-    public func onUpdateEditor(deltaTime ts: Timestep, editorCamera: EditorCamera) {
+    // Editor
+    public func onUpdateEditor(deltaTime ts: Timestep) {
+        for gameObject in gameObjects {
+            gameObject.onUpdateEditor(deltaTime: ts)
+        }
+    }
+    
+    public func onRenderEditor(deltaTime ts: Timestep, editorCamera: EditorCamera) {
         Renderer.beginRenderPass(type: .colorPass,
                                  begin: .clear,
                                  clearColor: bgColor)
@@ -35,13 +42,18 @@ extension Scene {
         Renderer.endRenderPass()
     }
     
+    // Runtime
     public func onUpdateRuntime(deltaTime ts: Timestep) {
+        // TODO: Play Mode
+    }
+    
+    public func onRenderRuntime(deltaTime ts: Timestep) {
         // TODO: Play Mode
     }
     
     public func onViewportResize(size: Int2) {
         viewportSize = size
-        // TODO: Resize scene cameras ?? Needed
+        // TODO: Resize scene camera. Needed?
     }
 }
 

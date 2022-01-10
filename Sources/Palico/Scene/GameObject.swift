@@ -32,7 +32,14 @@ open class GameObject {
         addComponent(transform)
     }
     
-    public func onUpdate(deltaTime ts: Timestep) {
+    // Editor Update
+    public func onUpdateEditor(deltaTime ts: Timestep) {
         
+    }
+    
+    // Runtime Update
+    public func onUpdateRuntime(deltaTime ts: Timestep) {
+        // TODO: Play Mode
+        // Update script component as well
     }
 }

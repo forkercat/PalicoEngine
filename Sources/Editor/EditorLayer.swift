@@ -68,10 +68,11 @@ class EditorLayer: Layer {
         viewportPanel.onUpdate(deltaTime: ts)
         hierarchyPanel.onUpdate(deltaTime: ts)
         
-        // Update Scene
+        // Update Scene (Editor)
+        scene?.onUpdateEditor(deltaTime: ts)
         
-        // Render Scene
-        scene?.onUpdateEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
+        // Render Scene (Editor)
+        scene?.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
         
         // Event
     }
