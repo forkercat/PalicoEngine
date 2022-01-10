@@ -10,7 +10,15 @@ import MathLib
 public class Scene {
     public var bgColor: Color4 = .black
     
+    // TODO: Use ECS to manage
     internal var gameObjects: [GameObject] = []
+    
+    public struct ObjectDebugItem {
+        public let name: String
+        public let uuid: String
+    }
+    public var debugItems: [ObjectDebugItem] = []
+    
     private var viewportSize: Int2 = [0, 0]
     
     public init() {
@@ -59,10 +67,14 @@ extension Scene {
     // Create and destroy methods
     public func addGameObject(_ gameObject: GameObject) {
         self.gameObjects.append(gameObject)
+        self.debugItems.append(ObjectDebugItem(name: gameObject.name, uuid: gameObject.uuid))
     }
     
     public func addGameObjects(_ gameObjects: [GameObject]) {
         self.gameObjects.append(contentsOf: gameObjects)
+        for gameObject in gameObjects {
+            self.debugItems.append(ObjectDebugItem(name: gameObject.name, uuid: gameObject.uuid))
+        }
     }
     
     public func destroyGameObject(_ gameObject: GameObject) {

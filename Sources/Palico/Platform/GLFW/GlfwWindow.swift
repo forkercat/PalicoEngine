@@ -5,6 +5,7 @@
 //  Created by Junhao Wang on 12/26/21.
 //
 
+/*
 import CGLFW3
 import Cocoa  // Is it possible not to use Cocoa?
 import MathLib
@@ -181,3 +182,4 @@ private func glfwCursorPosCallback(window: OpaquePointer?, xpos: Double, ypos: D
 private func publishEvent(dataPointer: UnsafeMutableRawPointer, event: Event) {
     dataPointer.load(as: WindowData.self).windowDelegate?.onEvent(event: event)
 }
+*/

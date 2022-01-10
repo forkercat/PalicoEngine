@@ -222,7 +222,8 @@ class EditorLayer: Layer {
         imGuiDemoPanel.onImGuiRender()
         
         // Hierarchy Panel
-        hierarchyPanel.onImGuiRender()
+        // TODO: Remove
+        hierarchyPanel.onImGuiRender(items: scene?.debugItems ?? [])
         
         // Inspector Panel
         inspectorPanel.onImGuiRender()

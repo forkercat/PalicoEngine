@@ -12,12 +12,12 @@ public struct ShaderLibrary {
     public static var shaderCount: Int { get { shaderCache.count } }
     
     public static func makeShader(name: String, url: URL) -> Shader? {
-        Log.debug("Making shader -> \(name) (\(url.lastPathComponent))")
+        Log.debug("Loading shader -> \(name) (\(url.lastPathComponent))")
         return Shader(name: name, url: url)
     }
     
     public static func makeShader(name: String, source: String) -> Shader? {
-        Log.debug("Making shader -> \(name) (source code)")
+        Log.debug("Loading shader -> \(name) (source code)")
         return Shader(name: name, source: source)
     }
     

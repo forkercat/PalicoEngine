@@ -89,7 +89,7 @@ class ImGuiLayer: Layer {
         let io = ImGuiGetIO()!
         
         let dpi: Float = MetalContext.dpi
-        let fontSize = Float(16.0)
+        let fontSize = Float(17.0)
         let scaledFontSize = Float(dpi * fontSize)
         let iconFontSize = Float(12.0)
         let iconScaledFontSize = Float(dpi * iconFontSize)

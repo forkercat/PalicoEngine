@@ -5,6 +5,7 @@
 //  Created by Junhao Wang on 12/26/21.
 //
 
+/*
 import CGLFW3
 
 fileprivate struct GLFWInt32 {
@@ -46,3 +47,4 @@ class GlfwContext: PlatformContextDelegate {
         glfwTerminate()
     }
 }
+*/

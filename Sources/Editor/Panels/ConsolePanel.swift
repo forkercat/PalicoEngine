@@ -45,11 +45,11 @@ class ConsolePanel: Panel {
         }
          */
 
-        ImGuiSameLine(ImGuiGetWindowWidth() - 150 - 95 - 25, -1)  // TODO: Use calculated width
+        ImGuiSameLine(ImGuiGetWindowWidth() - 150 - 95 - 40, -1)  // TODO: Use calculated width
         ImGuiCheckbox("Auto-Scroll", &autoScrolled)
         ImGuiSameLine(0, -1)
         
-        ImGuiPushItemWidth(90)
+        ImGuiPushItemWidth(95)
         ImGuiCombo("##OutputLevelCombo", &currentMessageLevel,
                    Console.Message.Level.levelStringsWithIcons,
                    Int32(Console.Message.Level.numLevels), -1)

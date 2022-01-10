@@ -13,9 +13,27 @@ class HierarchyPanel: Panel {
     var panelName: String { "Scene Hierarchy" }
     
     func onImGuiRender() {
+        
+    }
+    
+    // TODO: Remove
+    func onImGuiRender(items: [Scene.ObjectDebugItem]) {
         ImGuiBegin("\(FAIcon.list) \(panelName)", nil, 0)
         
+        let flags: ImGuiTreeNodeFlags = Im(ImGuiTreeNodeFlags_SpanAvailWidth)
         
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 8))
+        
+        for item in items {
+            let opened: Bool = ImGuiTreeNodeEx(item.name, flags)
+            
+            if opened {
+                ImGuiTextV("uuid: \(item.uuid)")
+                ImGuiTreePop()
+            }
+        }
+        
+        ImGuiPopStyleVar(1)
         
         ImGuiEnd()
     }
