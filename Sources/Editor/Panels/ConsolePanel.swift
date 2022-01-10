@@ -82,13 +82,13 @@ class ConsolePanel: Panel {
             
             switch message.level {
             case .debug:
-                color = ImVec4(0.4, 1.0, 0.4, 1.0)
+                color = ImVec4(0.4, 0.9, 0.4, 1.0)
             case .info:
-                color = ImVec4(1.0, 1.0, 1.0, 1.0)
+                color = ImVec4(0.9, 0.9, 0.9, 1.0)
             case .warn:
-                color = ImVec4(1.0, 1.0, 0.4, 1.0)
+                color = ImVec4(0.9, 0.9, 0.4, 1.0)
             case .error:
-                color = ImVec4(1.0, 0.4, 0.4, 1.0)
+                color = ImVec4(0.9, 0.4, 0.4, 1.0)
             }
             
             ImGuiPushStyleColor(Im(ImGuiCol_Text), color)
