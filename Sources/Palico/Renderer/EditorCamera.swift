@@ -9,12 +9,13 @@ import MathLib
 
 public class EditorCamera: Camera {
     // Parameters
-    public private(set) var position: Float3   = [0, 0, 0]
     public private(set) var fov: Float         = 45.0
     public private(set) var aspectRatio: Float = 1.778
     public private(set) var nearClip: Float    = 0.1
     public private(set) var farClip: Float     = 1000.0
-    
+    public var position: Float3 { get {
+        return focusPoint - forwardDirection * distance
+    }}
     
     // Orientation
     public var orientation: Quaternion { get {
@@ -68,8 +69,8 @@ public class EditorCamera: Camera {
     // Private
     private var focusPoint: Float3           = [0, 0, 0]
     private var distance: Float              = 10.0
-    private var pitchAtFocus: Float          = 0.0
-    private var yawAtFocus: Float            = 0.0
+    private var pitchAtFocus: Float          = Float(-20).toRadians
+    private var yawAtFocus: Float            = Float(-135).toRadians  // within [+X, +Y, +Z] 10 away from origin
     private var viewportSize: Int2           = [1280, 720]
     
     // Output
@@ -100,8 +101,6 @@ extension EditorCamera {
         /* Lock camera's orientation
          yaw = 0, pitch = 0
          */
-        position = focusPoint - forwardDirection * distance
-        
         let R = Float4x4(orientation)
         let T = Float4x4(translation: position)
         viewMatrix = mul(T, R).inverse
