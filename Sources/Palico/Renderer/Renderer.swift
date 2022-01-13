@@ -141,8 +141,11 @@ extension Renderer {
         
         // Light Data
         var lightData: [LightData] = []
-        let lightComponents: [LightComponent] = scene.getComponentList()
-        for lightComponent in lightComponents {
+        
+        let gameObjects = scene.view(LightComponent.self)
+        
+        for gameObject in gameObjects {
+            let lightComponent = gameObject.getComponent(LightComponent.self)
             lightData.append(lightComponent.light.lightData)
         }
         
@@ -167,11 +170,11 @@ extension Renderer {
             return
         }
         
-        let meshRendererList: [MeshRendererComponent] = scene.getComponentList()
+        let gameObjects = scene.view(TransformComponent.self, MeshRendererComponent.self)
         
-        for meshRenderer in meshRendererList {
-            let gameObject = meshRenderer.gameObject  // through ECS
-            let transform: TransformComponent = gameObject.getComponent()!  // transform is guaranteed
+        for gameObject in gameObjects {
+            let meshRenderer = gameObject.getComponent(MeshRendererComponent.self)
+            let transform = gameObject.getComponent(TransformComponent.self)
             let modelMatrix = transform.modelMatrix
             
             encoder.pushDebugGroup(gameObject.name)
@@ -185,7 +188,8 @@ extension Renderer {
             fragmentUniformData.noLight = 0  // false
             
             // For Light objects (override)
-            if let lightComponent: LightComponent = gameObject.getComponent() {
+            if gameObject.hasComponent(LightComponent.self) {
+                let lightComponent = gameObject.getComponent(LightComponent.self)
                 // let intensity = lightComponent.light.intensity
                 let intensity: Float = 1.0
                 fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
@@ -194,7 +198,9 @@ extension Renderer {
             
             uploadUniformData(encoder)
             
-            draw(encoder, mesh: meshRenderer.mesh)
+            if let mesh = meshRenderer.mesh {
+                draw(encoder, mesh: mesh)
+            }
             encoder.popDebugGroup()
         }
     }
@@ -206,12 +212,13 @@ extension Renderer {
         }
         
         // Get mesh renderer component
-        guard let meshRenderer: MeshRendererComponent = gameObject.getComponent() else {
+        guard gameObject.hasComponent(MeshRendererComponent.self) else {
             Log.error("This game object does not have mesh renderer component. Skipping rendering!")
             return
         }
         
-        let transform: TransformComponent = gameObject.getComponent()!  // transform is guaranteed
+        let meshRenderer = gameObject.getComponent(MeshRendererComponent.self)
+        let transform = gameObject.getComponent(TransformComponent.self)
         
         encoder.pushDebugGroup(gameObject.name)
         
@@ -223,8 +230,9 @@ extension Renderer {
         // Fragment Data
         fragmentUniformData.tintColor = meshRenderer.tintColor
         
-        // For Light objects (override)
-        if let lightComponent: LightComponent = gameObject.getComponent() {
+        /// For Light objects (override)
+        if gameObject.hasComponent(LightComponent.self) {
+            let lightComponent = gameObject.getComponent(LightComponent.self)
             // let intensity = lightComponent.light.intensity
             let intensity: Float = 1.0
             fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
@@ -234,7 +242,9 @@ extension Renderer {
         uploadUniformData(encoder)
         
         // Draw vertex
-        draw(encoder, mesh: meshRenderer.mesh)
+        if let mesh = meshRenderer.mesh {
+            draw(encoder, mesh: mesh)
+        }
         encoder.popDebugGroup()
     }
 }

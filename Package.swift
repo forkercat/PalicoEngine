@@ -6,17 +6,18 @@ import PackageDescription
 // Dependencies
 let OhMyLog = Target.Dependency.product(name: "OhMyLog", package: "OhMyLog")
 let MathLib = Target.Dependency.product(name: "MathLib", package: "MathLib")
+let MothECS = Target.Dependency.product(name: "MothECS", package: "MothECS")
 let ImGui = Target.Dependency.product(name: "ImGui", package: "SwiftImGui")
 // let CGLFW3 = Target.Dependency.product(name: "CGLFW3", package: "CGLFW3")
 
 // Engine Dependencies
 let engineDependencies: [Target.Dependency] = [
-    OhMyLog, MathLib, ImGui
+    OhMyLog, MathLib, MothECS, ImGui
 ]
 
 // Application Dependencies
 let appDependencies: [Target.Dependency] = [
-    OhMyLog, MathLib, ImGui
+    OhMyLog, MathLib, MothECS, ImGui
 ]
 
 let package = Package(
@@ -37,6 +38,7 @@ let package = Package(
         .package(url: "https://github.com/forkercat/OhMyLog.git", .branch("main")),
         .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
         .package(url: "https://github.com/forkercat/SwiftImGui.git", .branch("update-1.86-docking")),
+        .package(url: "https://github.com/forkercat/MothECS.git", .branch("main")),
     ],
     
     targets: [

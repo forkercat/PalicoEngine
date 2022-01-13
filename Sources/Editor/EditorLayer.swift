@@ -21,9 +21,6 @@ class EditorLayer: Layer {
     let consolePanel: ConsolePanel = ConsolePanel()
     let imGuiDemoPanel: ImGuiDemoPanel = ImGuiDemoPanel()
     
-    // Scene
-    var scene: Scene? = nil
-    
     override init() {
         super.init()
     }
@@ -34,64 +31,62 @@ class EditorLayer: Layer {
     
     override func onAttach() {
         // EditorCamera
+        hierarchyPanel.onAttach()
         viewportPanel.onAttach()
         
-        // Scene
-        scene = Scene()
-        
         // Primitives
-        let cube = Cube(name: "Cube", position: [0, 0, 0])
-        let cubeMeshRenderer: MeshRendererComponent = cube.getComponent()!
+        let cube = Cube(hierarchyPanel.scene, name: "Cube", position: [0, 0, 0])
+        let cubeMeshRenderer = cube.getComponent(MeshRendererComponent.self)
         cubeMeshRenderer.tintColor = .yellow
         
-        let sphere = Sphere(name: "Sphere",
+        let sphere = Sphere(hierarchyPanel.scene, name: "Sphere",
                             position: [-6, 1.5, -4], rotation: [0, 0, 0], scale: [1.5, 1.5, 1.5])
-        let capsule = Capsule(name: "Capsule",
+        let capsule = Capsule(hierarchyPanel.scene, name: "Capsule",
                               position: [-0.5, 1, -4])
-        let capsuleMeshRenderer: MeshRendererComponent = capsule.getComponent()!
+        let capsuleMeshRenderer = capsule.getComponent(MeshRendererComponent.self)
         capsuleMeshRenderer.tintColor = .green
-        let cone = Cone(name: "Cone",
+        let cone = Cone(hierarchyPanel.scene, name: "Cone",
                         position: [0, 1, 0], rotation: [0, 0, 0], scale: [0.8, 1, 0.8])
-        let coneMeshRenderer: MeshRendererComponent = cone.getComponent()!
+        let coneMeshRenderer = cone.getComponent(MeshRendererComponent.self)
         coneMeshRenderer.tintColor = .red
         
-        let cylinder = Cylinder(name: "Cylinder",
+        let cylinder = Cylinder(hierarchyPanel.scene, name: "Cylinder",
                                 position: [-4, 0.5, 0.5], rotation: [0, 0, 0], scale: [1, 1.5, 1])
-        let cylinderMeshRenderer: MeshRendererComponent = cylinder.getComponent()!
+        let cylinderMeshRenderer = cylinder.getComponent(MeshRendererComponent.self)
         cylinderMeshRenderer.tintColor = .lightBlue
         
-        scene?.addGameObject(cube)
-        scene?.addGameObject(sphere)
-        scene?.addGameObject(capsule)
-        scene?.addGameObject(cone)
-        scene?.addGameObject(cylinder)
+        hierarchyPanel.scene.addGameObject(cube)
+        hierarchyPanel.scene.addGameObject(sphere)
+        hierarchyPanel.scene.addGameObject(capsule)
+        hierarchyPanel.scene.addGameObject(cone)
+        hierarchyPanel.scene.addGameObject(cylinder)
         
         // Light Data
-        let ambientLight = SceneLight(name: "AmbientLight", type: .ambientLight, position: [5, 5, -5])
-        let dirLight = SceneLight(name: "DirLight", type: .dirLight, position: [3, 3, -1])
-        let pointLight1 = SceneLight(name: "PointLight1", type: .pointLight, position: [4, 2, 1.5])
-        let pointLight2 = SceneLight(name: "PointLight2", type: .pointLight, position: [-3, 4, 1.5])
+        let ambientLight = SceneLight(hierarchyPanel.scene, name: "AmbientLight", type: .ambientLight, position: [5, 5, -5])
+        let dirLight = SceneLight(hierarchyPanel.scene, name: "DirLight", type: .dirLight, position: [3, 3, -1])
+        let pointLight1 = SceneLight(hierarchyPanel.scene, name: "PointLight1", type: .pointLight, position: [4, 2, 1.5])
+        let pointLight2 = SceneLight(hierarchyPanel.scene, name: "PointLight2", type: .pointLight, position: [-3, 4, 1.5])
         
         // Config
-        let ambientLightTransform: TransformComponent = ambientLight.getComponent()!
+        let ambientLightTransform = ambientLight.getComponent(TransformComponent.self)
         ambientLightTransform.position = [5, 5, -5]
         
-        let dirLightComponent: LightComponent = dirLight.getComponent()!
+        let dirLightComponent = dirLight.getComponent(LightComponent.self)
         dirLightComponent.light.intensity = 0.6
         dirLightComponent.light.color = .lightYellow
         
-        let ambientLightComponent: LightComponent = ambientLight.getComponent()!
+        let ambientLightComponent = ambientLight.getComponent(LightComponent.self)
         ambientLightComponent.light.intensity = 0.2
         
-        let pointLightComponent1: LightComponent = pointLight1.getComponent()!
+        let pointLightComponent1 = pointLight1.getComponent(LightComponent.self)
         pointLightComponent1.light.intensity = 0.5
         pointLightComponent1.light.color = .lightBlue
         
-        let pointLightComponent2: LightComponent = pointLight2.getComponent()!
+        let pointLightComponent2 = pointLight2.getComponent(LightComponent.self)
         pointLightComponent2.light.intensity = 0.2
         pointLightComponent2.light.color = .red
         
-        scene?.addGameObjects([ambientLight, dirLight, pointLight1, pointLight2])
+        hierarchyPanel.scene.addGameObjects([ambientLight, dirLight, pointLight1, pointLight2])
     }
     
     override func onDetach() {
@@ -109,11 +104,8 @@ class EditorLayer: Layer {
         viewportPanel.onUpdate(deltaTime: ts)
         hierarchyPanel.onUpdate(deltaTime: ts)
         
-        // Update Scene (Editor)
-        scene?.onUpdateEditor(deltaTime: ts)
-        
         // Render Scene (Editor)
-        scene?.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
+        hierarchyPanel.scene.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
         
         // Event
     }
@@ -222,8 +214,7 @@ class EditorLayer: Layer {
         imGuiDemoPanel.onImGuiRender()
         
         // Hierarchy Panel
-        // TODO: Remove
-        hierarchyPanel.onImGuiRender(items: scene?.debugItems ?? [])
+        hierarchyPanel.onImGuiRender()
         
         // Inspector Panel
         inspectorPanel.onImGuiRender()

@@ -12,8 +12,8 @@ Implement a game engine on macOS using Metal API. Still in development. Currentl
 	<img src="gallery/screenshot.jpg" width="100%" alt="Palico Engine Screenshot"/>
 </p>
 
-Name Selection:
-- [Palico](https://monsterhunterworld.wiki.fextralife.com/Palicoes) - It is a cat-like combat companion in Monster Hunter!
+[Palico](https://monsterhunterworld.wiki.fextralife.com/Palicoes) - It is a cat-like combat companion in Monster Hunter!
+
 - [Moth](https://www.pinterest.com/pin/587649451369676935/) in MothECS - It refers to new players in [Sky](https://www.thatskygame.com/). Explanation is [here](https://www.reddit.com/r/SkyGame/comments/q03tj4/why_are_new_players_called_moths/)!
 
 Palico Engine [Sprint Board](https://forkercat.atlassian.net/jira/software/projects/PALICO/boards/1) on Jira (need permission request). Currently there are 54 issues in total!

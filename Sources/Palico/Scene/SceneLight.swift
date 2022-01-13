@@ -8,7 +8,8 @@
 import MathLib
 
 public class SceneLight: GameObject {
-    public init(name: String = "Scene Light",
+    public init(_ scene: Scene,
+                name: String = "Scene Light",
                 type: LightType = .dirLight,
                 position: Float3 = [3, 3, 2],
                 rotation: Float3 = [0, 0, 0]) {
@@ -21,7 +22,8 @@ public class SceneLight: GameObject {
             defaultScale = [0.2, 0.3, 0.2]
         }
         
-        super.init(name: name, position: position,
+        super.init(scene, name: name,
+                   position: position,
                    rotation: defaultRotation,
                    scale: defaultScale)
         
@@ -34,8 +36,9 @@ public class SceneLight: GameObject {
     }
     
     private func updateLightComponentData() {
-        if let lightComponent: LightComponent = getComponent() {
-            let transform: TransformComponent = getComponent()!
+        let transform = getComponent(TransformComponent.self)  // guranteed
+        if hasComponent(LightComponent.self) {
+            let lightComponent = getComponent(LightComponent.self)
             lightComponent.light.position = transform.position
             lightComponent.light.direction = -transform.upDirection  // points to -Y
         }

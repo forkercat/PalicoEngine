@@ -5,14 +5,14 @@
 //  Created by Junhao Wang on 1/9/22.
 //
 
-import Foundation
-
 public class LightComponent: Component {
-    public var uuid: String = UUID().uuidString
     public var title: String { "Light" }
-    public var gameObject: GameObject { MothECS.getGameObject(self) }
     
-    public var light: Light
+    public var light: Light = DirectionalLight()
+    
+    public required init() {
+        
+    }
     
     init(type: LightType) {
         switch type {
@@ -25,18 +25,5 @@ public class LightComponent: Component {
         case .ambientLight:
             light = AmbientLight()
         }
-    }
-}
-
-// Equatable/Hashable
-extension LightComponent {
-    public static func == (lhs: LightComponent, rhs: LightComponent) -> Bool {
-        return lhs.uuid == rhs.uuid
-    }
-}
-
-extension LightComponent {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(uuid)
     }
 }

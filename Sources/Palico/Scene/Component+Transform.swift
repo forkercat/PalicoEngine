@@ -5,13 +5,10 @@
 //  Created by Junhao Wang on 1/9/22.
 //
 
-import Foundation
 import MathLib
 
 public class TransformComponent: Component {
-    public var uuid: String = UUID().uuidString
     public var title: String { "Transform" }
-    public var gameObject: GameObject { MothECS.getGameObject(self) }
     
     public var position: Float3 = [0, 0, 0]
     public var rotation: Float3 = [0, 0, 0] {
@@ -41,17 +38,8 @@ public class TransformComponent: Component {
     
     // Used quaternion internally
     private var quaternion = Quaternion()
-}
-
-// Equatable/Hashable
-extension TransformComponent {
-    public static func == (lhs: TransformComponent, rhs: TransformComponent) -> Bool {
-        return lhs.uuid == rhs.uuid
-    }
-}
-
-extension TransformComponent {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(uuid)
+    
+    public required init() {
+        
     }
 }

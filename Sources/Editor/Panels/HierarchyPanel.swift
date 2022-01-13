@@ -9,26 +9,27 @@ import Palico
 import ImGui
 
 class HierarchyPanel: Panel {
-//    var panelName: String { "\(FAIcon.sitemap) Scene Hierarchy" }
     var panelName: String { "Scene Hierarchy" }
     
-    func onImGuiRender() {
-        
+    var scene: Scene = Scene()
+    
+    func onUpdate(deltaTime ts: Timestep) {
+        scene.onUpdateEditor(deltaTime: ts)
     }
     
-    // TODO: Remove
-    func onImGuiRender(items: [Scene.ObjectDebugItem]) {
+    func onImGuiRender() {
         ImGuiBegin("\(FAIcon.list) \(panelName)", nil, 0)
         
         let flags: ImGuiTreeNodeFlags = Im(ImGuiTreeNodeFlags_SpanAvailWidth)
         
         ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 8))
         
-        for item in items {
-            let opened: Bool = ImGuiTreeNodeEx(item.name, flags)
+        let gameObjectList = scene.gameObjectList
+        for gameObject in gameObjectList {
+            let opened: Bool = ImGuiTreeNodeEx("\(gameObject.name)  - EntityID: \(gameObject.entityID)", flags)
             
             if opened {
-                ImGuiTextV("uuid: \(item.uuid)")
+                ImGuiTextV("EntityID: \(gameObject.entityID)")
                 ImGuiTreePop()
             }
         }
@@ -38,22 +39,3 @@ class HierarchyPanel: Panel {
         ImGuiEnd()
     }
 }
-
-class InspectorPanel: Panel {
-    var panelName: String { "Inspector" }
-    
-    func onImGuiRender() {
-        ImGuiBegin("\(FAIcon.palette) \(panelName)", nil, 0)
-        
-        
-        
-        ImGuiEnd()
-    }
-}
-
-
-
-
-
-
-
