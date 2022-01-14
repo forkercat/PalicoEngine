@@ -45,7 +45,8 @@ extension ScenePanel {
             icon = FAIcon.lightbulb
         }
         
-        let opened: Bool = ImGuiTreeNodeEx("\(icon) [ID: \(gameObject.entityID)] \(gameObject.name)", flags)
+        let opened: Bool = ImGuiTreeNodeEx("\(icon) \(gameObject.name)", flags)
+        // let opened: Bool = ImGuiTreeNodeEx("\(icon) [ID: \(gameObject.entityID)] \(gameObject.name)", flags)
         
         if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) {
             selectedEntityID = gameObject.entityID
