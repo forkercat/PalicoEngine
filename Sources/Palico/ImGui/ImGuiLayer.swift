@@ -106,13 +106,22 @@ class ImGuiLayer: Layer {
         }
         
         io.pointee.FontDefault = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontBold, scaledFontSize, nil, nil)
+        ImGuiFontLibrary.defaultFont = io.pointee.FontDefault
         
         // FontAwesome5
         Self.config.MergeMode = true
         Self.config.GlyphMinAdvanceX = scaledFontSize  // Use if you want to make the icon monospaced
-        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontSolidIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
+        ImGuiFontLibrary.regularIcon = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontSolidIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
         ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontRegularIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
         ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontBrandsIcon, iconScaledFontSize, &Self.config, &Self.iconRanges)
+        
+        // Large Icons
+        let largeScale: Float = 1.8
+        Self.config.MergeMode = false
+        ImGuiFontLibrary.largeIcon = ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontSolidIcon, iconScaledFontSize * largeScale, &Self.config, &Self.iconRanges)
+        Self.config.MergeMode = true
+        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontRegularIcon, iconScaledFontSize * largeScale, &Self.config, &Self.iconRanges)
+        ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontBrandsIcon, iconScaledFontSize * largeScale, &Self.config, &Self.iconRanges)
         
         // ImFontAtlas_AddFontFromFileTTF(io.pointee.Fonts, fontRegular, scaledFontSize, nil, nil)
     }

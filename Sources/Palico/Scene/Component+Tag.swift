@@ -20,6 +20,9 @@ public class TagComponent: Component {
         public static let tagStrings: [String] = [
             "Default", "Player", "Enemy", "Light", "Camera", "Script", "Skybox"
         ]
+        public static var tagStringsWithIcon: [String] {
+            return tagStrings.map { "\(FAIcon.tag) \($0)" }
+        }
     }
     
     public var tag: Tag = .default
