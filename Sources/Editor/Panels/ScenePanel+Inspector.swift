@@ -27,16 +27,29 @@ extension ScenePanel {
         ImGuiPushStyleVar(Im(ImGuiStyleVar_FramePadding), ImVec2(6, 2))
         ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 6))
         
-        drawHeader(gameObject)
-        drawComponents(gameObject)
+        let shouldDeleteGameObject: Bool = drawHeader(gameObject)
+        
+        if shouldDeleteGameObject {
+            scene.destroyGameObject(gameObject)
+            selectedEntityID = .invalid
+        } else {
+            drawComponents(gameObject)
+        }
         
         ImGuiPopStyleVar(2)
         
         ImGuiEnd()
     }
     
-    private func drawHeader(_ gameObject: GameObject) {
+    private func drawHeader(_ gameObject: GameObject) -> Bool {
+        var shouldDeleteGameObject: Bool = false
         var inputValue: String? = gameObject.name
+        
+        let leftPanelWidth: Float = 35
+        let panelHeight: Float = 50
+        
+        // Icon
+        ImGuiBeginChild("##Left Pane", ImVec2(leftPanelWidth, panelHeight), false, 0)
         
         var icon = FAIcon.cube
         if gameObject is Primitive {
@@ -44,36 +57,59 @@ extension ScenePanel {
         } else if gameObject is SceneLight {
             icon = FAIcon.lightbulb
         }
-        ImGuiTextV("\(icon)")
         
-        ImGuiSameLine(0, -1)
+        ImGuiPushFont(ImGuiFontLibrary.largeIcon)
+        let iconItemSize: Float = 26
+        var leftPaneWindowSize: ImVec2 = ImVec2(0, 0)
+        ImGuiGetWindowSize(&leftPaneWindowSize)
+        ImGuiSetCursorPosX(8.0)
+        ImGuiSetCursorPosY((leftPaneWindowSize.y - iconItemSize) / 2.0)
+        ImGuiPushItemWidth(iconItemSize)
+        ImGuiTextV("\(icon)")
+        ImGuiPopItemWidth()
+        ImGuiPopFont()
+        
+        ImGuiEndChild()  // left pane
+        
+        ImGuiSameLine(0, 5)
+        
+        // Right
+        ImGuiBeginChild("##Right Pane", ImVec2(0, panelHeight), false, 0)
+        
+        var contentRegionAvailable: ImVec2 = ImVec2(0, 0)
+        ImGuiGetContentRegionAvail(&contentRegionAvailable)
         
         ImGuiCheckbox("##GameObjectEnabled", &gameObject.enabled)
         
         ImGuiSameLine(0, -1)
         
         // TODO: FIXME - Not working!
+        let deleteButtonSize: Float = 75
+        ImGuiSetNextItemWidth(contentRegionAvailable.x - deleteButtonSize - 37)  // TODO: should be calculated
         if ImGuiInputText("##GameObjectName", &inputValue, 50, Im(ImGuiInputTextFlags_EnterReturnsTrue) | Im(ImGuiInputTextFlags_ReadOnly), { a -> Int32 in
             return 1
         }, nil) { print(inputValue ?? "") }
         
-        ImGuiSameLine(0, -1)
-        
-        if ImGuiButton("\(FAIcon.trashAlt) Delete", ImVec2(0, 0)) {
-            
+        ImGuiSameLine(contentRegionAvailable.x - deleteButtonSize, -1)
+        if ImGuiButton("\(FAIcon.trashAlt) Delete", ImVec2(deleteButtonSize, 0)) {
+            shouldDeleteGameObject = true
         }
         
         // Tag Component
-        /*
+        ImGuiSetNextItemWidth(-Float.leastNormalMagnitude)
+        ImGuiPushItemWidth(contentRegionAvailable.x)
         let tagComponent = gameObject.getComponent(TagComponent.self)
         var tag: Int32 = Int32(tagComponent.tag.rawValue)
-        if ImGuiCombo("##GameObjectTag", &tag, TagComponent.Tag.tagStrings,
+        if ImGuiCombo("##TagComponent", &tag, TagComponent.Tag.tagStringsWithIcon,
                       Int32(TagComponent.Tag.tagStrings.count), -1) {
             tagComponent.tag = TagComponent.Tag(rawValue: Int(tag))!
         }
-        */
         
+        ImGuiEndChild()  // right pane
+                
         ImGuiSeparator()
+        
+        return shouldDeleteGameObject
     }
     
     func drawComponents(_ gameObject: GameObject) {

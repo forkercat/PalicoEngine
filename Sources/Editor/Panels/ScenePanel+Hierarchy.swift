@@ -32,7 +32,7 @@ extension ScenePanel {
     }
     
     private func drawGameObjectNode(_ gameObject: GameObject) {
-        ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 8))
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 4))
         ImGuiPushStyleVar(Im(ImGuiStyleVar_FramePadding), ImVec2(1, 3))
         
         var flags: ImGuiTreeNodeFlags = Im(ImGuiTreeNodeFlags_SpanAvailWidth) | Im(ImGuiTreeNodeFlags_OpenOnArrow) | Im(ImGuiTreeNodeFlags_OpenOnDoubleClick)
