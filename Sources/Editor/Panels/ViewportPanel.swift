@@ -13,6 +13,7 @@ class ViewportPanel: Panel {
     var panelName: String { "Editor Camera" }
     
     var viewportSize: Int2 = [0, 0]
+    var viewportLoadedFirstTime: Bool = false
     
     var viewportBoundsMin: Float2 = [0, 0]
     var viewportBoundsMax: Float2 = [0, 0]
@@ -49,6 +50,14 @@ class ViewportPanel: Panel {
     func checkIfViewportNeedsResize() -> Bool {
         guard viewportSize.width > 0 && viewportSize.height > 0 else {
             Console.warn("Viewport size has zero width or height. Skipping resize!")
+            return false
+        }
+        
+        // ImGui Viewport is intialized with different sizes for the first time.
+        // I think this should be the window size. So let's skip it first to avoid
+        // some resizing effect in application launch.
+        guard viewportLoadedFirstTime else {
+            viewportLoadedFirstTime = true
             return false
         }
         

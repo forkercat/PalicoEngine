@@ -9,14 +9,15 @@ import MathLib
 import MothECS
 
 public class GameObject {
-    public var name: String = "Unnamed GameObject"
+    public var name: String = "GameObject"
+    public var enabled: Bool = true
     
     public let entityID: MothEntityID
     
     internal weak var scene: Scene! = nil
         
     init(_ scene: Scene,
-         name: String = "Unnamed GameObject",
+         name: String = "GameObject",
          position: Float3 = [0, 0, 0],
          rotation: Float3 = [0, 0, 0],
          scale: Float3 = [1, 1, 1]) {
@@ -77,17 +78,19 @@ extension GameObject {
         return scene.moth.getComponent(type, from: entityID)
     }
     
+    @discardableResult
     public func removeComponent<T: Component>(_ component: T) -> T? {
         guard !(component is TagComponent) || !(component is TransformComponent) else {
-            Console.warn("Component (\(T.self) cannot be removed from a game object!")
+            Console.warn("\(T.self) cannot be removed from a game object!")
             return nil
         }
         return scene.moth.removeComponent(T.self, from: entityID)
     }
     
+    @discardableResult
     public func removeComponent<T: Component>(_ type: T.Type) -> T? {
-        guard !(type == TagComponent.self) || !(type == TransformComponent.self) else {
-            Console.warn("Component (\(T.self) cannot be removed from a game object!")
+        guard type != TagComponent.self && type != TransformComponent.self else {
+            Console.warn("\(T.self) cannot be removed from a game object!")
             return nil
         }
         return scene.moth.removeComponent(T.self, from: entityID)

@@ -145,6 +145,9 @@ extension Renderer {
         let gameObjects = scene.view(LightComponent.self)
         
         for gameObject in gameObjects {
+            guard gameObject.enabled else {
+                continue
+            }
             let lightComponent = gameObject.getComponent(LightComponent.self)
             lightData.append(lightComponent.light.lightData)
         }
@@ -173,6 +176,8 @@ extension Renderer {
         let gameObjects = scene.view(TransformComponent.self, MeshRendererComponent.self)
         
         for gameObject in gameObjects {
+            if !gameObject.enabled { continue }
+            
             let meshRenderer = gameObject.getComponent(MeshRendererComponent.self)
             let transform = gameObject.getComponent(TransformComponent.self)
             let modelMatrix = transform.modelMatrix
@@ -214,6 +219,10 @@ extension Renderer {
         // Get mesh renderer component
         guard gameObject.hasComponent(MeshRendererComponent.self) else {
             Log.error("This game object does not have mesh renderer component. Skipping rendering!")
+            return
+        }
+        
+        guard gameObject.enabled else {
             return
         }
         

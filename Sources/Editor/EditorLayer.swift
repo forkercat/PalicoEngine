@@ -14,10 +14,9 @@ fileprivate var dockspaceFlags: ImGuiDockNodeFlags = Im(ImGuiDockNodeFlags_None)
 
 class EditorLayer: Layer {
     // Panels
-    let hierarchyPanel: HierarchyPanel = HierarchyPanel()
+    let scenePanel: ScenePanel = ScenePanel()  // Hierarchy Panel + Inspector Panel
     let assetPanel: AssetPanel = AssetPanel()
     let viewportPanel: ViewportPanel = ViewportPanel()
-    let inspectorPanel: InspectorPanel = InspectorPanel()
     let consolePanel: ConsolePanel = ConsolePanel()
     let imGuiDemoPanel: ImGuiDemoPanel = ImGuiDemoPanel()
     
@@ -31,41 +30,44 @@ class EditorLayer: Layer {
     
     override func onAttach() {
         // EditorCamera
-        hierarchyPanel.onAttach()
+        scenePanel.onAttach()
         viewportPanel.onAttach()
         
+        // Empty GameObject
+        scenePanel.scene.createEmptyGameObject()
+        
         // Primitives
-        let cube = Cube(hierarchyPanel.scene, name: "Cube", position: [0, 0, 0])
+        let cube = Cube(scenePanel.scene, name: "Cube", position: [0, 0, 0])
         let cubeMeshRenderer = cube.getComponent(MeshRendererComponent.self)
         cubeMeshRenderer.tintColor = .yellow
         
-        let sphere = Sphere(hierarchyPanel.scene, name: "Sphere",
+        let sphere = Sphere(scenePanel.scene, name: "Sphere",
                             position: [-6, 1.5, -4], rotation: [0, 0, 0], scale: [1.5, 1.5, 1.5])
-        let capsule = Capsule(hierarchyPanel.scene, name: "Capsule",
+        let capsule = Capsule(scenePanel.scene, name: "Capsule",
                               position: [-0.5, 1, -4])
         let capsuleMeshRenderer = capsule.getComponent(MeshRendererComponent.self)
         capsuleMeshRenderer.tintColor = .green
-        let cone = Cone(hierarchyPanel.scene, name: "Cone",
+        let cone = Cone(scenePanel.scene, name: "Cone",
                         position: [0, 1, 0], rotation: [0, 0, 0], scale: [0.8, 1, 0.8])
         let coneMeshRenderer = cone.getComponent(MeshRendererComponent.self)
         coneMeshRenderer.tintColor = .red
         
-        let cylinder = Cylinder(hierarchyPanel.scene, name: "Cylinder",
+        let cylinder = Cylinder(scenePanel.scene, name: "Cylinder",
                                 position: [-4, 0.5, 0.5], rotation: [0, 0, 0], scale: [1, 1.5, 1])
         let cylinderMeshRenderer = cylinder.getComponent(MeshRendererComponent.self)
         cylinderMeshRenderer.tintColor = .lightBlue
         
-        hierarchyPanel.scene.addGameObject(cube)
-        hierarchyPanel.scene.addGameObject(sphere)
-        hierarchyPanel.scene.addGameObject(capsule)
-        hierarchyPanel.scene.addGameObject(cone)
-        hierarchyPanel.scene.addGameObject(cylinder)
+        scenePanel.scene.addGameObject(cube)
+        scenePanel.scene.addGameObject(sphere)
+        scenePanel.scene.addGameObject(capsule)
+        scenePanel.scene.addGameObject(cone)
+        scenePanel.scene.addGameObject(cylinder)
         
         // Light Data
-        let ambientLight = SceneLight(hierarchyPanel.scene, name: "AmbientLight", type: .ambientLight, position: [5, 5, -5])
-        let dirLight = SceneLight(hierarchyPanel.scene, name: "DirLight", type: .dirLight, position: [3, 3, -1])
-        let pointLight1 = SceneLight(hierarchyPanel.scene, name: "PointLight1", type: .pointLight, position: [4, 2, 1.5])
-        let pointLight2 = SceneLight(hierarchyPanel.scene, name: "PointLight2", type: .pointLight, position: [-3, 4, 1.5])
+        let ambientLight = SceneLight(scenePanel.scene, name: "Ambient Light", type: .ambientLight, position: [5, 5, -5])
+        let dirLight = SceneLight(scenePanel.scene, name: "Directional Light", type: .dirLight, position: [3, 3, -1])
+        let pointLight1 = SceneLight(scenePanel.scene, name: "Point Light #1", type: .pointLight, position: [4, 2, 1.5])
+        let pointLight2 = SceneLight(scenePanel.scene, name: "Point Light #2", type: .pointLight, position: [-3, 4, 1.5])
         
         // Config
         let ambientLightTransform = ambientLight.getComponent(TransformComponent.self)
@@ -86,7 +88,7 @@ class EditorLayer: Layer {
         pointLightComponent2.light.intensity = 0.2
         pointLightComponent2.light.color = .red
         
-        hierarchyPanel.scene.addGameObjects([ambientLight, dirLight, pointLight1, pointLight2])
+        scenePanel.scene.addGameObjects([ambientLight, dirLight, pointLight1, pointLight2])
     }
     
     override func onDetach() {
@@ -101,11 +103,11 @@ class EditorLayer: Layer {
         }
         
         // onUpdate
+        scenePanel.onUpdate(deltaTime: ts)
         viewportPanel.onUpdate(deltaTime: ts)
-        hierarchyPanel.onUpdate(deltaTime: ts)
         
         // Render Scene (Editor)
-        hierarchyPanel.scene.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
+        scenePanel.scene.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
         
         // Event
     }
@@ -165,59 +167,13 @@ class EditorLayer: Layer {
         // var openScenePopup: Bool = false
         // var saveSceneAsPopup: Bool = false
         
-        if ImGuiBeginMenuBar() {
-            if ImGuiBeginMenu("\(FAIcon.file) File", true) {
-                // Disabling fullscreen would allow the window to be moved to the front of other windows,
-                // which we can't undo at the moment without finer window depth/z control.
-                
-                if ImGuiMenuItem("\(FAIcon.folderPlus) New", "CMD+N", false, true) { }
-                if ImGuiMenuItem("\(FAIcon.folderOpen) Open...", "CMD+O", false, true) { }
-                if ImGuiMenuItem("\(FAIcon.save) Save", "CMD+S", false, true) { }
-                ImGuiSeparator()
-                if ImGuiMenuItem("\(FAIcon.signOutAlt) Exit", "CMD+Q", false, true) { }
-
-                /*
-                if (ImGui::MenuItem("New", "Ctrl+N"))
-                    NewScene();
-                
-                if (ImGui::MenuItem("Open...", "Cmd+O"))
-                    openScenePopup = true;
-                
-                if (ImGui::MenuItem("Save As...", "Cmd+Shift+S"))
-                    saveSceneAsPopup = true;
-                
-                if (ImGui::MenuItem("Exit"))
-                    Application::Get().Close();
-                 */
-                
-                ImGuiEnd()
-            }
-            
-            if ImGuiBeginMenu("\(FAIcon.edit) Edit", true) {
-                if ImGuiMenuItem("\(FAIcon.undo) Undo", "CMD+Z", false, true) { }
-                if ImGuiMenuItem("\(FAIcon.redo) Redo", "CMD+Y", false, false) { } // disabled item
-                ImGuiSeparator()
-                if ImGuiMenuItem("\(FAIcon.cut) Cut", "CMD+X", false, true) { }
-                if ImGuiMenuItem("\(FAIcon.copy) Copy", "CMD+C", false, true) { }
-                if ImGuiMenuItem("\(FAIcon.paste) Paste", "CMD+V", false, true) {}
-                ImGuiEndMenu()
-            }
-            
-            if ImGuiBeginMenu("\(FAIcon.cube) GameObject", true) { ImGuiEndMenu() }
-            if ImGuiBeginMenu("\(FAIcon.windowRestore) Window", true) { ImGuiEndMenu() }
-            if ImGuiBeginMenu("\(FAIcon.questionCircle) Help", true) { ImGuiEndMenu() }
-            
-            ImGuiEndMenuBar()
-        }
+        drawMenuBar()
         
         // ImGui Demo
         imGuiDemoPanel.onImGuiRender()
         
-        // Hierarchy Panel
-        hierarchyPanel.onImGuiRender()
-        
-        // Inspector Panel
-        inspectorPanel.onImGuiRender()
+        // Scene Panel (Hierarchy Panel + Inspector Panel)
+        scenePanel.onImGuiRender()
         
         // Asset Panel
         assetPanel.onImGuiRender()
@@ -240,7 +196,7 @@ class EditorLayer: Layer {
     }
 }
 
-// Key & Mouse Event Callbacks
+// MARK: - Key & Mouse Event Callbacks
 extension EditorLayer {
     private func onKeyPressed(event: KeyPressedEvent) -> Bool {
         return true
@@ -248,5 +204,65 @@ extension EditorLayer {
     
     private func onMouseButtonPressed(event: MouseButtonPressedEvent) -> Bool {
         return true
+    }
+}
+
+// MARK: - Menu Bar
+extension EditorLayer {
+    private func drawMenuBar() {
+        if ImGuiBeginMenuBar() {
+            // File
+            if ImGuiBeginMenu("\(FAIcon.file) File", true) {
+                // Disabling fullscreen would allow the window to be moved to the front of other windows,
+                // which we can't undo at the moment without finer window depth/z control.
+                
+                if ImGuiMenuItem("\(FAIcon.folderPlus) New", "CMD+N", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.folderOpen) Open...", "CMD+O", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.save) Save", "CMD+S", false, true) { }
+                ImGuiSeparator()
+                if ImGuiMenuItem("\(FAIcon.signOutAlt) Exit", "CMD+Q", false, true) { }
+                
+                /*
+                 if (ImGui::MenuItem("New", "Ctrl+N"))
+                 NewScene();
+                 
+                 if (ImGui::MenuItem("Open...", "Cmd+O"))
+                 openScenePopup = true;
+                 
+                 if (ImGui::MenuItem("Save As...", "Cmd+Shift+S"))
+                 saveSceneAsPopup = true;
+                 
+                 if (ImGui::MenuItem("Exit"))
+                 Application::Get().Close();
+                 */
+                
+                ImGuiEnd()
+            }
+            
+            // Edit
+            if ImGuiBeginMenu("\(FAIcon.edit) Edit", true) {
+                if ImGuiMenuItem("\(FAIcon.undo) Undo", "CMD+Z", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.redo) Redo", "CMD+Y", false, false) { } // disabled item
+                ImGuiSeparator()
+                if ImGuiMenuItem("\(FAIcon.cut) Cut", "CMD+X", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.copy) Copy", "CMD+C", false, true) { }
+                if ImGuiMenuItem("\(FAIcon.paste) Paste", "CMD+V", false, true) {}
+                ImGuiEndMenu()
+            }
+            
+            // GameObject
+            if ImGuiBeginMenu("\(FAIcon.cube) GameObject", true) {
+                scenePanel.drawGameObjectCreationMenuItems()
+                ImGuiEndMenu()
+            }
+            
+            // Window
+            if ImGuiBeginMenu("\(FAIcon.windowRestore) Window", true) { ImGuiEndMenu() }
+            
+            // Help
+            if ImGuiBeginMenu("\(FAIcon.questionCircle) Help", true) { ImGuiEndMenu() }
+            
+            ImGuiEndMenuBar()
+        }
     }
 }

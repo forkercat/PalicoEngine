@@ -7,7 +7,7 @@
 
 import MetalKit
 
-enum PrimitiveType {
+public enum PrimitiveType {
     case cube
     case sphere
     case hemisphere
