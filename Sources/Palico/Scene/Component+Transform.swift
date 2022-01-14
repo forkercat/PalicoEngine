@@ -9,6 +9,7 @@ import MathLib
 
 public class TransformComponent: Component {
     public var title: String { "Transform" }
+    public static var icon: String { FAIcon.expandArrowsAlt }
     
     public var position: Float3 = [0, 0, 0]
     public var rotation: Float3 = [0, 0, 0] {

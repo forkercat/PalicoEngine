@@ -15,7 +15,7 @@ extension ScenePanel {
         ImGuiBegin("\(FAIcon.palette) \(inspectorPanelName)", nil, 0)
         
         guard selectedEntityID != .invalid else {
-            ImGuiShowStyleEditor(nil)
+            // ImGuiShowStyleEditor(nil)
             // ImGuiShowUserGuide()
             
             ImGuiEnd()
@@ -25,7 +25,7 @@ extension ScenePanel {
         let gameObject = scene.getGameObjectBy(entityID: selectedEntityID)
         
         ImGuiPushStyleVar(Im(ImGuiStyleVar_FramePadding), ImVec2(6, 2))
-        ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 6))
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_ItemSpacing), ImVec2(8, 8))
         
         let shouldDeleteGameObject: Bool = drawHeader(gameObject)
         
@@ -35,6 +35,10 @@ extension ScenePanel {
         } else {
             drawComponents(gameObject)
         }
+        
+        ImGuiSeparator()
+        
+        drawAddComponentButton(gameObject)
         
         ImGuiPopStyleVar(2)
         
@@ -62,7 +66,7 @@ extension ScenePanel {
         let iconItemSize: Float = 26
         var leftPaneWindowSize: ImVec2 = ImVec2(0, 0)
         ImGuiGetWindowSize(&leftPaneWindowSize)
-        ImGuiSetCursorPosX(8.0)
+        ImGuiSetCursorPosX(7.0)
         ImGuiSetCursorPosY((leftPaneWindowSize.y - iconItemSize) / 2.0)
         ImGuiPushItemWidth(iconItemSize)
         ImGuiTextV("\(icon)")
@@ -113,66 +117,45 @@ extension ScenePanel {
     }
     
     func drawComponents(_ gameObject: GameObject) {
-        
-//        ImGuiPopItemWidth()
-        
-//        // Add Component Button
-//        ImGuiSameLine(0, -1)
-//        ImGuiPushItemWidth(-1)
-//        if ImGuiButton("Add Component", ImVec2(0, 0)) {
-//
-//        }
-//        ImGuiPopItemWidth()
-        
-        /*
-        ImGui::SameLine();
-        ImGui::PushItemWidth(-1);  // align 1 pixel to the right of window
-        
-        if (ImGui::Button("Add Component"))
-            ImGui::OpenPopup("AddComponent");
-        
-        if (ImGui::BeginPopup("AddComponent"))
-        {
-            if (ImGui::MenuItem("Camera"))
-            {
-                if (!m_SelectionContext.HasComponent<CameraComponent>())
-                    m_SelectionContext.AddComponent<CameraComponent>();
-                else
-                    PL_WARN("This entity already has the Camera Component!");
-                ImGui::CloseCurrentPopup();
-            }
-            
-            if (ImGui::MenuItem("Sprite Component"))
-            {
-                if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-                    m_SelectionContext.AddComponent<SpriteRendererComponent>();
-                else
-                    PL_WARN("This entity already has the Sprite Renderer Component!");
-                ImGui::CloseCurrentPopup();
-            }
-            
-            ImGui::EndPopup();
-        }
-        
-        ImGui::PopItemWidth();
-        */
-        
-        drawComponent(TagComponent.self, gameObject, widgets: { component in
-            ImGuiTextV("---------- \(component.tag)")
-        })
+        let labelColumnWidth: Float = 70
         
         drawComponent(TransformComponent.self, gameObject, widgets: { component in
-            ImGuiTextV("---------- \(component.position)")
+            Self.drawControlFloat3("Position", &component.position, "%.2f", 0.0, labelColumnWidth)
+            var rotationInDegrees: Float3 = component.rotation.toDegrees
+            Self.drawControlFloat3("Rotation", &rotationInDegrees, "%.2f", 0.0, labelColumnWidth)
+            component.rotation = rotationInDegrees.toRadians
+            Self.drawControlFloat3("Scale", &component.scale, "%.2f", 0.0, labelColumnWidth)
         })
         
-        // MeshRenderer
+        drawComponent(MeshRendererComponent.self, gameObject, widgets: { component in
+            ImGuiTextV("Mesh: \(String(describing: component.mesh?.nativeMesh.name ?? "unknown"))")
+            ImGuiColorEdit4("Tint Color", &component.tintColor, Im(ImGuiColorEditFlags_None))
+        })
         
-        //
+        drawComponent(LightComponent.self, gameObject, widgets: { component in
+            var lightType: Int32 = Int32(component.light.type.rawValue)
+            if ImGuiCombo("Type", &lightType, LightType.typeStrings,
+                          Int32(LightType.typeStrings.count), -1) {
+                component.setLightType(LightType(rawValue: lightType)!)
+            }
+            ImGuiColorEdit3("Color", &component.light.color, Im(ImGuiColorEditFlags_None))
+            ImGuiSliderFloat("Intensity", &component.light.intensity, 0.0, 1.0, "%.2f", 0)
+        })
+        
+        drawComponent(CameraComponent.self, gameObject, widgets: { component in
+            ImGuiTextV("\(component.title)")
+        })
+        
+        drawComponent(ScriptComponent.self, gameObject, widgets: { component in
+            ImGuiTextV("\(component.title): printf(Hello Palico!)")
+        })
     }
     
     private func drawComponent<T: Component>(_ type: T.Type, _ gameObject: GameObject, widgets drawWidgets: (T) -> Void) {
         let treeNodeFlags = Im(ImGuiTreeNodeFlags_DefaultOpen) | Im(ImGuiTreeNodeFlags_SpanAvailWidth) | Im(ImGuiTreeNodeFlags_Framed)
             | Im(ImGuiTreeNodeFlags_AllowItemOverlap) | Im(ImGuiTreeNodeFlags_FramePadding)
+//            | Im(ImGuiTreeNodeFlags_Leaf)
+//            | Im(ImGuiTreeNodeFlags_Bullet)
         
         guard gameObject.hasComponent(type) else {
             return
@@ -184,12 +167,12 @@ extension ScenePanel {
         ImGuiGetContentRegionAvail(&contentRegionAvailable)
         
         let fontSize = ImGuiGetFont().pointee.FontSize / Float(Renderer.dpi)
-//        ImGuiPushStyleVar(Im(ImGuiStyleVar_FramePadding), ImVec2(4, 4))
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_FramePadding), ImVec2(1, 2))
         let lineHeight: Float = fontSize + ImGuiGetStyle().pointee.FramePadding.y * 2.0
-        let opened: Bool = ImGuiTreeNodeEx(component.title, treeNodeFlags)
-//        ImGuiPopStyleVar(1)  // FramePadding
+        let opened: Bool = ImGuiTreeNodeEx("\(T.icon) \(component.title)", treeNodeFlags)
+        ImGuiPopStyleVar(1)  // FramePadding
         
-        ImGuiSameLine(contentRegionAvailable.x - lineHeight, -1.0)  // -1.0 is default value
+        ImGuiSameLine(contentRegionAvailable.x - lineHeight + 4.0, -1.0)  // -1.0 is default value
         if ImGuiButton("\(FAIcon.bars)", ImVec2(0, lineHeight)) {
             // fa-align-justify
             ImGuiOpenPopup("##ComponentSettings", 0)
@@ -197,7 +180,7 @@ extension ScenePanel {
         
         var shouldRemoveComponent: Bool = false
         if ImGuiBeginPopup("##ComponentSettings", 0) {
-            if ImGuiMenuItem("\(FAIcon.trashAlt) Remove", nil, false, true) {
+            if ImGuiMenuItem("\(FAIcon.trashAlt) Delete", nil, false, true) {
                 shouldRemoveComponent = true
             }
             ImGuiEndPopup()
@@ -213,7 +196,131 @@ extension ScenePanel {
         }
     }
     
-    private static func drawFloat3(_ label: String, _ values: inout Float3, _ resetValue: Float = 0.0, _ columnWidth: Float = 100.0) {
-        ImGuiDragFloat3(label, &values, 0.1, 0, 0, "%.3f", 0)
+    private static func drawControlFloat3(_ label: String, _ values: inout Float3, _ format: String = "%.1f", _ resetValue: Float = 0.0, _ columnWidth: Float = 100.0) {
+        ImGuiPushID(label)
+        ImGuiColumns(2, nil, false)
+        
+        ImGuiSetColumnWidth(0, columnWidth)
+        ImGuiTextV(label)
+        ImGuiNextColumn()
+        
+        ImGuiPushMultiItemsWidths(3, ImGuiCalcItemWidth())
+        
+        let itemInnerSpacing: Float = 4
+        let itemOutterSpacing: Float = 4
+        
+        // X
+        if ImGuiButton("X", ImVec2(0, 0)) {
+            values.x = resetValue
+        }
+        ImGuiSameLine(0, itemInnerSpacing)
+        ImGuiDragFloat("##X", &values.x, 0.1, 0.0, 0.0, format, 0)
+        ImGuiPopItemWidth()
+        ImGuiSameLine(0, itemOutterSpacing)
+        
+        // Y
+        if ImGuiButton("Y", ImVec2(0, 0)) {
+            values.y = resetValue
+        }
+        ImGuiSameLine(0, itemInnerSpacing)
+        ImGuiDragFloat("##Y", &values.y, 0.1, 0.0, 0.0, format, 0)
+        ImGuiPopItemWidth()
+        ImGuiSameLine(0, itemOutterSpacing)
+        
+        // Z
+        if ImGuiButton("Z", ImVec2(0, 0)) {
+            values.z = resetValue
+        }
+        ImGuiSameLine(0, itemInnerSpacing)
+        ImGuiDragFloat("##Z", &values.z, 0.1, 0.0, 0.0, format, 0)
+        ImGuiPopItemWidth()
+        
+        ImGuiColumns(1, nil, false)
+        ImGuiPopID()  // pop ID label
     }
+    
+    private static func drawControlFloat2(_ label: String, _ values: inout Float2, _ format: String = "%.1f", _ resetValue: Float = 0.0, _ columnWidth: Float = 100.0) {
+        ImGuiPushID(label)
+        ImGuiColumns(2, nil, false)
+        
+        ImGuiSetColumnWidth(0, columnWidth)
+        ImGuiTextV(label)
+        ImGuiNextColumn()
+        
+        ImGuiPushMultiItemsWidths(2, ImGuiCalcItemWidth())
+        
+        let itemInnerSpacing: Float = 4
+        let itemOutterSpacing: Float = 4
+        
+        // X
+        if ImGuiButton("X", ImVec2(0, 0)) {
+            values.x = resetValue
+        }
+        ImGuiSameLine(0, itemInnerSpacing)
+        ImGuiDragFloat("##X", &values.x, 0.1, 0.0, 0.0, format, 0)
+        ImGuiPopItemWidth()
+        ImGuiSameLine(0, itemOutterSpacing)
+        
+        // Y
+        if ImGuiButton("Y", ImVec2(0, 0)) {
+            values.y = resetValue
+        }
+        ImGuiSameLine(0, itemInnerSpacing)
+        ImGuiDragFloat("##Y", &values.y, 0.1, 0.0, 0.0, format, 0)
+        ImGuiPopItemWidth()
+        
+        ImGuiColumns(1, nil, false)
+        ImGuiPopID()  // pop ID label
+    }
+    
+    private func drawAddComponentButton(_ gameObject: GameObject) {
+        var windowSize: ImVec2 = ImVec2(0, 0)
+        let buttonSize: Float = 138.0
+        ImGuiGetWindowSize(&windowSize)
+        ImGuiSetCursorPosX(windowSize.x / 2.0 - buttonSize / 2.0)
+        
+        if ImGuiButton("\(FAIcon.plus) Add Component", ImVec2(140, 26)) {
+            ImGuiOpenPopup("AddComponentPopup", 0)
+        }
+        
+        if ImGuiBeginPopup("AddComponentPopup", 0) {
+            drawComponentCreationMenuItems(gameObject)
+            ImGuiEndPopup()
+        }
+    }
+    
+    func drawComponentCreationMenuItems(_ gameObject: GameObject) {
+        if ImGuiMenuItem("\(MeshRendererComponent.icon) Mesh Renderer", nil, false, true) {
+            guard !gameObject.hasComponent(MeshRendererComponent.self) else {
+                Console.warn("\(MeshRendererComponent.self) has already existed!")
+                return
+            }
+            gameObject.addComponent(MeshRendererComponent.self)
+        }
+        
+        if ImGuiMenuItem("\(LightComponent.icon) Light", nil, false, true) {
+            guard !gameObject.hasComponent(LightComponent.self) else {
+                Console.warn("\(LightComponent.self) has already existed!")
+                return
+            }
+            gameObject.addComponent(LightComponent.self)
+        }
+        
+        if ImGuiMenuItem("\(CameraComponent.icon) Camera", nil, false, true) {
+            guard !gameObject.hasComponent(CameraComponent.self) else {
+                Console.warn("\(CameraComponent.self) has already existed!")
+                return
+            }
+            gameObject.addComponent(CameraComponent.self)
+        }
+        
+        if ImGuiMenuItem("\(ScriptComponent.icon) Script", nil, false, true) {
+            guard !gameObject.hasComponent(ScriptComponent.self) else {
+                Console.warn("\(ScriptComponent.self) has already existed!")
+                return
+            }
+            gameObject.addComponent(ScriptComponent.self)
+        }
+    }
+
 }

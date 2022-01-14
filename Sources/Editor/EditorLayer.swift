@@ -256,6 +256,17 @@ extension EditorLayer {
                 ImGuiEndMenu()
             }
             
+            // Component
+            if ImGuiBeginMenu("\(FAIcon.thLarge) Component", true) {
+                if scenePanel.selectedEntityID == .invalid {
+                    ImGuiTextV("No Selected GameObject")
+                } else {
+                    let gameObject = scenePanel.scene.getGameObjectBy(entityID: scenePanel.selectedEntityID)
+                    scenePanel.drawComponentCreationMenuItems(gameObject)
+                }
+                ImGuiEndMenu()
+            }
+            
             // Window
             if ImGuiBeginMenu("\(FAIcon.windowRestore) Window", true) { ImGuiEndMenu() }
             

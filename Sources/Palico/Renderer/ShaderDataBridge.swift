@@ -50,10 +50,14 @@ public struct FragmentUniformData {
 
 // Light
 public enum LightType: Int32 {
-    case dirLight       = 1
-    case pointLight     = 2
-    case spotLight      = 3
-    case ambientLight   = 4
+    case dirLight       = 0
+    case pointLight     = 1
+    case spotLight      = 2
+    case ambientLight   = 3
+    
+    public static let typeStrings: [String] = [
+        "Directional", "Point", "Spot", "Ambient"
+    ]
 }
 
 public struct LightData {

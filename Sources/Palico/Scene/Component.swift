@@ -10,10 +10,5 @@ import MothECS
 
 public protocol Component: MothComponent {
     var title: String { get }
+    static var icon: String { get }
 }
-
-//public protocol Component: AnyObject {
-//    var uuid: String { get }
-//    var title: String { get }
-//    var gameObject: GameObject { get }
-//}

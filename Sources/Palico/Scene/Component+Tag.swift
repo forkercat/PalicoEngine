@@ -7,6 +7,7 @@
 
 public class TagComponent: Component {
     public var title: String { "Tag" }
+    public static var icon: String { FAIcon.tag }
     
     public enum Tag: Int {
         case `default` = 0

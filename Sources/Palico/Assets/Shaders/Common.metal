@@ -49,11 +49,10 @@ namespace Palico {
     
     // Light
     enum LightType {
-        NoLight           = 0,
-        DirLight          = 1,
-        PointLight        = 2,
-        SpotLight         = 3,
-        AmbientLight      = 4
+        DirLight          = 0,
+        PointLight        = 1,
+        SpotLight         = 2,
+        AmbientLight      = 3
     };
     
     struct LightData {

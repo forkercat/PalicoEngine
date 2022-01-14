@@ -31,8 +31,8 @@ class MeshFactory {
     }
 }
 
-class Mesh {
-    let nativeMesh: MTKMesh
+public class Mesh {
+    public let nativeMesh: MTKMesh
     let submeshes: [Submesh]
     
     init(type: PrimitiveType) {

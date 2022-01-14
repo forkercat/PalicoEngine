@@ -6,10 +6,11 @@
 //
 
 public class MeshRendererComponent: Component {
-    public var title: String { "MeshRenderer" }
+    public var title: String { "Mesh Renderer" }
+    public static var icon: String { FAIcon.vectorSquare }
     
     // Mesh
-    var mesh: Mesh? = nil
+    public var mesh: Mesh? = nil
     
     // Material
     public var tintColor: Color4 = .white

@@ -7,6 +7,7 @@
 
 public class LightComponent: Component {
     public var title: String { "Light" }
+    public static var icon: String { FAIcon.lightbulb }
     
     public var light: Light = DirectionalLight()
     
@@ -14,7 +15,14 @@ public class LightComponent: Component {
         
     }
     
-    init(type: LightType) {
+    public init(type: LightType) {
+        setLightType(type)
+    }
+    
+    public func setLightType(_ type: LightType) {
+        let color = light.color
+        let intensity = light.intensity
+        
         switch type {
         case .dirLight:
             light = DirectionalLight()
@@ -25,5 +33,8 @@ public class LightComponent: Component {
         case .ambientLight:
             light = AmbientLight()
         }
+        
+        light.color = color
+        light.intensity = intensity
     }
 }
