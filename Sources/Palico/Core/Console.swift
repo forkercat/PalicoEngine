@@ -41,7 +41,7 @@ public class Console {
         }}
     }
     
-    private static let maxMessageCount: Int = 30
+    private static let maxMessageCount: Int = 1000
     private static var messages: [Message?] = [Message?](repeating: nil, count: maxMessageCount)
     private static var start: Int = 0
     private static var end: Int = 0

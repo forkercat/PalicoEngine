@@ -22,6 +22,14 @@ public class Cube: GameObject, Primitive {
         let mesh = MeshFactory.makePrimitiveMesh(type: .cube)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
+    }
 }
 
 public class Sphere: GameObject, Primitive {
@@ -34,6 +42,14 @@ public class Sphere: GameObject, Primitive {
         
         let mesh = MeshFactory.makePrimitiveMesh(type: .sphere)
         addComponent(MeshRendererComponent(mesh: mesh))
+    }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
     }
 }
 
@@ -48,6 +64,14 @@ public class Hemisphere: GameObject, Primitive {
         let mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
+    }
 }
 
 public class Plane: GameObject, Primitive {
@@ -60,6 +84,14 @@ public class Plane: GameObject, Primitive {
         
         let mesh = MeshFactory.makePrimitiveMesh(type: .plane)
         addComponent(MeshRendererComponent(mesh: mesh))
+    }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
     }
 }
 
@@ -74,6 +106,14 @@ public class Capsule: GameObject, Primitive {
         let mesh = MeshFactory.makePrimitiveMesh(type: .capsule)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
+    }
 }
 
 public class Cylinder: GameObject, Primitive {
@@ -87,6 +127,14 @@ public class Cylinder: GameObject, Primitive {
         let mesh = MeshFactory.makePrimitiveMesh(type: .cylinder)
         addComponent(MeshRendererComponent(mesh: mesh))
     }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
+    }
 }
 
 public class Cone: GameObject, Primitive {
@@ -99,5 +147,13 @@ public class Cone: GameObject, Primitive {
         
         let mesh = MeshFactory.makePrimitiveMesh(type: .cone)
         addComponent(MeshRendererComponent(mesh: mesh))
+    }
+    
+    public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
     }
 }

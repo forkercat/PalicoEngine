@@ -89,7 +89,7 @@ public struct ShaderLibrary {
                  Compiled \(nameSet.count) shader file(s) \
                  that contain \(MetalContext.library.functionNames.count) function(s): \(MetalContext.library.functionNames)
                  """)
-        Console.info("Shader Function Compilation: \(MetalContext.library.functionNames)")
+        Console.info("Compiled Shader Functions: \(MetalContext.library.functionNames)")
     }
     
     public static func empty() {

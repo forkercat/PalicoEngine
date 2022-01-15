@@ -203,7 +203,7 @@ extension ViewportPanel{
         
         let paddingSize: Float = 8.0
         let ySpacing: Float = 8.0
-        let xSpacing: Float = 6.0
+        // let xSpacing: Float = 6.0
         
         
         ImGuiSetNextWindowPos(ImVec2(viewportPos.x + paddingSize, viewportPos.y + tabBarHeight + paddingSize), 0, ImVec2(0, 0))
@@ -211,13 +211,13 @@ extension ViewportPanel{
         
         ImGuiBegin("GizmoControl", nil, windowFlags)
         drawGizmoTypeButton("\(FAIcon.handRock)", .none, buttonSize)
-//        ImGuiSameLine(0, xSpacing)
+        // ImGuiSameLine(0, xSpacing)
         ImGuiSpacing()
         drawGizmoTypeButton("\(FAIcon.arrowsAlt)", .translate, buttonSize)
-//        ImGuiSameLine(0, xSpacing)
+        // ImGuiSameLine(0, xSpacing)
         ImGuiSpacing()
         drawGizmoTypeButton("\(FAIcon.syncAlt)", .rotate, buttonSize)
-//        ImGuiSameLine(0, xSpacing)
+        // ImGuiSameLine(0, xSpacing)
         ImGuiSpacing()
         drawGizmoTypeButton("\(FAIcon.expand)", .scale, buttonSize)
         

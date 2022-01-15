@@ -20,6 +20,10 @@ class ScenePanel: Panel {
     var selectedEntityID: MothEntityID = .invalid
     
     func onUpdate(deltaTime ts: Timestep) {
+        scene.onUpdateRuntime(deltaTime: ts)
+    }
+    
+    func onUpdateEditor(deltaTime ts: Timestep) {
         scene.onUpdateEditor(deltaTime: ts)
     }
     

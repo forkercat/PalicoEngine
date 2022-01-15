@@ -33,11 +33,16 @@ class EditorLayer: Layer {
         // EditorCamera
         scenePanel.onAttach()
         viewportPanel.onAttach()
-        
+    }
+    
+    func showDebugScene() {
         // Primitives
         let cube = Cube(scenePanel.scene, name: "Cube", position: [0, 0, 0])
         let cubeMeshRenderer = cube.getComponent(MeshRendererComponent.self)
         cubeMeshRenderer.tintColor = .yellow
+        
+        let nativeScript = MyScript()
+        cube.addComponent(ScriptComponent(nativeScript))
         
         let sphere = Sphere(scenePanel.scene, name: "Sphere",
                             position: [-6, 1.5, -4], rotation: [0, 0, 0], scale: [1.5, 1.5, 1.5])
@@ -107,8 +112,8 @@ class EditorLayer: Layer {
             
         }
         
-        // onUpdate
-        scenePanel.onUpdate(deltaTime: ts)
+        // onUpdateEditor
+        scenePanel.onUpdateEditor(deltaTime: ts)
         viewportPanel.onUpdate(deltaTime: ts)
         
         // Render Scene (Editor)

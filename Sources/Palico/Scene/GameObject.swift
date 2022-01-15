@@ -38,13 +38,18 @@ public class GameObject {
     
     // Editor Update
     public func onUpdateEditor(deltaTime ts: Timestep) {
-        
+        if hasComponent(ScriptComponent.self) {
+            let scriptComponent = getComponent(ScriptComponent.self)
+            scriptComponent.nativeScript?.onUpdateEditor(deltaTime: ts)
+        }
     }
     
     // Runtime Update
     public func onUpdateRuntime(deltaTime ts: Timestep) {
-        // TODO: Play Mode
-        // Update script component as well
+        if hasComponent(ScriptComponent.self) {
+            let scriptComponent = getComponent(ScriptComponent.self)
+            scriptComponent.nativeScript?.onUpdate(deltaTime: ts)
+        }
     }
 }
 
@@ -64,10 +69,20 @@ extension GameObject: Hashable {
 extension GameObject {
     public func addComponent<T: Component>(_ component: T) {
         scene.moth.assignComponent(component, to: entityID)
+        
+        if let scriptComponent = component as? ScriptComponent {
+            scriptComponent.nativeScript?.gameObject = self
+            scriptComponent.nativeScript?.onCreate()
+        }
     }
     
     public func addComponent<T: Component>(_ type: T.Type) {
-        scene.moth.createComponent(type, to: entityID)
+        let component = scene.moth.createComponent(type, to: entityID)
+        
+        if let scriptComponent = component as? ScriptComponent {
+            scriptComponent.nativeScript?.gameObject = self
+            scriptComponent.nativeScript?.onCreate()
+        }
     }
     
     public func hasComponent<T: Component>(_ type: T.Type) -> Bool {
@@ -84,6 +99,11 @@ extension GameObject {
             Console.warn("\(T.self) cannot be removed from a game object!")
             return nil
         }
+        
+        if let scriptComponent = component as? ScriptComponent {
+            scriptComponent.nativeScript?.onDestroy()
+        }
+        
         return scene.moth.removeComponent(T.self, from: entityID)
     }
     
@@ -93,6 +113,13 @@ extension GameObject {
             Console.warn("\(T.self) cannot be removed from a game object!")
             return nil
         }
-        return scene.moth.removeComponent(T.self, from: entityID)
+        
+        let component = scene.moth.removeComponent(T.self, from: entityID)
+        
+        if let scriptComponent = component as? ScriptComponent {
+            scriptComponent.nativeScript?.onDestroy()
+        }
+        
+        return component
     }
 }

@@ -51,7 +51,9 @@ extension Scene {
     
     // Runtime
     public func onUpdateRuntime(deltaTime ts: Timestep) {
-        // TODO: Play Mode
+        for gameObject in gameObjectMap.values {
+            gameObject.onUpdateRuntime(deltaTime: ts)
+        }
     }
     
     public func onRenderRuntime(deltaTime ts: Timestep) {

@@ -11,6 +11,10 @@ import MathLib
 class Editor: Application {
     override init(name: String = "Palico Editor", arguments: [String] = [], size: Int2 = [1280, 720]) {
         super.init(name: name, arguments: arguments, size: size)
-        pushLayer(EditorLayer(name: "Editor Layer"))
+        
+        let editorLayer = EditorLayer(name: "Editor Layer")
+        pushLayer(editorLayer)
+        
+        editorLayer.showDebugScene()
     }
 }

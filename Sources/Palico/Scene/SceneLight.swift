@@ -32,6 +32,12 @@ public class SceneLight: GameObject {
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
+        super.onUpdateEditor(deltaTime: ts)
+        updateLightComponentData()
+    }
+    
+    public override func onUpdateRuntime(deltaTime ts: Timestep) {
+        super.onUpdateRuntime(deltaTime: ts)
         updateLightComponentData()
     }
     

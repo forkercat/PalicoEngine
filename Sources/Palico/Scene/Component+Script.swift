@@ -9,7 +9,13 @@ public class ScriptComponent: Component {
     public var title: String { "Script" }
     public static var icon: String { FAIcon.code }
     
+    public var nativeScript: NativeScript? = nil
+    
     public required init() {
         
+    }
+    
+    public init(_ nativeScript: NativeScript) {
+        self.nativeScript = nativeScript
     }
 }
