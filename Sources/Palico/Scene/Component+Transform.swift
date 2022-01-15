@@ -47,7 +47,5 @@ public class TransformComponent: Component {
     // Used quaternion internally
     private var quaternion = Quaternion()
     
-    public required init() {
-        
-    }
+    public required init() { }
 }

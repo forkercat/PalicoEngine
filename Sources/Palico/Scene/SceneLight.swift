@@ -27,7 +27,10 @@ public class SceneLight: GameObject {
                    rotation: defaultRotation,
                    scale: defaultScale)
         
-        addComponent(MeshRendererComponent(mesh: makeLightMesh(type: type)))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(makeLightMeshType(type: type))
+        addComponent(meshRenderer)
+        
         addComponent(LightComponent(type: type))
     }
     
@@ -50,18 +53,16 @@ public class SceneLight: GameObject {
         }
     }
     
-    private func makeLightMesh(type: LightType) -> Mesh {
-        var mesh: Mesh
+    private func makeLightMeshType(type: LightType) -> PrimitiveType {
         switch type {
         case .dirLight:
-            mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
+            return .hemisphere
         case .pointLight:
-            mesh = MeshFactory.makePrimitiveMesh(type: .sphere)
+            return .sphere
         case .spotLight:
-            mesh = MeshFactory.makePrimitiveMesh(type: .cone)
+            return .cone
         case .ambientLight:
-            mesh = MeshFactory.makePrimitiveMesh(type: .cube)
+            return .cube
         }
-        return mesh
     }
 }

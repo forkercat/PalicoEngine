@@ -12,7 +12,5 @@ public class CameraComponent: Component {
     
     // TODO: SceneCamera
     
-    public required init() {
-        
-    }
+    public required init() { }
 }

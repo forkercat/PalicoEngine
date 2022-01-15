@@ -28,7 +28,11 @@ extension ScenePanel {
             ImGuiEndPopup()
         }
         
-        ImGuiHelpMarker("Current object selection in viewport is not supported. \nUse [Tab] to navigate in-scene objects.")
+        ImGuiHelpMarker("""
+        Currently object selection in viewport is not supported.
+        Use \(FAIcon.keyboard) [Tab] to navigate in-scene objects.
+        Do not press \(FAIcon.keyboard) [Ctrl+Tab]. I don't know why it crashes yet. \(FAIcon.sadCry)
+        """)
         
         ImGuiEnd()
     }

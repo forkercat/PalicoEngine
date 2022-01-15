@@ -12,9 +12,7 @@ public class LightComponent: Component {
     
     public var light: Light = DirectionalLight()
     
-    public required init() {
-        
-    }
+    public required init() { }
     
     public init(type: LightType) {
         setLightType(type)

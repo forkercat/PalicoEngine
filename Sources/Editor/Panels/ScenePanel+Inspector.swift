@@ -128,7 +128,13 @@ extension ScenePanel {
         })
         
         drawComponent(MeshRendererComponent.self, gameObject, widgets: { component in
-            ImGuiTextV("Mesh: \(String(describing: component.mesh?.nativeMesh.name ?? "unknown"))")
+            var meshType: Int32 = Int32(component.meshType?.rawValue ?? -1) + 1  // offset by one to include "No Mesh"
+            if ImGuiCombo("Mesh", &meshType,
+                          ["No Mesh"] + PrimitiveType.typeStrings,
+                          Int32(PrimitiveType.typeStrings.count + 1), -1) {
+                let type: Int32 = meshType - 1  // restore
+                component.setMesh(type < 0 ? nil : PrimitiveType(rawValue: Int(type)))
+            }
             ImGuiColorEdit4("Tint Color", &component.tintColor, Im(ImGuiColorEditFlags_None))
         })
         

@@ -19,8 +19,9 @@ public class Cube: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .cube)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.cube)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
@@ -40,8 +41,9 @@ public class Sphere: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .sphere)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.sphere)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
@@ -61,8 +63,9 @@ public class Hemisphere: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .hemisphere)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.hemisphere)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
@@ -82,8 +85,9 @@ public class Plane: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .plane)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.plane)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
@@ -103,8 +107,9 @@ public class Capsule: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .capsule)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.capsule)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
@@ -124,8 +129,9 @@ public class Cylinder: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .cylinder)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.cylinder)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {
@@ -145,8 +151,9 @@ public class Cone: GameObject, Primitive {
                          scale: Float3 = [1, 1, 1]) {
         super.init(scene, name: name, position: position, rotation: rotation, scale: scale)
         
-        let mesh = MeshFactory.makePrimitiveMesh(type: .cone)
-        addComponent(MeshRendererComponent(mesh: mesh))
+        let meshRenderer = MeshRendererComponent()
+        meshRenderer.setMesh(.cone)
+        addComponent(meshRenderer)
     }
     
     public override func onUpdateEditor(deltaTime ts: Timestep) {

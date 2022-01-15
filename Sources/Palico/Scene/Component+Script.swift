@@ -12,9 +12,7 @@ public class ScriptComponent: Component {
     
     public var nativeScript: NativeScript? = nil
     
-    public required init() {
-        
-    }
+    public required init() { }
     
     public init(_ nativeScript: NativeScript) {
         self.nativeScript = nativeScript

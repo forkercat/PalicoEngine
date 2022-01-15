@@ -7,7 +7,7 @@
 
 import MetalKit
 
-public enum PrimitiveType {
+public enum PrimitiveType: Int {
     case cube
     case sphere
     case hemisphere
@@ -15,6 +15,10 @@ public enum PrimitiveType {
     case capsule
     case cylinder
     case cone
+    
+    public static let typeStrings: [String] = [
+        "Cube", "Sphere", "Hemisphere", "Plane", "Capsule", "Cylinder", "Cone"
+    ]
 }
 
 class MeshFactory {

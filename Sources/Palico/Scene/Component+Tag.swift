@@ -34,7 +34,5 @@ public class TagComponent: Component {
     
     public var tag: Tag = .default
     
-    public required init() {
-        
-    }
+    public required init() { }
 }
