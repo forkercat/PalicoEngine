@@ -9,8 +9,8 @@ import ImGui
 
 public let ImGuiFlag_None: Int32 = 0
 
-public func ImGuiHelpMarker(_ string: String) {
-    ImGuiTextV("\(FAIcon.questionCircle)")
+public func ImGuiHelpMarker(_ label: String = "", _ string: String = "") {
+    ImGuiTextV("\(FAIcon.questionCircle) \(label)")
     if igIsItemHovered(0) {
         ImGuiBeginTooltip()
         ImGuiTextUnformatted(string, nil)

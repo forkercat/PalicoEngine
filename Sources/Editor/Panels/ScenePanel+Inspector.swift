@@ -15,8 +15,39 @@ extension ScenePanel {
         ImGuiBegin("\(FAIcon.palette) \(inspectorPanelName)", nil, 0)
         
         guard selectedEntityID != .invalid else {
-            // ImGuiShowStyleEditor(nil)
-            // ImGuiShowUserGuide()
+            
+            ImGuiTextV("""
+            Hello, Palico Editor! \(FAIcon.cat)
+            
+            Controls:
+            
+            \(FAIcon.mousePointer) [ Command + Left ] Rotate
+            \(FAIcon.mousePointer) [ Right ] Look around
+            \(FAIcon.mouse) [ Middle ] Pan
+            \(FAIcon.mouse) [ Scroll ] Zoom in/out
+            
+            \(FAIcon.keyboard) [ Tab ] Next in-scene object
+            \(FAIcon.keyboard) [ F ] Focus on in-scene object
+            \(FAIcon.keyboard) [ Q ] No action
+            \(FAIcon.keyboard) [ W ] Translate
+            \(FAIcon.keyboard) [ E ] Rotate
+            \(FAIcon.keyboard) [ R ] Scale
+            
+            Known Issue:
+            
+            \(FAIcon.exclamationTriangle) Sometimes window is not focused on launch,
+            you can switch to other application and
+            switch back.
+            
+            Repositories:
+            
+            \(FAIcon.github) forkercat/PalicoEngine
+            \(FAIcon.github) forkercat/MothECS
+            \(FAIcon.github) forkercat/MathLib
+            \(FAIcon.github) forkercat/OhMyLog
+            \(FAIcon.github) ctreffs/SwiftImGui (forked)
+            \(FAIcon.github) ctreffs/SwiftImGuizmo (forked)
+            """)
             
             ImGuiEnd()
             return
@@ -117,35 +148,33 @@ extension ScenePanel {
     }
     
     func drawComponents(_ gameObject: GameObject) {
-        let labelColumnWidth: Float = 70
+        let labelColumnWidth: Float = 80
         
         drawComponent(TransformComponent.self, gameObject, widgets: { component in
-            Self.drawControlFloat3("Position", &component.position, "%.2f", 0.0, labelColumnWidth)
+            drawControlFloat3("Position", &component.position, "%.2f", 0.0, labelColumnWidth)
             var rotationInDegrees: Float3 = component.rotation.toDegrees
-            Self.drawControlFloat3("Rotation", &rotationInDegrees, "%.2f", 0.0, labelColumnWidth)
+            drawControlFloat3("Rotation", &rotationInDegrees, "%.2f", 0.0, labelColumnWidth)
             component.rotation = rotationInDegrees.toRadians
-            Self.drawControlFloat3("Scale", &component.scale, "%.2f", 0.0, labelColumnWidth)
+            drawControlFloat3("Scale", &component.scale, "%.2f", 0.0, labelColumnWidth)
         })
         
         drawComponent(MeshRendererComponent.self, gameObject, widgets: { component in
             var meshType: Int32 = Int32(component.meshType?.rawValue ?? -1) + 1  // offset by one to include "No Mesh"
-            if ImGuiCombo("Mesh", &meshType,
-                          ["No Mesh"] + PrimitiveType.typeStrings,
-                          Int32(PrimitiveType.typeStrings.count + 1), -1) {
+            if drawControlCombo("Mesh", &meshType, ["No Mesh"] + PrimitiveType.typeStrings, labelColumnWidth) {
                 let type: Int32 = meshType - 1  // restore
                 component.setMesh(type < 0 ? nil : PrimitiveType(rawValue: Int(type)))
             }
-            ImGuiColorEdit4("Tint Color", &component.tintColor, Im(ImGuiColorEditFlags_None))
+            drawControlColorEdit4("Tint Color", &component.tintColor, labelColumnWidth)
         })
         
         drawComponent(LightComponent.self, gameObject, widgets: { component in
             var lightType: Int32 = Int32(component.light.type.rawValue)
-            if ImGuiCombo("Type", &lightType, LightType.typeStrings,
-                          Int32(LightType.typeStrings.count), -1) {
+            if drawControlCombo("Type", &lightType, LightType.typeStrings, labelColumnWidth) {
                 component.setLightType(LightType(rawValue: lightType)!)
             }
-            ImGuiColorEdit3("Color", &component.light.color, Im(ImGuiColorEditFlags_None))
-            ImGuiSliderFloat("Intensity", &component.light.intensity, 0.0, 1.0, "%.2f", 0)
+            
+            drawControlColorEdit3("Color", &component.light.color, labelColumnWidth)
+            drawControlFloatSlider("Intensity", &component.light.intensity, "%.2f", 0.0, 1.0, labelColumnWidth)
         })
         
         drawComponent(CameraComponent.self, gameObject, widgets: { component in
@@ -153,7 +182,8 @@ extension ScenePanel {
         })
         
         drawComponent(ScriptComponent.self, gameObject, widgets: { component in
-            ImGuiTextV("\(component.title): printf(Hello Palico!)")
+            var inputValue: String? = component.nativeScript?.name ?? "no script"
+            drawControlInputReadOnly("Script", &inputValue, labelColumnWidth)
         })
     }
     
@@ -223,83 +253,6 @@ extension ScenePanel {
         ImGuiPopStyleColor(3)
     }
     
-    private static func drawControlFloat3(_ label: String, _ values: inout Float3, _ format: String = "%.1f", _ resetValue: Float = 0.0, _ columnWidth: Float = 100.0) {
-        ImGuiPushID(label)
-        ImGuiColumns(2, nil, false)
-        
-        ImGuiSetColumnWidth(0, columnWidth)
-        ImGuiTextV(label)
-        ImGuiNextColumn()
-        
-        ImGuiPushMultiItemsWidths(3, ImGuiCalcItemWidth())
-        
-        let itemInnerSpacing: Float = 4
-        let itemOutterSpacing: Float = 4
-        
-        // X
-        if ImGuiButton("X", ImVec2(0, 0)) {
-            values.x = resetValue
-        }
-        ImGuiSameLine(0, itemInnerSpacing)
-        ImGuiDragFloat("##X", &values.x, 0.1, 0.0, 0.0, format, 0)
-        ImGuiPopItemWidth()
-        ImGuiSameLine(0, itemOutterSpacing)
-        
-        // Y
-        if ImGuiButton("Y", ImVec2(0, 0)) {
-            values.y = resetValue
-        }
-        ImGuiSameLine(0, itemInnerSpacing)
-        ImGuiDragFloat("##Y", &values.y, 0.1, 0.0, 0.0, format, 0)
-        ImGuiPopItemWidth()
-        ImGuiSameLine(0, itemOutterSpacing)
-        
-        // Z
-        if ImGuiButton("Z", ImVec2(0, 0)) {
-            values.z = resetValue
-        }
-        ImGuiSameLine(0, itemInnerSpacing)
-        ImGuiDragFloat("##Z", &values.z, 0.1, 0.0, 0.0, format, 0)
-        ImGuiPopItemWidth()
-        
-        ImGuiColumns(1, nil, false)
-        ImGuiPopID()  // pop ID label
-    }
-    
-    private static func drawControlFloat2(_ label: String, _ values: inout Float2, _ format: String = "%.1f", _ resetValue: Float = 0.0, _ columnWidth: Float = 100.0) {
-        ImGuiPushID(label)
-        ImGuiColumns(2, nil, false)
-        
-        ImGuiSetColumnWidth(0, columnWidth)
-        ImGuiTextV(label)
-        ImGuiNextColumn()
-        
-        ImGuiPushMultiItemsWidths(2, ImGuiCalcItemWidth())
-        
-        let itemInnerSpacing: Float = 4
-        let itemOutterSpacing: Float = 4
-        
-        // X
-        if ImGuiButton("X", ImVec2(0, 0)) {
-            values.x = resetValue
-        }
-        ImGuiSameLine(0, itemInnerSpacing)
-        ImGuiDragFloat("##X", &values.x, 0.1, 0.0, 0.0, format, 0)
-        ImGuiPopItemWidth()
-        ImGuiSameLine(0, itemOutterSpacing)
-        
-        // Y
-        if ImGuiButton("Y", ImVec2(0, 0)) {
-            values.y = resetValue
-        }
-        ImGuiSameLine(0, itemInnerSpacing)
-        ImGuiDragFloat("##Y", &values.y, 0.1, 0.0, 0.0, format, 0)
-        ImGuiPopItemWidth()
-        
-        ImGuiColumns(1, nil, false)
-        ImGuiPopID()  // pop ID label
-    }
-    
     private func drawAddComponentButton(_ gameObject: GameObject) {
         var windowSize: ImVec2 = ImVec2(0, 0)
         let buttonSize: Float = 138.0
@@ -346,7 +299,8 @@ extension ScenePanel {
                 Console.warn("\(ScriptComponent.self) has already existed!")
                 return
             }
-            gameObject.addComponent(ScriptComponent.self)
+            // TODO: Don't hard-coded!
+            gameObject.addComponent(ScriptComponent(RotateScript()))
         }
     }
 

@@ -200,13 +200,12 @@ extension Renderer {
             // For Light objects (override)
             if gameObject.hasComponent(LightComponent.self) {
                 let lightComponent = gameObject.getComponent(LightComponent.self)
-                guard lightComponent.enabled else {
-                    continue
+                if lightComponent.enabled {
+                    // let intensity = lightComponent.light.intensity
+                    let intensity: Float = 1.0
+                    fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
+                    fragmentUniformData.noLight = 1  // true
                 }
-                // let intensity = lightComponent.light.intensity
-                let intensity: Float = 1.0
-                fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
-                fragmentUniformData.noLight = 1  // true
             }
             
             uploadUniformData(encoder)
@@ -252,13 +251,12 @@ extension Renderer {
         /// For Light objects (override)
         if gameObject.hasComponent(LightComponent.self) {
             let lightComponent = gameObject.getComponent(LightComponent.self)
-            guard lightComponent.enabled else {
-                return
+            if lightComponent.enabled {
+                // let intensity = lightComponent.light.intensity
+                let intensity: Float = 1.0
+                fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
+                fragmentUniformData.noLight = 1  // true
             }
-            // let intensity = lightComponent.light.intensity
-            let intensity: Float = 1.0
-            fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
-            fragmentUniformData.noLight = 1  // true
         }
         
         uploadUniformData(encoder)

@@ -15,7 +15,7 @@ public class TransformComponent: Component {
             Log.error("You cannot set transform component status! Skipping")
         }
     }
-    public static var icon: String { FAIcon.expandArrowsAlt }
+    public static var icon: String { FAIcon.locationArrow }
     
     public var position: Float3 = [0, 0, 0]
     public var rotation: Float3 = [0, 0, 0] {

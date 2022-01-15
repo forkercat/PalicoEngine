@@ -121,6 +121,12 @@ extension EditorCamera {
         updateView()
     }
     
+    public func setFocusPoint(_ focusPoint: Float3, _ distance: Float = 10) {
+        self.distance = distance
+        self.focusPoint = focusPoint
+        updateView()
+    }
+    
     public func setFov(_ fov: Float) {
         self.fov = fov
         updateProjection()

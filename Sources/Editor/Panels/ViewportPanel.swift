@@ -210,7 +210,7 @@ extension ViewportPanel{
         ImGuiSetNextWindowSize(ImVec2(buttonSize.x, buttonSize.y * 4 + ySpacing * 3), 0)
         
         ImGuiBegin("GizmoControl", nil, windowFlags)
-        drawGizmoTypeButton("\(FAIcon.handRock)", .none, buttonSize)
+        drawGizmoTypeButton("\(FAIcon.handPaper)", .none, buttonSize)
         // ImGuiSameLine(0, xSpacing)
         ImGuiSpacing()
         drawGizmoTypeButton("\(FAIcon.arrowsAlt)", .translate, buttonSize)

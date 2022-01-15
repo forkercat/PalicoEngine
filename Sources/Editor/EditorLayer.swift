@@ -40,9 +40,7 @@ class EditorLayer: Layer {
         let cube = Cube(scenePanel.scene, name: "Cube", position: [0, 0, 0])
         let cubeMeshRenderer = cube.getComponent(MeshRendererComponent.self)
         cubeMeshRenderer.tintColor = .yellow
-        
-        let nativeScript = MyScript()
-        cube.addComponent(ScriptComponent(nativeScript))
+        cube.addComponent(ScriptComponent(RotateScript()))
         
         let sphere = Sphere(scenePanel.scene, name: "Sphere",
                             position: [-6, 1.5, -4], rotation: [0, 0, 0], scale: [1.5, 1.5, 1.5])
@@ -82,6 +80,7 @@ class EditorLayer: Layer {
         let dirLightComponent = dirLight.getComponent(LightComponent.self)
         dirLightComponent.light.intensity = 0.6
         dirLightComponent.light.color = .lightYellow
+        dirLight.addComponent(ScriptComponent(RotateScript(name: "RotateScript", speed: 2.0)))
         
         let ambientLightComponent = ambientLight.getComponent(LightComponent.self)
         ambientLightComponent.light.intensity = 0.2
@@ -240,6 +239,7 @@ extension EditorLayer {
                     scenePanel.selectedEntityID = list[scenePanel.debugCursor].entityID
                 }
             }
+        // Gizmo Control
         case .Q:
             if !ImGuizmoIsUsing() {
                 viewportPanel.gizmoType = .none
@@ -259,6 +259,12 @@ extension EditorLayer {
         case .T:
             if !ImGuizmoIsUsing() {
                 viewportPanel.gizmoType = .bounds
+            }
+        // Editor Camera
+        case .F:
+            if scenePanel.selectedEntityID != .invalid {
+                let gameObject = scenePanel.scene.getGameObjectBy(entityID: scenePanel.selectedEntityID)
+                viewportPanel.editorCamera.setFocusPoint(gameObject.getComponent(TransformComponent.self).position)
             }
         default:
             return false
@@ -312,7 +318,7 @@ extension EditorLayer {
                 ImGuiSeparator()
                 if ImGuiMenuItem("\(FAIcon.cut) Cut", "CMD+X", false, true) { }
                 if ImGuiMenuItem("\(FAIcon.copy) Copy", "CMD+C", false, true) { }
-                if ImGuiMenuItem("\(FAIcon.paste) Paste", "CMD+V", false, true) {}
+                if ImGuiMenuItem("\(FAIcon.paste) Paste", "CMD+V", false, true) { }
                 ImGuiEndMenu()
             }
             
@@ -325,7 +331,7 @@ extension EditorLayer {
             // Component
             if ImGuiBeginMenu("\(FAIcon.thLarge) Component", true) {
                 if scenePanel.selectedEntityID == .invalid {
-                    ImGuiTextV("No Selected GameObject")
+                    ImGuiTextV("\(FAIcon.ban) No Selected GameObject")
                 } else {
                     let gameObject = scenePanel.scene.getGameObjectBy(entityID: scenePanel.selectedEntityID)
                     scenePanel.drawComponentCreationMenuItems(gameObject)
@@ -334,10 +340,16 @@ extension EditorLayer {
             }
             
             // Window
-            if ImGuiBeginMenu("\(FAIcon.windowRestore) Window", true) { ImGuiEndMenu() }
+            if ImGuiBeginMenu("\(FAIcon.windowRestore) Window", true) {
+                if ImGuiMenuItem("\(FAIcon.ban) Not supported yet", "", false, true) { }
+                ImGuiEndMenu()
+            }
             
             // Help
-            if ImGuiBeginMenu("\(FAIcon.questionCircle) Help", true) { ImGuiEndMenu() }
+            if ImGuiBeginMenu("\(FAIcon.questionCircle) Help", true) {
+                if ImGuiMenuItem("\(FAIcon.cat) No cat is available for help", "", false, true) { }
+                ImGuiEndMenu()
+            }
             
             ImGuiEndMenuBar()
         }

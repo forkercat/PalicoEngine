@@ -36,7 +36,7 @@ open class NativeScript {
         return gameObject.hasComponent(type)
     }
     
-    public func getComponent<T: Component>(_ type: T.Type) -> T! {
+    public func getComponent<T: Component>(_ type: T.Type) -> T {
         assert(gameObject != nil, "Native script has nil game object!")
         return gameObject.getComponent(type)
     }
