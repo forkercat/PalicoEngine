@@ -43,7 +43,8 @@ dependencies: [
     .package(url: "https://github.com/forkercat/OhMyLog.git", .branch("main")),
     .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
     .package(url: "https://github.com/forkercat/MothECS.git", .branch("main")),
-    .package(url: "https://github.com/forkercat/SwiftImGui.git", .branch("update-1.86-docking")),  // by @ctreffs
+    .package(url: "https://github.com/forkercat/SwiftImGui.git", .branch("update-1.86-docking")),  // forked from @ctreffs
+    .package(url: "https://github.com/forkercat/SwiftImGuizmo.git", .branch("master")),  // forked from @ctreffs
 ],
 ```
 

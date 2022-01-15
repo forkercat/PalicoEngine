@@ -85,7 +85,7 @@ extension Scene {
     
     // Get
     public func getGameObjectBy(entityID: MothEntityID) -> GameObject {
-        return gameObjectMap[entityID]!
+            return gameObjectMap[entityID]!
     }
     
     // Destroy

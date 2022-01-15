@@ -7,6 +7,7 @@
 
 import Palico
 import ImGui
+import ImGuizmo
 import MathLib
 
 class ViewportPanel: Panel {
@@ -25,6 +26,8 @@ class ViewportPanel: Panel {
     var currentTargetType: RenderPass.Target = .color
     
     var editorCamera: EditorCamera = EditorCamera()
+    
+    var gizmoType: ImGuizmoType = .translate
     
     func onAttach() {
         editorCamera = EditorCamera(fov: 45.0, aspect: 1.778)
@@ -78,7 +81,8 @@ class ViewportPanel: Panel {
 
 // Functions called during ImGui rendering
 extension ViewportPanel{
-    func onImGuiRender() {
+    func onImGuiRender() { }
+    func onImGuiRender(_ gameObject: GameObject?) {
         ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowPadding), ImVec2(0, 0))
         ImGuiBegin("\(FAIcon.video) \(panelName)", nil, ImGuiFlag_None)
         
@@ -95,9 +99,84 @@ extension ViewportPanel{
         updateViewportTexture()
         
         // Gizmo
+        if gizmoType != .none && gameObject != nil {
+            renderGizmo(gameObject!)
+        }
         
         ImGuiEnd()
         ImGuiPopStyleVar(1)
+    }
+    
+    private func renderGizmo(_ gameObject: GameObject) {
+        ImGuizmoSetOrthographic(false)
+        ImGuizmoSetDrawlist(nil)
+        ImGuizmoSetRect(viewportBoundsMin.x, viewportBoundsMin.y,
+                        viewportBoundsMax.x - viewportBoundsMin.x,
+                        viewportBoundsMax.y - viewportBoundsMin.y)
+        
+        let viewMatrix: Float4x4 = editorCamera.viewMatrix
+        let projectionMatrix: Float4x4 = editorCamera.projectionMatrix
+        let transform = gameObject.getComponent(TransformComponent.self)
+        var modelMatrix: Float4x4 = transform.modelMatrix
+        
+        // Snapping
+        let snap: Bool = Input.isPressed(key: .shift)
+        var snapValues: Float3 = (gizmoType == .rotate) ? Float3(repeating: 45.0) : Float3(repeating: 0.5)
+        
+        withUnsafeBytes(of: viewMatrix) { (view: UnsafeRawBufferPointer) -> Void in
+            withUnsafeBytes(of: projectionMatrix) { (project: UnsafeRawBufferPointer) -> Void in
+                withUnsafeMutableBytes(of: &modelMatrix) { (model: UnsafeMutableRawBufferPointer) -> Void in
+                    withUnsafeMutableBytes(of: &snapValues, { (values: UnsafeMutableRawBufferPointer) -> Void in
+                        ImGuizmoManipulate(view.baseAddress!.assumingMemoryBound(to: Float.self),
+                                           project.baseAddress!.assumingMemoryBound(to: Float.self),
+                                           OPERATION(rawValue: UInt32(gizmoType.rawValue)),
+                                           MODE(rawValue: UInt32(ImGuizmoMode.local.rawValue)),
+                                           model.baseAddress!.assumingMemoryBound(to: Float.self),
+                                           nil, (snap) ? values.baseAddress!.assumingMemoryBound(to: Float.self) : nil,
+                                           nil, nil)
+                    })
+                }
+            }
+        }
+        
+        if ImGuizmoIsUsing() {
+            var position: Float3 = [0, 0, 0]
+            var rotation: Float3 = [0, 0, 0]
+            var scale: Float3 = [0, 0, 0]
+            decomposeModelMatrix(modelMatrix: modelMatrix, translation: &position, rotation: &rotation, scale: &scale)
+            transform.position = position
+            transform.rotation += (rotation - transform.rotation)
+            transform.scale = scale
+        }
+    }
+    
+    // TODO: Rotation needs to be fixed (currently using XYZ)
+    private func decomposeModelMatrix(modelMatrix mat: Float4x4, translation: inout Float3, rotation: inout Float3,
+                                 scale: inout Float3) {
+        // Scale
+        scale.x = length(mat.columns.0.xyz)
+        scale.y = length(mat.columns.1.xyz)
+        scale.z = length(mat.columns.2.xyz)
+        
+        // Rotation
+        let c0 = normalize(mat.columns.0.xyz)
+        let c1 = normalize(mat.columns.1.xyz)
+        let c2 = normalize(mat.columns.2.xyz)
+        rotation.y = atan2f(-c0.z, sqrtf(c1.z * c1.z + c2.z * c2.z))
+        rotation.x = atan2f(c1.z, c2.z)
+        rotation.z = atan2f(c0.y, c0.x)
+        /*
+        if cosf(rotation.y) != 0 {
+            rotation.x = atan2f(c1.z, c2.z)
+            rotation.z = atan2f(c0.y, c0.x)
+        } else {
+            rotation.x = atan2f(c1.z, c2.z)
+            rotation.z = 0
+        }
+         */
+        
+        // Translation
+        translation = mat.columns.3.xyz
     }
     
     private func updateViewportSize() {

@@ -7,6 +7,7 @@
 
 import Palico
 import ImGui
+import ImGuizmo
 
 fileprivate var dockspaceOpen: Bool = true
 fileprivate var optFullscreenPersistent: Bool = true
@@ -168,6 +169,7 @@ class EditorLayer: Layer {
         // var saveSceneAsPopup: Bool = false
         
         drawMenuBar()
+//        drawToolBar()
         
         // ImGui Demo
         imGuiDemoPanel.onImGuiRender()
@@ -179,7 +181,12 @@ class EditorLayer: Layer {
         assetPanel.onImGuiRender()
         
         // Viewport Panel
-        viewportPanel.onImGuiRender()
+        if scenePanel.selectedEntityID != .invalid {
+            let gameObject = scenePanel.scene.getGameObjectBy(entityID: scenePanel.selectedEntityID)
+            viewportPanel.onImGuiRender(gameObject)  // Render Gizmo
+        } else {
+            viewportPanel.onImGuiRender(nil)
+        }
         
         // Console Panel
         consolePanel.onImGuiRender()
@@ -199,10 +206,60 @@ class EditorLayer: Layer {
 // MARK: - Key & Mouse Event Callbacks
 extension EditorLayer {
     private func onKeyPressed(event: KeyPressedEvent) -> Bool {
+        // let control: Bool = Input.isPressed(key: .control)
+        // let command: Bool = Input.isPressed(key: .command)
+        // let option: Bool = Input.isPressed(key: .option)
+        
+        switch event.key {
+        case .tab:
+            // TODO: Remove. It is for debugging!   
+            let list = scenePanel.scene.gameObjectList
+            if scenePanel.selectedEntityID == .invalid {
+                if let gameObject = list.first {
+                    scenePanel.debugCursor = 0
+                    scenePanel.selectedEntityID = gameObject.entityID
+                } else {
+                    scenePanel.debugCursor = -1
+                    scenePanel.selectedEntityID = .invalid
+                }
+            } else {
+                scenePanel.debugCursor += 1
+                if scenePanel.debugCursor >= list.count {
+                    scenePanel.debugCursor = -1
+                    scenePanel.selectedEntityID = .invalid
+                } else {
+                    scenePanel.selectedEntityID = list[scenePanel.debugCursor].entityID
+                }
+            }
+        case .Q:
+            if !ImGuizmoIsUsing() {
+                viewportPanel.gizmoType = .none
+            }
+        case .W:
+            if !ImGuizmoIsUsing() {
+                viewportPanel.gizmoType = .translate
+            }
+        case .E:
+            if !ImGuizmoIsUsing() {
+                viewportPanel.gizmoType = .rotate
+            }
+        case .R:
+            if !ImGuizmoIsUsing() {
+                viewportPanel.gizmoType = .scale
+            }
+        case .T:
+            if !ImGuizmoIsUsing() {
+                viewportPanel.gizmoType = .bounds
+            }
+        default:
+            return false
+        }
+        
         return true
     }
     
     private func onMouseButtonPressed(event: MouseButtonPressedEvent) -> Bool {
+        // TODO: Select game object
         return true
     }
 }
@@ -275,5 +332,49 @@ extension EditorLayer {
             
             ImGuiEndMenuBar()
         }
+    }
+}
+
+// MARK: - Tool Bar
+extension EditorLayer {
+    private func drawToolBar() {
+//        let viewport = ImGuiGetMainViewport()!
+        let windowFlags = Im(ImGuiWindowFlags_NoScrollbar) | Im(ImGuiWindowFlags_NoSavedSettings) | Im(ImGuiWindowFlags_MenuBar)
+        let height: Float = ImGuiGetFrameHeight()
+        
+        if ImGuiBeginViewportSideBar("##MenuBar", nil, Im(ImGuiDir_Up), height, windowFlags) {
+            drawMenuBar()
+            ImGuiEnd()
+        }
+        
+        if ImGuiBeginViewportSideBar("##SecondaryMenuBar", nil, Im(ImGuiDir_Up), height, windowFlags) {
+            if ImGuiBeginMenuBar() {
+                ImGuiTextV("Hello")
+                ImGuiEndMenuBar()
+            }
+            ImGuiEnd()
+        }
+        
+        /*
+         ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
+         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+         float height = ImGui::GetFrameHeight();
+         
+         if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) {
+            if (ImGui::BeginMenuBar()) {
+                ImGui::Text("Happy secondary menu bar");
+                ImGui::EndMenuBar();
+            }
+            ImGui::End();
+         }
+         
+         if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
+            if (ImGui::BeginMenuBar()) {
+                ImGui::Text("Happy status bar");
+                ImGui::EndMenuBar();
+            }
+            ImGui::End();
+         }
+         */
     }
 }

@@ -14,6 +14,8 @@ class ScenePanel: Panel {
     var hierarchyPanelName: String { "Scene Hierarchy" }
     var inspectorPanelName: String { "Inspector" }
     
+    var debugCursor: Int = -1
+    
     var scene: Scene = Scene()
     var selectedEntityID: MothEntityID = .invalid
     

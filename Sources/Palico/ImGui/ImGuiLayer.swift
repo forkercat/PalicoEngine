@@ -6,6 +6,7 @@
 //
 
 import ImGui
+import ImGuizmo
 
 class ImGuiLayer: Layer {
     // Determine if the events are dispatched to subsequent layers.
@@ -68,7 +69,8 @@ class ImGuiLayer: Layer {
         ImGuiBackend.implPlatformNewFrame()
         ImGuiNewFrame()
         
-        // ImGuizmo::BeginFrame()
+        // ImGuizmo
+        ImGuizmoBeginFrame()
     }
     
     func end() {
@@ -160,7 +162,7 @@ class ImGuiLayer: Layer {
     }
     
     private func setThemeColors() {
-        CArray<ImVec4>.write(&ImGuiGetStyle().pointee.Colors) { colors in
+        ImGui.CArray<ImVec4>.write(&ImGuiGetStyle().pointee.Colors) { colors in
             colors[Int(Im(ImGuiCol_WindowBg))]            = ImVec4(0.1, 0.105, 0.11, 1.0)
             
             // Headers

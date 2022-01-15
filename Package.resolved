@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/forkercat/MathLib.git",
         "state": {
           "branch": "main",
-          "revision": "38a6a472ca69895693a237a692d1ccbeed7cd6e2",
+          "revision": "439fa720cd73b285f9109dc12c4d781847e5f502",
           "version": null
         }
       },
@@ -34,6 +34,15 @@
         "state": {
           "branch": "update-1.86-docking",
           "revision": "336ee0c6649149a2199dc44b7c5f8e5ca1fc0abd",
+          "version": null
+        }
+      },
+      {
+        "package": "ImGuizmo",
+        "repositoryURL": "https://github.com/forkercat/SwiftImGuizmo.git",
+        "state": {
+          "branch": "master",
+          "revision": "abce4774c1038b5b6265d6805dc84d987657b39b",
           "version": null
         }
       }
