@@ -161,6 +161,10 @@ extension ScenePanel {
             return
         }
     
+        ImGuiPushStyleColor(Im(ImGuiCol_Header), ImVec4(0.2, 0.205, 0.21, 1.0))
+        ImGuiPushStyleColor(Im(ImGuiCol_HeaderHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
+        ImGuiPushStyleColor(Im(ImGuiCol_HeaderActive), ImVec4(0.2, 0.205, 0.21, 1.0))
+        
         let component = gameObject.getComponent(type)
         
         var contentRegionAvailable: ImVec2 = ImVec2(0, 0)
@@ -173,10 +177,14 @@ extension ScenePanel {
         ImGuiPopStyleVar(1)  // FramePadding
         
         ImGuiSameLine(contentRegionAvailable.x - lineHeight + 4.0, -1.0)  // -1.0 is default value
+        ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.2, 0.205, 0.21, 1.0))
+        ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
+        ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.2, 0.205, 0.21, 1.0))
         if ImGuiButton("\(FAIcon.bars)", ImVec2(0, lineHeight)) {
             // fa-align-justify
             ImGuiOpenPopup("##ComponentSettings", 0)
         }
+        ImGuiPopStyleColor(3)
         
         var shouldRemoveComponent: Bool = false
         if ImGuiBeginPopup("##ComponentSettings", 0) {
@@ -194,6 +202,8 @@ extension ScenePanel {
         if shouldRemoveComponent {
             gameObject.removeComponent(type)
         }
+        
+        ImGuiPopStyleColor(3)
     }
     
     private static func drawControlFloat3(_ label: String, _ values: inout Float3, _ format: String = "%.1f", _ resetValue: Float = 0.0, _ columnWidth: Float = 100.0) {

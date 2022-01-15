@@ -34,9 +34,6 @@ class EditorLayer: Layer {
         scenePanel.onAttach()
         viewportPanel.onAttach()
         
-        // Empty GameObject
-        scenePanel.scene.createEmptyGameObject()
-        
         // Primitives
         let cube = Cube(scenePanel.scene, name: "Cube", position: [0, 0, 0])
         let cubeMeshRenderer = cube.getComponent(MeshRendererComponent.self)
@@ -64,6 +61,9 @@ class EditorLayer: Layer {
         scenePanel.scene.addGameObject(cone)
         scenePanel.scene.addGameObject(cylinder)
         
+        // Empty GameObject
+        scenePanel.scene.createEmptyGameObject()
+        
         // Light Data
         let ambientLight = SceneLight(scenePanel.scene, name: "Ambient Light", type: .ambientLight, position: [5, 5, -5])
         let dirLight = SceneLight(scenePanel.scene, name: "Directional Light", type: .dirLight, position: [3, 3, -1])
@@ -90,6 +90,10 @@ class EditorLayer: Layer {
         pointLightComponent2.light.color = .red
         
         scenePanel.scene.addGameObjects([ambientLight, dirLight, pointLight1, pointLight2])
+        
+        if let gameObject = scenePanel.scene.gameObjectList.first {
+            scenePanel.selectedEntityID = gameObject.entityID
+        }
     }
     
     override func onDetach() {
@@ -212,7 +216,7 @@ extension EditorLayer {
         
         switch event.key {
         case .tab:
-            // TODO: Remove. It is for debugging!   
+            // TODO: Remove. It is for debugging!
             let list = scenePanel.scene.gameObjectList
             if scenePanel.selectedEntityID == .invalid {
                 if let gameObject = list.first {

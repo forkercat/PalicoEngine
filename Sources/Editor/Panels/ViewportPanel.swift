@@ -102,6 +102,7 @@ extension ViewportPanel{
         if gizmoType != .none && gameObject != nil {
             renderGizmo(gameObject!)
         }
+        drawGizmoControl()
         
         ImGuiEnd()
         ImGuiPopStyleVar(1)
@@ -137,6 +138,11 @@ extension ViewportPanel{
                     })
                 }
             }
+        }
+        
+        // Avoid using gizmo when rotating editor camera
+        guard !Input.isPressed(key: .command) && !Input.isPressed(key: .option) else {
+            return
         }
         
         if ImGuizmoIsUsing() {
@@ -177,6 +183,67 @@ extension ViewportPanel{
         
         // Translation
         translation = mat.columns.3.xyz
+    }
+    
+    private func drawGizmoControl() {
+        let windowFlags: ImGuiWindowFlags = Im(ImGuiWindowFlags_NoDecoration) | Im(ImGuiWindowFlags_NoDocking)
+            | Im(ImGuiWindowFlags_AlwaysAutoResize) | Im(ImGuiWindowFlags_NoSavedSettings)
+            | Im(ImGuiWindowFlags_NoFocusOnAppearing) | Im(ImGuiWindowFlags_NoNav)
+        
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowBorderSize), 0.0)
+        
+        var viewportPos: ImVec2 = ImVec2(0, 0)
+        ImGuiGetWindowPos(&viewportPos)
+        
+        let tabBarHeight: Float = 23
+        let buttonSize: ImVec2 = ImVec2(32, 23)
+        
+        var viewportWindowSize: ImVec2 = ImVec2(0, 0)
+        ImGuiGetWindowSize(&viewportWindowSize)
+        
+        let paddingSize: Float = 8.0
+        let ySpacing: Float = 8.0
+        let xSpacing: Float = 6.0
+        
+        
+        ImGuiSetNextWindowPos(ImVec2(viewportPos.x + paddingSize, viewportPos.y + tabBarHeight + paddingSize), 0, ImVec2(0, 0))
+        ImGuiSetNextWindowSize(ImVec2(buttonSize.x, buttonSize.y * 4 + ySpacing * 3), 0)
+        
+        ImGuiBegin("GizmoControl", nil, windowFlags)
+        drawGizmoTypeButton("\(FAIcon.handRock)", .none, buttonSize)
+//        ImGuiSameLine(0, xSpacing)
+        ImGuiSpacing()
+        drawGizmoTypeButton("\(FAIcon.arrowsAlt)", .translate, buttonSize)
+//        ImGuiSameLine(0, xSpacing)
+        ImGuiSpacing()
+        drawGizmoTypeButton("\(FAIcon.syncAlt)", .rotate, buttonSize)
+//        ImGuiSameLine(0, xSpacing)
+        ImGuiSpacing()
+        drawGizmoTypeButton("\(FAIcon.expand)", .scale, buttonSize)
+        
+        ImGuiPopStyleVar(1)
+        ImGuiEnd()  // GizmoControl
+    }
+    
+    private func drawGizmoTypeButton(_ icon: String, _ type: ImGuizmoType, _ buttonSize: ImVec2 = ImVec2(0, 0)) {
+        ImGuiPushID("GizmoTypeButton\(icon)");
+        if (gizmoType == type)  // enabled
+        {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.3, 0.305, 0.31, 1.0))
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.3, 0.305, 0.31, 1.0))
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.3, 0.305, 0.31, 1.0))
+            ImGuiButton(icon, buttonSize)
+            if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) { gizmoType = type }
+            ImGuiPopStyleColor(3);
+        }
+        else {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.2, 0.205, 0.21, 1.0))
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.2, 0.205, 0.21, 1.0))
+            if ImGuiButton(icon, buttonSize) { gizmoType = type }
+            ImGuiPopStyleColor(3)
+        }
+        ImGuiPopID();
     }
     
     private func updateViewportSize() {
