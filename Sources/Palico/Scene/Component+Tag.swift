@@ -7,6 +7,12 @@
 
 public class TagComponent: Component {
     public var title: String { "Tag" }
+    public var enabled: Bool = true {
+        didSet {
+            enabled = true
+            Log.error("You cannot set tag component status! Skipping")
+        }
+    }
     public static var icon: String { FAIcon.tag }
     
     public enum Tag: Int {

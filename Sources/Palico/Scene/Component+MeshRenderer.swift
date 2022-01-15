@@ -7,6 +7,7 @@
 
 public class MeshRendererComponent: Component {
     public var title: String { "Mesh Renderer" }
+    public var enabled: Bool = true
     public static var icon: String { FAIcon.vectorSquare }
     
     // Mesh

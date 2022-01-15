@@ -7,6 +7,7 @@
 
 public class ScriptComponent: Component {
     public var title: String { "Script" }
+    public var enabled: Bool = true
     public static var icon: String { FAIcon.code }
     
     public var nativeScript: NativeScript? = nil

@@ -9,6 +9,12 @@ import MathLib
 
 public class TransformComponent: Component {
     public var title: String { "Transform" }
+    public var enabled: Bool = true {
+        didSet {
+            enabled = true
+            Log.error("You cannot set transform component status! Skipping")
+        }
+    }
     public static var icon: String { FAIcon.expandArrowsAlt }
     
     public var position: Float3 = [0, 0, 0]

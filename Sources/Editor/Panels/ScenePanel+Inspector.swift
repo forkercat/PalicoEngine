@@ -170,17 +170,28 @@ extension ScenePanel {
         var contentRegionAvailable: ImVec2 = ImVec2(0, 0)
         ImGuiGetContentRegionAvail(&contentRegionAvailable)
         
+        // Header
         let fontSize = ImGuiGetFont().pointee.FontSize / Float(Renderer.dpi)
         ImGuiPushStyleVar(Im(ImGuiStyleVar_FramePadding), ImVec2(1, 2))
         let lineHeight: Float = fontSize + ImGuiGetStyle().pointee.FramePadding.y * 2.0
         let opened: Bool = ImGuiTreeNodeEx("\(T.icon) \(component.title)", treeNodeFlags)
         ImGuiPopStyleVar(1)  // FramePadding
         
-        ImGuiSameLine(contentRegionAvailable.x - lineHeight + 4.0, -1.0)  // -1.0 is default value
+        // Component Status
+        if type != TransformComponent.self {
+            ImGuiSameLine(contentRegionAvailable.x - lineHeight - 22 + 4.0, -1)
+            ImGuiPushStyleColor(Im(ImGuiCol_FrameBg), ImVec4(0.3, 0.305, 0.31, 1.0))
+            // TODO: Checkmark Color
+            ImGuiCheckbox("##ComponentCheckboxEnabled", &component.enabled)
+            ImGuiPopStyleColor(1)
+        }
+        
+        // Component Settings Button
+        ImGuiSameLine(contentRegionAvailable.x - lineHeight + 4.0, -1)  // -1.0 is default value
         ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.2, 0.205, 0.21, 1.0))
         ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
         ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.2, 0.205, 0.21, 1.0))
-        if ImGuiButton("\(FAIcon.bars)", ImVec2(0, lineHeight)) {
+        if ImGuiButton("\(FAIcon.bars)", ImVec2(lineHeight, lineHeight)) {
             // fa-align-justify
             ImGuiOpenPopup("##ComponentSettings", 0)
         }

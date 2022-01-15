@@ -10,5 +10,6 @@ import MothECS
 
 public protocol Component: MothComponent {
     var title: String { get }
+    var enabled: Bool { get set }
     static var icon: String { get }
 }

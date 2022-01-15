@@ -40,6 +40,9 @@ public class GameObject {
     public func onUpdateEditor(deltaTime ts: Timestep) {
         if hasComponent(ScriptComponent.self) {
             let scriptComponent = getComponent(ScriptComponent.self)
+            guard scriptComponent.enabled else {
+                return
+            }
             scriptComponent.nativeScript?.onUpdateEditor(deltaTime: ts)
         }
     }
@@ -48,6 +51,9 @@ public class GameObject {
     public func onUpdateRuntime(deltaTime ts: Timestep) {
         if hasComponent(ScriptComponent.self) {
             let scriptComponent = getComponent(ScriptComponent.self)
+            guard scriptComponent.enabled else {
+                return
+            }
             scriptComponent.nativeScript?.onUpdate(deltaTime: ts)
         }
     }
@@ -72,6 +78,9 @@ extension GameObject {
         
         if let scriptComponent = component as? ScriptComponent {
             scriptComponent.nativeScript?.gameObject = self
+            guard scriptComponent.enabled else {
+                return
+            }
             scriptComponent.nativeScript?.onCreate()
         }
     }
@@ -81,6 +90,9 @@ extension GameObject {
         
         if let scriptComponent = component as? ScriptComponent {
             scriptComponent.nativeScript?.gameObject = self
+            guard scriptComponent.enabled else {
+                return
+            }
             scriptComponent.nativeScript?.onCreate()
         }
     }

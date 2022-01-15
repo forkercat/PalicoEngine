@@ -149,6 +149,9 @@ extension Renderer {
                 continue
             }
             let lightComponent = gameObject.getComponent(LightComponent.self)
+            guard lightComponent.enabled else {
+                continue
+            }
             lightData.append(lightComponent.light.lightData)
         }
         
@@ -182,6 +185,8 @@ extension Renderer {
             let transform = gameObject.getComponent(TransformComponent.self)
             let modelMatrix = transform.modelMatrix
             
+            if !meshRenderer.enabled { continue }
+            
             encoder.pushDebugGroup(gameObject.name)
             
             // Vertex Data
@@ -195,6 +200,9 @@ extension Renderer {
             // For Light objects (override)
             if gameObject.hasComponent(LightComponent.self) {
                 let lightComponent = gameObject.getComponent(LightComponent.self)
+                guard lightComponent.enabled else {
+                    continue
+                }
                 // let intensity = lightComponent.light.intensity
                 let intensity: Float = 1.0
                 fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)
@@ -229,6 +237,8 @@ extension Renderer {
         let meshRenderer = gameObject.getComponent(MeshRendererComponent.self)
         let transform = gameObject.getComponent(TransformComponent.self)
         
+        if !meshRenderer.enabled { return }
+        
         encoder.pushDebugGroup(gameObject.name)
         
         // Vertex Data
@@ -242,6 +252,9 @@ extension Renderer {
         /// For Light objects (override)
         if gameObject.hasComponent(LightComponent.self) {
             let lightComponent = gameObject.getComponent(LightComponent.self)
+            guard lightComponent.enabled else {
+                return
+            }
             // let intensity = lightComponent.light.intensity
             let intensity: Float = 1.0
             fragmentUniformData.tintColor = Color4(intensity * lightComponent.light.color, 1)

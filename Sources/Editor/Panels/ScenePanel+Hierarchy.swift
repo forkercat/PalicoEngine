@@ -28,6 +28,8 @@ extension ScenePanel {
             ImGuiEndPopup()
         }
         
+        ImGuiHelpMarker("Current object selection in viewport is not supported. \nUse [Tab] to navigate in-scene objects.")
+        
         ImGuiEnd()
     }
     

@@ -7,6 +7,7 @@
 
 public class LightComponent: Component {
     public var title: String { "Light" }
+    public var enabled: Bool = true
     public static var icon: String { FAIcon.lightbulb }
     
     public var light: Light = DirectionalLight()

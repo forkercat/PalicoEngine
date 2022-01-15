@@ -9,6 +9,15 @@ import ImGui
 
 public let ImGuiFlag_None: Int32 = 0
 
+public func ImGuiHelpMarker(_ string: String) {
+    ImGuiTextV("\(FAIcon.questionCircle)")
+    if igIsItemHovered(0) {
+        ImGuiBeginTooltip()
+        ImGuiTextUnformatted(string, nil)
+        ImGuiEndTooltip()
+    }
+}
+
 extension ImVec2 {
     public init(_ v0: Float, _ v1: Float) {
         self.init(x: v0, y: v1)

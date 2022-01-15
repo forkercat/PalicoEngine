@@ -7,6 +7,7 @@
 
 public class CameraComponent: Component {
     public var title: String { "Camera" }
+    public var enabled: Bool = true
     public static var icon: String { FAIcon.camera }
     
     // TODO: SceneCamera
