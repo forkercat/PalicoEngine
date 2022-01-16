@@ -9,7 +9,7 @@
 Implement a game engine on macOS using Metal API. Still in development. Currently I am working on a more capable entity-component-system [MothECS](https://github.com/forkercat/MothECS) :)
 
 <p align="left">
-	<img src="gallery/screenshot.jpg" width="90%" alt="Palico Engine Screenshot"/>
+	<img src="gallery/screenshot.jpg" width="100%" alt="Palico Engine Screenshot"/>
 </p>
 
 [Palico](https://monsterhunterworld.wiki.fextralife.com/Palicoes) - It is a cat-like combat companion in Monster Hunter!

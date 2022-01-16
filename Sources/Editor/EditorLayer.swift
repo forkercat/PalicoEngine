@@ -115,14 +115,15 @@ class EditorLayer: Layer {
             
         }
         
-        // onUpdateEditor
-        scenePanel.onUpdateEditor(deltaTime: ts)
         viewportPanel.onUpdate(deltaTime: ts)
         
-        // Render Scene (Editor)
-        scenePanel.scene.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)
-        
-        // Event
+        if viewportPanel.isPlaying {
+            scenePanel.onUpdate(deltaTime: ts)
+            scenePanel.scene.onRenderRuntime(deltaTime: ts)  // render
+        } else {
+            scenePanel.onUpdateEditor(deltaTime: ts)
+            scenePanel.scene.onRenderEditor(deltaTime: ts, editorCamera: viewportPanel.editorCamera)  // render
+        }
     }
     
     // Called after onUpdate()

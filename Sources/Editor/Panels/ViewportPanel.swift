@@ -29,6 +29,9 @@ class ViewportPanel: Panel {
     
     var gizmoType: ImGuizmoType = .translate
     
+    var isPlaying: Bool = false
+    var isPaused: Bool = false
+    
     func onAttach() {
         editorCamera = EditorCamera(fov: 45.0, aspect: 1.778)
     }
@@ -103,6 +106,9 @@ extension ViewportPanel{
             renderGizmo(gameObject!)
         }
         drawGizmoControl()
+        
+        // Play/Pause
+        drawPlayPauseControl()
         
         ImGuiEnd()
         ImGuiPopStyleVar(1)
@@ -203,8 +209,6 @@ extension ViewportPanel{
         
         let paddingSize: Float = 8.0
         let ySpacing: Float = 8.0
-        // let xSpacing: Float = 6.0
-        
         
         ImGuiSetNextWindowPos(ImVec2(viewportPos.x + paddingSize, viewportPos.y + tabBarHeight + paddingSize), 0, ImVec2(0, 0))
         ImGuiSetNextWindowSize(ImVec2(buttonSize.x, buttonSize.y * 4 + ySpacing * 3), 0)
@@ -226,24 +230,106 @@ extension ViewportPanel{
     }
     
     private func drawGizmoTypeButton(_ icon: String, _ type: ImGuizmoType, _ buttonSize: ImVec2 = ImVec2(0, 0)) {
-        ImGuiPushID("GizmoTypeButton\(icon)");
-        if (gizmoType == type)  // enabled
-        {
-            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.hovered)
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.hovered)
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.hovered)
+        ImGuiPushID("GizmoTypeButton\(icon)")
+        if (gizmoType == type) {  // enabled
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.enabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.enabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.enabled)
             ImGuiButton(icon, buttonSize)
             if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) { gizmoType = type }
             ImGuiPopStyleColor(3);
-        }
-        else {
-            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.normal)
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.normal)
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.normal)
-            if ImGuiButton(icon, buttonSize) { gizmoType = type }
+        } else {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.disabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.disabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.disabled)
+            ImGuiButton(icon, buttonSize)
+            if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) { gizmoType = type }
             ImGuiPopStyleColor(3)
         }
-        ImGuiPopID();
+        ImGuiPopID()
+    }
+    
+    private func drawPlayPauseControl() {
+        let windowFlags: ImGuiWindowFlags = Im(ImGuiWindowFlags_NoDecoration) | Im(ImGuiWindowFlags_NoDocking)
+        | Im(ImGuiWindowFlags_AlwaysAutoResize) | Im(ImGuiWindowFlags_NoSavedSettings)
+        | Im(ImGuiWindowFlags_NoFocusOnAppearing) | Im(ImGuiWindowFlags_NoNav)
+        
+        ImGuiPushStyleVar(Im(ImGuiStyleVar_WindowBorderSize), 0.0)
+        
+        var viewportPos: ImVec2 = ImVec2(0, 0)
+        ImGuiGetWindowPos(&viewportPos)
+        
+        let tabBarHeight: Float = 23
+        let buttonSize: ImVec2 = ImVec2(32, 23)
+        
+        var viewportWindowSize: ImVec2 = ImVec2(0, 0)
+        ImGuiGetWindowSize(&viewportWindowSize)
+        
+        let paddingSize: Float = 8.0
+        let xSpacing: Float = 8.0
+        
+        let controlWindowSize: ImVec2 = ImVec2(buttonSize.x * 2 + xSpacing, buttonSize.y)
+                                        
+        ImGuiSetNextWindowPos(ImVec2(viewportPos.x + viewportWindowSize.x / 2.0 - controlWindowSize.x / 2.0,
+                                     viewportPos.y + tabBarHeight + paddingSize),
+                              0, ImVec2(0, 0))
+        ImGuiSetNextWindowSize(controlWindowSize, 0)
+        
+        ImGuiBegin("PlayPauseControl", nil, windowFlags)
+        drawPlayButton(buttonSize)
+        ImGuiSameLine(0, xSpacing)
+        drawPauseButton(buttonSize)
+        
+        ImGuiPopStyleVar(1)
+        ImGuiEnd()  // GizmoControl
+    }
+    
+    private func drawPlayButton(_ buttonSize: ImVec2 = ImVec2(0, 0)) {
+        ImGuiPushID("PlayButton")
+        if isPlaying {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.enabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.enabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.enabled)
+            ImGuiButton("\(FAIcon.stop)", buttonSize)
+            if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) {
+                isPlaying = false
+            }
+            ImGuiPopStyleColor(3);
+        } else {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.disabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.disabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.disabled)
+            ImGuiButton("\(FAIcon.play)", buttonSize)
+            if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) {
+                isPlaying = true
+            }
+            ImGuiPopStyleColor(3)
+        }
+        ImGuiPopID()
+    }
+    
+    private func drawPauseButton(_ buttonSize: ImVec2 = ImVec2(0, 0)) {
+        ImGuiPushID("PauseButton")
+        if isPaused {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.enabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.enabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.enabled)
+            ImGuiButton("\(FAIcon.pause)", buttonSize)
+            if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) {
+                isPaused = false
+            }
+            ImGuiPopStyleColor(3);
+        } else {
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.disabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.disabled)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.disabled)
+            ImGuiButton("\(FAIcon.pause)", buttonSize)
+            if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) {
+                isPaused = true
+            }
+            ImGuiPopStyleColor(3)
+        }
+        ImGuiPopID()
     }
     
     private func updateViewportSize() {

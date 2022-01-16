@@ -30,7 +30,5 @@ class RotateScript: NativeScript {
     override func onUpdateEditor(deltaTime ts: Timestep) {
         let transform = getComponent(TransformComponent.self)
         transform.rotation.y += rotateSpeed * Time.deltaTime  // or you can use ts
-//        transform.rotation.y = y.truncatingRemainder(dividingBy: 360.0)
-        
     }
 }

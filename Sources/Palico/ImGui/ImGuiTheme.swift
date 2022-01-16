@@ -35,6 +35,9 @@ public struct ImGuiTheme {
     public static var hovered            = ImVec4(0.30, 0.30, 0.30, 1.0)
     public static var active             = ImVec4(0.15, 0.15, 0.15, 1.0)
     
+    public static var enabled            = ImVec4(0.30, 0.30, 0.30, 1.0)
+    public static var disabled           = ImVec4(0.20, 0.21, 0.21, 1.0)
+    
     public static var tabNormal          = ImVec4(0.15, 0.15, 0.15, 1.0)
     public static var tabHovered         = ImVec4(0.38, 0.38, 0.38, 1.0)
     public static var tabActive          = ImVec4(0.28, 0.28, 0.28, 1.0)
