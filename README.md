@@ -9,7 +9,7 @@
 Implement a game engine on macOS using Metal API. Still in development. Currently I am working on a more capable entity-component-system [MothECS](https://github.com/forkercat/MothECS) :)
 
 <p align="left">
-	<img src="gallery/screenshot.jpg" width="100%" alt="Palico Engine Screenshot"/>
+	<img src="gallery/screenshot.jpg" width="90%" alt="Palico Engine Screenshot"/>
 </p>
 
 [Palico](https://monsterhunterworld.wiki.fextralife.com/Palicoes) - It is a cat-like combat companion in Monster Hunter!
@@ -18,7 +18,7 @@ Implement a game engine on macOS using Metal API. Still in development. Currentl
 	<img src="https://www.touchtapplay.com/wp-content/uploads/2021/04/Monster-Hunter-Rise-Gathering-Palico.jpg" width="25%" alt="This is Palico! Credits: Francesco"/>
 </p>
 
-Palico Engine's [Sprint Board](https://forkercat.atlassian.net/jira/software/projects/PALICO/boards/1) on Jira (need permission request). Currently there are **58 issues** in total!
+Palico Engine's [Sprint Board](https://forkercat.atlassian.net/jira/software/projects/PALICO/boards/1) on Jira (need permission request). Currently there are **65 issues** in total!
 
 
 ## 🔧 Install & Run
@@ -36,6 +36,28 @@ swift run Editor
 ```
 
 
+## 📝 User Guide
+
+Mouse Controls:
+- `Command + Left`: Rotate camera
+- `Right`: Look around
+- `Middle`: Pan
+- `Scroll`: Zoom in/out
+
+Keyboard Controls:
+- `Tab`: Select next in-scene object
+- `F`: Focus on object
+- `Q`: No action
+- `W`: Translate
+- `E`: Rotate
+- `R`: Scale
+
+Create GameObject:
+<p align="left">
+	<img src="gallery/create-gameobject.jpg" width="40%" alt="Palico Engine Screenshot"/>
+</p>
+
+
 ## 🍻 Dependencies
 
 ```swift
@@ -44,7 +66,7 @@ dependencies: [
     .package(url: "https://github.com/forkercat/MathLib.git", .branch("main")),
     .package(url: "https://github.com/forkercat/MothECS.git", .branch("main")),
     .package(url: "https://github.com/forkercat/SwiftImGui.git", .branch("update-1.86-docking")),  // forked from @ctreffs
-    .package(url: "https://github.com/forkercat/SwiftImGuizmo.git", .branch("master")),  // forked from @ctreffs
+    .package(url: "https://github.com/forkercat/SwiftImGuizmo.git", .branch("master")),            // forked from @ctreffs
 ],
 ```
 
@@ -53,11 +75,6 @@ Thanks to SwiftImGui by [@ctreffs](https://github.com/ctreffs) I am able to use 
 I forked the repository and wrapped ImGui v1.86 and added new OSX backend file. Related PRs: 
 - [Update to 1.86 and update OSX backend (fix keyboard issue) #7](https://github.com/ctreffs/SwiftImGui/pull/7)
 - [Update ImGui 1.86-docking #8](https://github.com/ctreffs/SwiftImGui/pull/8)
-
-
-## ⭐ Features
-
-To be added!
 
 
 ## 🥺 Future Development

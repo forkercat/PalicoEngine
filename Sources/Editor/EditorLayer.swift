@@ -37,10 +37,13 @@ class EditorLayer: Layer {
     
     func showDebugScene() {
         // Primitives
-        let cube = Cube(scenePanel.scene, name: "Cube", position: [0, 0, 0])
-        let cubeMeshRenderer = cube.getComponent(MeshRendererComponent.self)
-        cubeMeshRenderer.tintColor = .yellow
-        cube.addComponent(ScriptComponent(RotateScript()))
+        let cube1 = Cube(scenePanel.scene, name: "Cube #1", position: [0, 0, 0])
+        let cubeMeshRenderer1 = cube1.getComponent(MeshRendererComponent.self)
+        cubeMeshRenderer1.tintColor = .yellow
+        
+        let cube2 = Cube(scenePanel.scene, name: "Cube #2",
+                         position: [-4, 1.5, 0.5], rotation: [0, 0, 0], scale:[0.5, 0.5, 0.5])
+        cube2.addComponent(ScriptComponent(RotateScript()))
         
         let sphere = Sphere(scenePanel.scene, name: "Sphere",
                             position: [-6, 1.5, -4], rotation: [0, 0, 0], scale: [1.5, 1.5, 1.5])
@@ -58,7 +61,8 @@ class EditorLayer: Layer {
         let cylinderMeshRenderer = cylinder.getComponent(MeshRendererComponent.self)
         cylinderMeshRenderer.tintColor = .lightBlue
         
-        scenePanel.scene.addGameObject(cube)
+        scenePanel.scene.addGameObject(cube1)
+        scenePanel.scene.addGameObject(cube2)
         scenePanel.scene.addGameObject(sphere)
         scenePanel.scene.addGameObject(capsule)
         scenePanel.scene.addGameObject(cone)
@@ -80,7 +84,7 @@ class EditorLayer: Layer {
         let dirLightComponent = dirLight.getComponent(LightComponent.self)
         dirLightComponent.light.intensity = 0.6
         dirLightComponent.light.color = .lightYellow
-        dirLight.addComponent(ScriptComponent(RotateScript(name: "RotateScript", speed: 2.0)))
+        // dirLight.addComponent(ScriptComponent(RotateScript(name: "RotateScript", speed: 2.0)))
         
         let ambientLightComponent = ambientLight.getComponent(LightComponent.self)
         ambientLightComponent.light.intensity = 0.2

@@ -21,13 +21,13 @@ extension ScenePanel {
             
             Controls:
             
-            \(FAIcon.mousePointer) [ Command + Left ] Rotate
+            \(FAIcon.mousePointer) [ Command + Left ] Rotate camera
             \(FAIcon.mousePointer) [ Right ] Look around
             \(FAIcon.mouse) [ Middle ] Pan
             \(FAIcon.mouse) [ Scroll ] Zoom in/out
             
-            \(FAIcon.keyboard) [ Tab ] Next in-scene object
-            \(FAIcon.keyboard) [ F ] Focus on in-scene object
+            \(FAIcon.keyboard) [ Tab ] Select next in-scene object
+            \(FAIcon.keyboard) [ F ] Focus on object
             \(FAIcon.keyboard) [ Q ] No action
             \(FAIcon.keyboard) [ W ] Translate
             \(FAIcon.keyboard) [ E ] Rotate
@@ -155,7 +155,7 @@ extension ScenePanel {
             var rotationInDegrees: Float3 = component.rotation.toDegrees
             drawControlFloat3("Rotation", &rotationInDegrees, "%.2f", 0.0, labelColumnWidth)
             component.rotation = rotationInDegrees.toRadians
-            drawControlFloat3("Scale", &component.scale, "%.2f", 0.0, labelColumnWidth)
+            drawControlFloat3("Scale", &component.scale, "%.2f", 1.0, labelColumnWidth)
         })
         
         drawComponent(MeshRendererComponent.self, gameObject, widgets: { component in
@@ -197,9 +197,9 @@ extension ScenePanel {
             return
         }
     
-        ImGuiPushStyleColor(Im(ImGuiCol_Header), ImVec4(0.2, 0.205, 0.21, 1.0))
-        ImGuiPushStyleColor(Im(ImGuiCol_HeaderHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
-        ImGuiPushStyleColor(Im(ImGuiCol_HeaderActive), ImVec4(0.2, 0.205, 0.21, 1.0))
+        ImGuiPushStyleColor(Im(ImGuiCol_Header), ImGuiTheme.normal)
+        ImGuiPushStyleColor(Im(ImGuiCol_HeaderHovered), ImGuiTheme.normal)
+        ImGuiPushStyleColor(Im(ImGuiCol_HeaderActive), ImGuiTheme.normal)
         
         let component = gameObject.getComponent(type)
         
@@ -224,9 +224,9 @@ extension ScenePanel {
         
         // Component Settings Button
         ImGuiSameLine(contentRegionAvailable.x - lineHeight + 4.0, -1)  // -1.0 is default value
-        ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.2, 0.205, 0.21, 1.0))
-        ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
-        ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.2, 0.205, 0.21, 1.0))
+        ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.normal)
+        ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.normal)
+        ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.normal)
         if ImGuiButton("\(FAIcon.bars)", ImVec2(lineHeight, lineHeight)) {
             // fa-align-justify
             ImGuiOpenPopup("##ComponentSettings", 0)

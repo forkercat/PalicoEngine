@@ -229,17 +229,17 @@ extension ViewportPanel{
         ImGuiPushID("GizmoTypeButton\(icon)");
         if (gizmoType == type)  // enabled
         {
-            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.3, 0.305, 0.31, 1.0))
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.3, 0.305, 0.31, 1.0))
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.3, 0.305, 0.31, 1.0))
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.hovered)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.hovered)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.hovered)
             ImGuiButton(icon, buttonSize)
             if ImGuiIsItemClicked(Im(ImGuiMouseButton_Left)) { gizmoType = type }
             ImGuiPopStyleColor(3);
         }
         else {
-            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImVec4(0.2, 0.205, 0.21, 1.0))
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImVec4(0.2, 0.205, 0.21, 1.0))
-            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImVec4(0.2, 0.205, 0.21, 1.0))
+            ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.normal)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.normal)
+            ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.normal)
             if ImGuiButton(icon, buttonSize) { gizmoType = type }
             ImGuiPopStyleColor(3)
         }

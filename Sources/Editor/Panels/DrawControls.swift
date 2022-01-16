@@ -23,27 +23,39 @@ func drawControlFloat3(_ label: String, _ values: inout Float3, _ format: String
     let itemOutterSpacing: Float = 4
     
     // X
+    ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.componentX)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.componentHoveredX)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.componentX)
     if ImGuiButton("X", ImVec2(0, 0)) {
         values.x = resetValue
     }
+    ImGuiPopStyleColor(3)
     ImGuiSameLine(0, itemInnerSpacing)
     ImGuiDragFloat("##X", &values.x, 0.1, 0.0, 0.0, format, 0)
     ImGuiPopItemWidth()
     ImGuiSameLine(0, itemOutterSpacing)
     
     // Y
+    ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.componentY)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.componentHoveredY)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.componentY)
     if ImGuiButton("Y", ImVec2(0, 0)) {
         values.y = resetValue
     }
+    ImGuiPopStyleColor(3)
     ImGuiSameLine(0, itemInnerSpacing)
     ImGuiDragFloat("##Y", &values.y, 0.1, 0.0, 0.0, format, 0)
     ImGuiPopItemWidth()
     ImGuiSameLine(0, itemOutterSpacing)
     
     // Z
+    ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.componentZ)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.componentHoveredZ)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.componentZ)
     if ImGuiButton("Z", ImVec2(0, 0)) {
         values.z = resetValue
     }
+    ImGuiPopStyleColor(3)
     ImGuiSameLine(0, itemInnerSpacing)
     ImGuiDragFloat("##Z", &values.z, 0.1, 0.0, 0.0, format, 0)
     ImGuiPopItemWidth()
@@ -66,18 +78,26 @@ func drawControlFloat2(_ label: String, _ values: inout Float2, _ format: String
     let itemOutterSpacing: Float = 4
     
     // X
+    ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.componentX)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.componentHoveredX)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.componentX)
     if ImGuiButton("X", ImVec2(0, 0)) {
         values.x = resetValue
     }
+    ImGuiPopStyleColor(3)
     ImGuiSameLine(0, itemInnerSpacing)
     ImGuiDragFloat("##X", &values.x, 0.1, 0.0, 0.0, format, 0)
     ImGuiPopItemWidth()
     ImGuiSameLine(0, itemOutterSpacing)
     
     // Y
+    ImGuiPushStyleColor(Im(ImGuiCol_Button), ImGuiTheme.componentY)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonHovered), ImGuiTheme.componentHoveredY)
+    ImGuiPushStyleColor(Im(ImGuiCol_ButtonActive), ImGuiTheme.componentY)
     if ImGuiButton("Y", ImVec2(0, 0)) {
         values.y = resetValue
     }
+    ImGuiPopStyleColor(3)
     ImGuiSameLine(0, itemInnerSpacing)
     ImGuiDragFloat("##Y", &values.y, 0.1, 0.0, 0.0, format, 0)
     ImGuiPopItemWidth()

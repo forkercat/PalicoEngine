@@ -12,6 +12,8 @@ class ImGuiLayer: Layer {
     // Determine if the events are dispatched to subsequent layers.
     var tryToBlockEvents: Bool = true
     
+    let theme = ImGuiTheme()
+    
     override init() {
         super.init(name: "ImGui Layer")
     }
@@ -162,35 +164,6 @@ class ImGuiLayer: Layer {
     }
     
     private func setThemeColors() {
-        ImGui.CArray<ImVec4>.write(&ImGuiGetStyle().pointee.Colors) { colors in
-            colors[Int(Im(ImGuiCol_WindowBg))]            = ImVec4(0.1, 0.105, 0.11, 1.0)
-            
-            // Headers
-            colors[Int(Im(ImGuiCol_Header))]              = ImVec4(0.2, 0.205, 0.21, 1.0)
-            colors[Int(Im(ImGuiCol_HeaderHovered))]       = ImVec4(0.3, 0.305, 0.31, 1.0)
-            colors[Int(Im(ImGuiCol_HeaderActive))]        = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            
-            // Buttons
-            colors[Int(Im(ImGuiCol_Button))]              = ImVec4(0.2, 0.205, 0.21, 1.0)
-            colors[Int(Im(ImGuiCol_ButtonHovered))]       = ImVec4(0.3, 0.305, 0.31, 1.0)
-            colors[Int(Im(ImGuiCol_ButtonActive))]        = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            
-            // Frame BG
-            colors[Int(Im(ImGuiCol_FrameBg))]             = ImVec4(0.2, 0.205, 0.21, 1.0)
-            colors[Int(Im(ImGuiCol_FrameBgHovered))]      = ImVec4(0.3, 0.305, 0.31, 1.0)
-            colors[Int(Im(ImGuiCol_FrameBgActive))]       = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            
-            // Tabs
-            colors[Int(Im(ImGuiCol_Tab))]                 = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            colors[Int(Im(ImGuiCol_TabHovered))]          = ImVec4(0.38, 0.3805, 0.381, 1.0)
-            colors[Int(Im(ImGuiCol_TabActive))]           = ImVec4(0.28, 0.2805, 0.281, 1.0)
-            colors[Int(Im(ImGuiCol_TabUnfocused))]        = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            colors[Int(Im(ImGuiCol_TabUnfocusedActive))]  = ImVec4(0.2, 0.205, 0.21, 1.0)
-            
-            // Title
-            colors[Int(Im(ImGuiCol_TitleBg))]             = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            colors[Int(Im(ImGuiCol_TitleBgActive))]       = ImVec4(0.15, 0.1505, 0.151, 1.0)
-            colors[Int(Im(ImGuiCol_TitleBgCollapsed))]    = ImVec4(0.15, 0.1505, 0.151, 1.0)
-        }
+        theme.loadTheme()
     }
 }

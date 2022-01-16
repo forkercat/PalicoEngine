@@ -78,17 +78,17 @@ class ConsolePanel: Panel {
                 continue
             }
             
-            var color: ImVec4 = ImVec4(1, 1, 1, 1)
+            var color: ImVec4 = ImGuiTheme.text
             
             switch message.level {
             case .debug:
-                color = ImVec4(0.4, 0.9, 0.4, 1.0)
+                color = ImGuiTheme.consoleDebug
             case .info:
-                color = ImVec4(0.9, 0.9, 0.9, 1.0)
+                color = ImGuiTheme.consoleInfo
             case .warn:
-                color = ImVec4(0.9, 0.9, 0.4, 1.0)
+                color = ImGuiTheme.consoleWarn
             case .error:
-                color = ImVec4(0.9, 0.4, 0.4, 1.0)
+                color = ImGuiTheme.consoleError
             }
             
             ImGuiPushStyleColor(Im(ImGuiCol_Text), color)
